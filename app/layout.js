@@ -1,8 +1,5 @@
-import { Inter } from "next/font/google";
 import "@/css/satoshi.css";
-import "@/css/style.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import "@/app/globals.css";
 
 export const metadata = {
   title: "Create Next App",
