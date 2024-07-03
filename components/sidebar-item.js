@@ -16,6 +16,7 @@ const SidebarItem = ({ item, pageName, setPageName }) => {
     if (item.children) {
       return item.children.some((child) => isActive(child));
     }
+    if (pathname.startsWith(`${item.route}/`)) return true;
     return false;
   };
 
