@@ -1,20 +1,27 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
-const ApplicationsTable = ({ data, columns }) => {
+const ApplicationsTable = ({ data, columns, className }) => {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
   return (
-    <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+    <div
+      className={cn(
+        "rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-6",
+        className
+      )}
+    >
       <div className="max-w-full overflow-x-auto">
+        {!data && "No applications."}
         <table className="w-full table-auto">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -5,6 +5,11 @@ export const getApplicationByID = async (applicationID) => {
     where: {
       id: applicationID,
     },
+    include: {
+      qualifications: true,
+      pendingQualifications: true,
+      workExperience: true,
+    },
   });
 
   return application;
