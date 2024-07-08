@@ -12,12 +12,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { startTransition, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import SendSMSModal from "./send-sms-modal";
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -34,9 +35,16 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { ID, messaging } from "@/lib/appwrite";
+import { sendSMS } from "@/actions/twilio";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
 
 const StudentActions = ({ studentID }) => {
+  const [isPending, startTransition] = useTransition();
+  const [open, setIsOpen] = useState(false);
+
+  const { toast } = useToast();
+
   const form = useForm({
     defaultValues: {
       message: "",
@@ -44,17 +52,26 @@ const StudentActions = ({ studentID }) => {
   });
 
   const onSubmit = async (values) => {
-    try {
-      await messaging.createSms(ID.unique(), values.message, [], [studentID]);
+    startTransition(() => {
+      sendSMS(values.message).then((data) => {
+        if (data?.success) {
+          toast({
+            variant: "success",
+            title: "SMS Message sent successfully!",
+          });
+        }
 
-      console.log("Done");
-    } catch (error) {
-      console.log(error);
-    }
+        if (data?.error) {
+          // ADD Toast
+        }
+
+        setIsOpen(false);
+      });
+    });
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setIsOpen}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Link
@@ -89,19 +106,32 @@ const StudentActions = ({ studentID }) => {
                 <FormItem>
                   <FormLabel>Message</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter message" {...field} />
+                    <Input
+                      placeholder="Enter message"
+                      disabled={isPending}
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
-            <DialogFooter className="mt-2">
-              <Link
-                href="#"
-                className="inline-flex items-center justify-center rounded-md bg-meta-1 px-8 py-2.5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6"
-              >
-                Cancel
-              </Link>
-              <Button type="submit">Send SMS</Button>
+            <DialogFooter className="mt-6">
+              <DialogClose>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  disabled={isPending}
+                >
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <p>Send SMS</p>
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

@@ -1,6 +1,7 @@
 import "@/css/satoshi.css";
 import "@/app/globals.css";
 import { QueryProvider } from "@/providers/query-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata = {
   title: "Create Next App",
@@ -11,7 +12,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          {children}
+          <Toaster />
+        </QueryProvider>
       </body>
     </html>
   );
