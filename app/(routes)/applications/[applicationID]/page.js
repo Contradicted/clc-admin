@@ -9,6 +9,7 @@ import QualificationDetails from "./_components/qualification-details";
 import WorkExperienceDetails from "./_components/work-experience-details";
 import AdditionalDetails from "./_components/additional-details";
 import ApplicationButtons from "./_components/application-buttons";
+import ApplicationTabs from "./_components/application-tabs";
 
 const ApplicationIDPage = async ({ params }) => {
   const application = await getApplicationByID(params.applicationID);
@@ -28,14 +29,7 @@ const ApplicationIDPage = async ({ params }) => {
               </div>
             </div>
             <div className="px-4 py-4.5 md:px-6 2xl:px-7.5">
-              <CourseDetails
-                courseTitle={application.courseTitle}
-                studyMode={application.studyMode}
-              />
-              <PersonalDetails application={application} />
-              <QualificationDetails application={application} />
-              <WorkExperienceDetails application={application} />
-              <AdditionalDetails application={application} />
+              <ApplicationTabs data={application} className="px-0" />
             </div>
           </div>
 

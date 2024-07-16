@@ -91,13 +91,10 @@ const PersonalDetails = ({ application }) => {
 
   return (
     <div className="border-b border-stroke space-y-4 mt-4">
-      <h4 className="text-xl font-semibold text-black dark:text-white">
-        Personal Details
-      </h4>
       <div className="w-full space-y-4 pb-4">
         {data.map((pd) => (
           <div className="flex gap-3" key={pd.id}>
-            <div className="flex items-start w-full max-w-[25%]">
+            <div className="flex items-start w-full max-w-[50%]">
               <p>{pd.title}</p>
             </div>
             <p className="flex flex-wrap font-medium text-black w-full">

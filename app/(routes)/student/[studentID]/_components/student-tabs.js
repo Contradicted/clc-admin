@@ -17,7 +17,7 @@ const StudentTabs = ({ data }) => {
         <div className="space-y-4 mt-4">
           <div className="w-full space-y-3 pb-4">
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">ID</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -25,7 +25,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">Title</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -33,7 +33,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">First Name</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -41,7 +41,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">Last Name</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -49,7 +49,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">Date of Birth</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -57,7 +57,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">Gender</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -65,7 +65,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">
                   Address Line 1
                 </p>
@@ -75,7 +75,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">
                   Address Line 2
                 </p>
@@ -85,7 +85,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">City</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -93,7 +93,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">Postcode</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -101,7 +101,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">
                   Home Telephone No.
                 </p>
@@ -111,7 +111,7 @@ const StudentTabs = ({ data }) => {
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p className="uppercase font-semibold text-sm">Email</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">

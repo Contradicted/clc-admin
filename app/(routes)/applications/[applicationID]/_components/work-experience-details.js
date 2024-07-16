@@ -6,7 +6,7 @@ const WorkExperienceDetails = ({ application }) => {
       </h4>
 
       <div className="flex gap-3 pb-4">
-        <div className="flex items-start w-full max-w-[25%]">
+        <div className="flex items-start w-full max-w-[50%]">
           <p>Do you have any work experience?</p>
         </div>
         <p className="flex flex-wrap font-medium text-black w-full">
@@ -19,7 +19,7 @@ const WorkExperienceDetails = ({ application }) => {
         application.workExperience.map((we, index) => (
           <div className="w-full space-y-4 pb-4 bg-zinc-50 pt-3" key={index}>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Job Title</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -27,7 +27,7 @@ const WorkExperienceDetails = ({ application }) => {
               </p>
             </div>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Name of Organisation</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -35,7 +35,7 @@ const WorkExperienceDetails = ({ application }) => {
               </p>
             </div>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Nature of Job</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -43,7 +43,7 @@ const WorkExperienceDetails = ({ application }) => {
               </p>
             </div>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Job Start Date</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -51,7 +51,7 @@ const WorkExperienceDetails = ({ application }) => {
               </p>
             </div>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Job End Date</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">

@@ -3,15 +3,11 @@ import { formatDate } from "@/lib/utils";
 const QualificationDetails = ({ application }) => {
   return (
     <div className="border-b border-stroke space-y-4 mt-4">
-      <h4 className="text-xl font-semibold text-black dark:text-white">
-        Qualification Details
-      </h4>
-
       {application.qualifications.length > 0 &&
         application.qualifications.map((qualification, index) => (
           <div className="w-full space-y-4 pb-4 bg-zinc-50 pt-3" key={index}>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Qualification Title</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -19,7 +15,7 @@ const QualificationDetails = ({ application }) => {
               </p>
             </div>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Examining Body</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -27,7 +23,7 @@ const QualificationDetails = ({ application }) => {
               </p>
             </div>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Date Awarded</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -38,7 +34,7 @@ const QualificationDetails = ({ application }) => {
         ))}
 
       <div className="flex gap-3 pb-4">
-        <div className="flex items-start w-full max-w-[25%]">
+        <div className="flex items-start w-full max-w-[50%]">
           <p>Do you have any pending qualifications?</p>
         </div>
         <p className="flex flex-wrap font-medium text-black w-full">
@@ -51,7 +47,7 @@ const QualificationDetails = ({ application }) => {
         application.pendingQualifications.map((pq, index) => (
           <div className="w-full space-y-4 pb-4 bg-zinc-50 pt-3" key={index}>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Qualification Title</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -59,7 +55,7 @@ const QualificationDetails = ({ application }) => {
               </p>
             </div>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Examining/Awarding Body</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -67,7 +63,7 @@ const QualificationDetails = ({ application }) => {
               </p>
             </div>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Subjects Passed</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
@@ -75,7 +71,7 @@ const QualificationDetails = ({ application }) => {
               </p>
             </div>
             <div className="flex gap-3" key={index}>
-              <div className="flex items-start w-full max-w-[25%] pl-3">
+              <div className="flex items-start w-full max-w-[50%] pl-3">
                 <p>Date of Results</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">

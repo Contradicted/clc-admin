@@ -6,7 +6,7 @@ const AdditionalDetails = ({ application }) => {
       </h4>
       <div className="w-full space-y-4 pb-4">
         <div className="flex gap-3">
-          <div className="flex items-start w-full max-w-[25%]">
+          <div className="flex items-start w-full max-w-[50%]">
             <p>Special needs requiring support or facilities</p>
           </div>
           <p className="flex flex-wrap font-medium text-black w-full">
@@ -15,7 +15,7 @@ const AdditionalDetails = ({ application }) => {
         </div>
 
         <div className="flex gap-3">
-          <div className="flex items-start w-full max-w-[25%]">
+          <div className="flex items-start w-full max-w-[50%]">
             Reasons for choosing programme of study
           </div>
           <p className="flex flex-wrap font-medium text-black w-full">
@@ -24,7 +24,7 @@ const AdditionalDetails = ({ application }) => {
         </div>
 
         <div className="flex gap-3">
-          <div className="flex items-start w-full max-w-[25%]">
+          <div className="flex items-start w-full max-w-[50%]">
             What are your future education plans?
           </div>
           <p className="flex flex-wrap font-medium text-black w-full">
@@ -33,7 +33,7 @@ const AdditionalDetails = ({ application }) => {
         </div>
 
         <div className="flex gap-3">
-          <div className="flex items-start w-full max-w-[25%]">
+          <div className="flex items-start w-full max-w-[50%]">
             What employment do you intend to seek on completion of your studies?
           </div>
           <p className="flex flex-wrap font-medium text-black w-full">
@@ -42,7 +42,7 @@ const AdditionalDetails = ({ application }) => {
         </div>
 
         <div className="flex gap-3">
-          <div className="flex items-start w-full max-w-[25%]">
+          <div className="flex items-start w-full max-w-[50%]">
             Brief statement about your interests and hobbies
           </div>
           <p className="flex flex-wrap font-medium text-black w-full">
@@ -51,7 +51,7 @@ const AdditionalDetails = ({ application }) => {
         </div>
 
         <div className="flex gap-3">
-          <div className="flex items-start w-full max-w-[25%]">
+          <div className="flex items-start w-full max-w-[50%]">
             How did you hear about the college?
           </div>
           <p className="flex flex-wrap font-medium text-black w-full">
