@@ -8,7 +8,11 @@ export default async function ApplicationsPage() {
 
   return (
     <DefaultLayout>
-      <ApplicationsTable data={applications} columns={columns} />
+      {applications && applications.length > 0 ? (
+        <ApplicationsTable data={applications} columns={columns} />
+      ) : (
+        "0 Applications found."
+      )}
     </DefaultLayout>
   );
 }

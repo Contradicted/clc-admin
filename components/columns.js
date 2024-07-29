@@ -1,5 +1,6 @@
 "use client";
 
+import { getDisplayStatus } from "@/lib/utils";
 import Link from "next/link";
 
 export const columns = [
@@ -23,8 +24,9 @@ export const columns = [
   },
   {
     id: "status",
+    accessorKey: "status",
     header: () => "Status",
-    cell: (info) => info.getValue(),
+    cell: (info) => getDisplayStatus(info.getValue()),
   },
   {
     id: "actions",

@@ -29,7 +29,7 @@ const toastVariants = cva(
         success:
           "border-l-6 border-[#34D399] bg-[#a7f3d0] px-7 py-8 shadow-md md:p-9",
         destructive:
-          "destructive group border-destructive bg-destructive text-destructive-foreground",
+          "border-l-6 border-[#F87171] bg-[#F87171] bg-opacity-[15%] px-7 py-8 shadow-md md:p-9",
       },
     },
     defaultVariants: {
@@ -52,6 +52,15 @@ const Toast = React.forwardRef(({ className, variant, ...props }, ref) => {
             style={{ width: "36px", height: "36px" }}
           >
             <Check className="text-white" />
+          </div>
+        )}
+
+        {variant === "destructive" && (
+          <div
+            className="flex items-center justify-center rounded-lg bg-[#F87171]"
+            style={{ width: "36px", height: "36px" }}
+          >
+            <X className="text-white" />
           </div>
         )}
         <div className="flex flex-col justify-center flex-1">

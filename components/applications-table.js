@@ -21,7 +21,6 @@ const ApplicationsTable = ({ data, columns, className }) => {
       )}
     >
       <div className="max-w-full overflow-x-auto">
-        {!data && "No applications."}
         <table className="w-full table-auto">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
