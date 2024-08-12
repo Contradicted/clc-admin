@@ -1,3 +1,5 @@
+import { getDisplayEthnicity, getDisplayReligion } from "@/lib/utils";
+
 const AdditionalDetails = ({ application }) => {
   return (
     <div className="border-stroke space-y-4 mt-4">
@@ -47,6 +49,22 @@ const AdditionalDetails = ({ application }) => {
           </div>
           <p className="flex flex-wrap font-medium text-black w-full">
             {application.hobbies}
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <div className="flex items-start w-full max-w-[50%]">
+            Ethnic Origin
+          </div>
+          <p className="flex flex-wrap font-medium text-black w-full">
+            {getDisplayEthnicity(application.ethnicity)}
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <div className="flex items-start w-full max-w-[50%]">Religion</div>
+          <p className="flex flex-wrap font-medium text-black w-full">
+            {getDisplayReligion(application.religion)}
           </p>
         </div>
 
