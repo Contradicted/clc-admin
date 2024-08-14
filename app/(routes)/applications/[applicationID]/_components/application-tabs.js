@@ -13,7 +13,7 @@ const ApplicationTabs = ({ data, className }) => {
       defaultValue="course-details"
       className={cn("flex flex-col items-start px-4", className)}
     >
-      <TabsList>
+      <TabsList className="w-full gap-x-3">
         <TabsTrigger value="course-details">Course Details</TabsTrigger>
         <TabsTrigger value="personal-details">Personal Details</TabsTrigger>
         <TabsTrigger value="qualifications">Qualifications</TabsTrigger>

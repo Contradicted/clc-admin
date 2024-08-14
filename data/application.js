@@ -9,6 +9,11 @@ export const getApplicationByID = async (applicationID) => {
       qualifications: true,
       pendingQualifications: true,
       workExperience: true,
+      notes: {
+        include: {
+          user: true,
+        },
+      },
     },
   });
 

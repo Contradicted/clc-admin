@@ -19,7 +19,7 @@ const ApplicationHeader = ({
       <div className="flex flex-col">
         <span className="text-slate-600 text-xs">Email sent</span>
         <span className="text-black text-sm font-medium">
-          {formatDateTime(emailTimestamp)}
+          {formatDateTime(emailTimestamp).dateTime}
         </span>
       </div>
       <div className="flex flex-col">
