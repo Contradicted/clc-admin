@@ -1,3 +1,5 @@
+import { formatDate } from "@/lib/utils";
+
 const WorkExperienceDetails = ({ application }) => {
   return (
     <div className="border-b border-stroke space-y-4 mt-4">

@@ -2,6 +2,7 @@ import DefaultLayout from "@/components/default-layout";
 import { getStudentByApplicationID } from "@/data/student";
 import Link from "next/link";
 import VerifyApplicationButtons from "./_components/verify-application-buttons";
+import { getDisplayStatus } from "@/lib/utils";
 
 export default async function VerifyApplication({ params }) {
   const student = await getStudentByApplicationID(params.applicationID);
@@ -27,7 +28,9 @@ export default async function VerifyApplication({ params }) {
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark flex-1">
             <div className="grid grid-cols-6 border-b border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
               <div className="col-span-3 flex items-center">
-                <VerifyApplicationButtons />
+                <VerifyApplicationButtons
+                  applicationID={params.applicationID}
+                />
               </div>
             </div>
             <div className="px-4 py-4.5 md:px-6 2xl:px-7.5">
@@ -62,7 +65,7 @@ export default async function VerifyApplication({ params }) {
                       <p>Application Status</p>
                     </div>
                     <p className="flex flex-wrap font-medium text-black w-full">
-                      {student.applications[0].status}
+                      {getDisplayStatus(student.applications[0].status)}
                     </p>
                   </div>
                 </div>

@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { updateStatusEmail } from "@/lib/mail";
 import { generateUpdateApplicationToken } from "@/lib/tokens";
 
-export const updateStatus = async (status, applicationID) => {
+export const updateStatus = async (emailMsg, applicationID, status) => {
   const user = await currentUser();
   const application = await getApplicationByID(applicationID);
   const student = await getStudentByID(application.userID);
@@ -34,7 +34,7 @@ export const updateStatus = async (status, applicationID) => {
     },
   });
 
-  if (status === "Waiting_For_Change") {
+  if (status === "Waiting_for_Change") {
     const updateApplicationToken = await generateUpdateApplicationToken(
       student.email
     );
@@ -48,7 +48,7 @@ export const updateStatus = async (status, applicationID) => {
     return { success: "Successfully updated status!" };
   }
 
-  await updateStatusEmail(status, application, student);
+  await updateStatusEmail(status, application, student, "", emailMsg);
 
   // Create note
   await db.note.create({

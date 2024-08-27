@@ -14,6 +14,12 @@ export const getApplicationByID = async (applicationID) => {
           user: true,
         },
       },
+      interview: {
+        include: {
+          questions: true,
+          files: true,
+        },
+      },
     },
   });
 

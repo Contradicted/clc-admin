@@ -27,13 +27,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { toast, useToast } from "@/components/ui/use-toast";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
-const StatusButton = ({ application }) => {
+const StatusModal = ({
+  applicationID,
+  name,
+  title,
+  desc,
+  status,
+  className,
+}) => {
   const [open, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -42,7 +50,7 @@ const StatusButton = ({ application }) => {
 
   const form = useForm({
     defaultValues: {
-      status: application?.status !== "Submitted" ? application?.status : "",
+      message: "",
     },
   });
 
@@ -65,7 +73,7 @@ const StatusButton = ({ application }) => {
 
   const onSubmit = (values) => {
     startTransition(() => {
-      updateStatus(values.status, application.id)
+      updateStatus(values.message, applicationID, status)
         .then((data) => {
           if (data?.success) {
             setIsOpen(false);
@@ -94,47 +102,24 @@ const StatusButton = ({ application }) => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button size="default2">Status</Button>
+        <Button className={className}>{name}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Status of Application</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           <div className="border-2 border-primary w-[25%] rounded-sm" />
-          <DialogDescription>
-            Please select a status from the list below
-          </DialogDescription>
+          <DialogDescription>{desc}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
-              name="status"
+              name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>Message</FormLabel>
                   <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                      disabled={isPending}
-                    >
-                      <SelectTrigger className="h-[50px]">
-                        <SelectValue placeholder="Select a status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="Approved">Approved</SelectItem>
-                          <SelectItem value="Rejected">Rejected</SelectItem>
-                          <SelectItem value="Waiting_for_Change">
-                            Waiting for Change
-                          </SelectItem>
-                          <SelectItem value="Re_Submitted">
-                            Re-Submitted
-                          </SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                    <Textarea {...field} placeholder="Please enter a message" />
                   </FormControl>
                 </FormItem>
               )}
@@ -153,7 +138,7 @@ const StatusButton = ({ application }) => {
                 {isPending ? (
                   <LoaderCircle className="animate-spin" />
                 ) : (
-                  <p>Save changes</p>
+                  <p>Submit</p>
                 )}
               </Button>
             </DialogFooter>
@@ -164,4 +149,4 @@ const StatusButton = ({ application }) => {
   );
 };
 
-export default StatusButton;
+export default StatusModal;

@@ -33,3 +33,9 @@ export const addNoteSchema = z.object({
       message: "You must add a note",
     }),
 });
+
+export const InterviewSchema = z.object({
+  date: z.date({
+    required_error: "Please enter a date/time",
+  }),
+});

@@ -67,7 +67,7 @@ const QualificationDetails = ({ application }) => {
                 <p>Subjects Passed</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
-                {formatDate(pq.subjectsPassed)}
+                {pq.subjectsPassed}
               </p>
             </div>
             <div className="flex gap-3" key={index}>

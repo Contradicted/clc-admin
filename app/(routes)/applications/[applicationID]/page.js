@@ -10,9 +10,11 @@ import { Minus, SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AddNoteButton from "./_components/add-note-button";
 import { cn, formatDate, formatDateTime } from "@/lib/utils";
+import { getStudentByApplicationID } from "@/data/student";
 
 const ApplicationIDPage = async ({ params }) => {
   const application = await getApplicationByID(params.applicationID);
+  const student = await getStudentByApplicationID(application.id);
 
   if (!application) {
     return redirect("/applications");
@@ -23,7 +25,7 @@ const ApplicationIDPage = async ({ params }) => {
       <div className="max-w-screen-xl mx-auto">
         <ApplicationHeader
           applicationID={application.id}
-          studentID={application.userID}
+          studentID={student.id}
           emailTimestamp={application.emailSentAt}
           status={application.status}
         />
@@ -32,7 +34,7 @@ const ApplicationIDPage = async ({ params }) => {
             <div className="grid grid-cols-6 border-b border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
               <div className="col-span-3 flex items-center">
                 <ApplicationButtons
-                  studentID={application.userID}
+                  student={student}
                   application={application}
                 />
               </div>
@@ -51,31 +53,31 @@ const ApplicationIDPage = async ({ params }) => {
             </div>
             {application.notes.map((note, index) => (
               <div
-                className={cn("w-full flex justify-between gap-x-6 px-5 mb-5")}
+                className={cn("w-full flex gap-x-4 px-5 mb-5")}
                 key={note.id}
               >
-                <div className="flex flex-col text-sm gap-y-3">
-                  <div className="flex flex-col items-center gap-y-1 flex-1">
-                    <span className="font-medium">
-                      {formatDateTime(note.createdAt).date}
-                    </span>
-                    <span className="italic">
-                      {formatDateTime(note.createdAt).time}
-                    </span>
-                  </div>
+                <div className="flex flex-col items-center text-sm">
+                  <span className="font-medium">
+                    {formatDateTime(note.createdAt).date}
+                  </span>
+                  <span className="italic text-xs">
+                    {formatDateTime(note.createdAt).time}
+                  </span>
                   <Button
-                    size="icon"
-                    className="rounded-full bg-meta-1 h-7 w-full"
+                    size="sm"
+                    className="mt-2 rounded-full bg-meta-1 px-3 py-1 text-xs hover:bg-meta-1 hover:cursor-default"
                   >
                     {note.type}
                   </Button>
                 </div>
-                <div className="flex flex-col text-sm gap-y-3 flex-1">
-                  <p className="flex-1">{note.content}</p>
-                  <span className="flex gap-x-3 items-center font-medium">
-                    <Minus className="size-5 stroke-1" />
+                <div className="flex-1 min-w-0 flex flex-col justify-between">
+                  <p className="text-sm break-words whitespace-pre-wrap mb-2">
+                    {note.content}
+                  </p>
+                  <div className="flex items-center font-medium text-sm">
+                    <Minus className="size-4 stroke-1 mr-2" />
                     {note.user.firstName + " " + note.user.lastName}
-                  </span>
+                  </div>
                 </div>
               </div>
             ))}

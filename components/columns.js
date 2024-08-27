@@ -1,7 +1,9 @@
 "use client";
 
-import { getDisplayStatus } from "@/lib/utils";
+import { formatDate, getDisplayStatus } from "@/lib/utils";
 import Link from "next/link";
+import { Button } from "./ui/button";
+import { Trash2 } from "lucide-react";
 
 export const columns = [
   {
@@ -40,6 +42,34 @@ export const columns = [
         >
           View
         </Link>
+      );
+    },
+  },
+];
+
+export const fileColumns = [
+  {
+    id: "file",
+    accessorKey: "name",
+    header: () => "File",
+    cell: (info) => {
+      return <Button variant="outline">{info.getValue()}</Button>;
+    },
+  },
+  {
+    id: "upload_date",
+    accessorKey: "createdAt",
+    header: () => "Upload Date",
+    cell: (info) => formatDate(info.getValue()),
+  },
+  {
+    id: "actions",
+    header: () => "Actions",
+    cell: (info) => {
+      return (
+        <Button variant="ghost">
+          <Trash2 className="size-4" />
+        </Button>
       );
     },
   },

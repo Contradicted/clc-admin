@@ -1,11 +1,12 @@
 import Link from "next/link";
 import StatusButton from "./status-button";
+import InterviewModal from "./interview-modal";
 
-const ApplicationButtons = ({ studentID, application }) => {
+const ApplicationButtons = ({ student, application }) => {
   return (
     <div className="flex gap-x-3">
       <Link
-        href={`/student/${studentID}`}
+        href={`/student/${student.id}`}
         className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2.5 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-6 whitespace-nowrap w-full sm:w-auto"
       >
         View Student
@@ -16,6 +17,9 @@ const ApplicationButtons = ({ studentID, application }) => {
       >
         Verify Application
       </Link>
+      {application.status === "Approved_for_Interview" && (
+        <InterviewModal studentData={student} applicationData={application} />
+      )}
       <StatusButton application={application} />
     </div>
   );
