@@ -3,7 +3,8 @@
 import { formatDate, getDisplayStatus } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { Trash2 } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
+import { handleDeleteFiles } from "./files-table";
 
 export const columns = [
   {
@@ -47,13 +48,15 @@ export const columns = [
   },
 ];
 
-export const fileColumns = [
+export const fileColumns = (onDeleteFile) => [
   {
     id: "file",
     accessorKey: "name",
     header: () => "File",
     cell: (info) => {
-      return <Button variant="outline">{info.getValue()}</Button>;
+      return (
+        <span className="truncate overflow-hidden">{info.getValue()}</span>
+      );
     },
   },
   {
@@ -66,10 +69,26 @@ export const fileColumns = [
     id: "actions",
     header: () => "Actions",
     cell: (info) => {
+      const fileID = info.row.original.id;
+      const fileKey = info.row.original.url.split("f/")[1];
+
       return (
-        <Button variant="ghost">
-          <Trash2 className="size-4" />
-        </Button>
+        <div className="flex items-center">
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => window.open(info.row.original.url, "file")}
+          >
+            <Eye className="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => onDeleteFile({ fileID: fileID, fileKey: fileKey })}
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
       );
     },
   },

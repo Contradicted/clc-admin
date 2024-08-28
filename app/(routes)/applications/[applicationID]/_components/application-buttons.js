@@ -17,7 +17,9 @@ const ApplicationButtons = ({ student, application }) => {
       >
         Verify Application
       </Link>
-      {application.status === "Approved_for_Interview" && (
+      {["Approved_for_Interview", "Interview_successful"].includes(
+        application.status
+      ) && (
         <InterviewModal studentData={student} applicationData={application} />
       )}
       <StatusButton application={application} />

@@ -268,7 +268,7 @@ export const FileUploaderItem = forwardRef(
         ref={ref}
         className={cn(
           buttonVariants({ variant: "ghost" }),
-          "h-6 p-1 justify-between cursor-pointer relative",
+          "h-6 p-2 justify-between cursor-pointer relative",
           className,
           isSelected ? "bg-muted" : ""
         )}
@@ -303,7 +303,7 @@ export const FileInput = forwardRef(
       <div
         ref={ref}
         {...props}
-        className={`relative w-full ${
+        className={`relative w-fit ${
           isLOF ? "opacity-50 cursor-not-allowed " : "cursor-pointer "
         }`}
       >

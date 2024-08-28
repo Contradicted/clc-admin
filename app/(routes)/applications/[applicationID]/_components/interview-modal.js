@@ -30,10 +30,21 @@ import { formatDateTime } from "@/lib/utils";
 import InterviewQuestions from "./interview-questions";
 
 import { isEmpty } from "lodash";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const InterviewModal = ({ studentData, applicationData }) => {
   const [open, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isStudentTest, setIsStudentTest] = useState(
+    applicationData?.interview?.[0]?.student_test
+  );
   const [showQuestions, setShowQuestions] = useState(false);
 
   const { toast } = useToast();
@@ -42,6 +53,13 @@ const InterviewModal = ({ studentData, applicationData }) => {
   const form = useForm({
     defaultValues: {
       date: applicationData?.interview?.[0]?.date || "",
+      status: applicationData?.interview?.[0]?.status || "",
+      student_test:
+        applicationData?.interview?.[0]?.student_test === true
+          ? "true"
+          : "false" || undefined,
+      test_status: applicationData?.interview?.[0]?.test_status || undefined,
+      notes: applicationData?.interview?.[0]?.notes || undefined,
     },
   });
 
@@ -63,8 +81,16 @@ const InterviewModal = ({ studentData, applicationData }) => {
   };
 
   const onSubmit = (values) => {
+    const studentTestValue = form.getValues("student_test");
+
+    if (studentTestValue === "false") {
+      form.setValue("test_status", null);
+    }
+
+    const formValues = form.getValues();
+
     startTransition(() => {
-      interview(values, applicationData.id)
+      interview(formValues, applicationData.id)
         .then((data) => {
           if (data?.success) {
             setIsOpen(false);
@@ -91,6 +117,7 @@ const InterviewModal = ({ studentData, applicationData }) => {
         })
         .finally(() => {
           setIsOpen(false);
+          router.refresh();
         });
     });
   };
@@ -158,13 +185,132 @@ const InterviewModal = ({ studentData, applicationData }) => {
                     </div>
                   </div>
                   {applicationData?.interview.length > 0 && (
-                    <Button
-                      type="button"
-                      className="mt-4 w-full"
-                      onClick={() => setShowQuestions(true)}
-                    >
-                      View Questions
-                    </Button>
+                    <>
+                      <Button
+                        type="button"
+                        className="mt-4 w-full"
+                        onClick={() => setShowQuestions(true)}
+                      >
+                        View Questions
+                      </Button>
+                      <div className="flex gap-3">
+                        <div className="flex items-start w-full max-w-[35%]">
+                          <p>Interview Status</p>
+                        </div>
+                        <div className="w-full relative z-0">
+                          <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field }) => (
+                              <FormItem>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                  value={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select a status" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent className="z-[9999999]">
+                                    <SelectItem value="pass">Pass</SelectItem>
+                                    <SelectItem value="fail">Fail</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="flex items-start w-full max-w-[35%]">
+                          <p>Student Test</p>
+                        </div>
+                        <div className="w-full relative z-0">
+                          <FormField
+                            control={form.control}
+                            name="student_test"
+                            render={({ field }) => (
+                              <FormItem>
+                                <Select
+                                  onValueChange={(value) => {
+                                    field.onChange(value);
+                                    if (value === "true") {
+                                      setIsStudentTest(true);
+                                    } else {
+                                      setIsStudentTest(false);
+                                    }
+                                  }}
+                                  defaultValue={field.value}
+                                  value={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select a status" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent className="z-[9999999]">
+                                    <SelectItem value="true">Yes</SelectItem>
+                                    <SelectItem value="false">No</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                      {isStudentTest && (
+                        <div className="flex gap-3">
+                          <div className="flex items-start w-full max-w-[35%]">
+                            <p>Test Status</p>
+                          </div>
+                          <div className="w-full relative z-0">
+                            <FormField
+                              control={form.control}
+                              name="test_status"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    value={field.value}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select a status" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="z-[9999999]">
+                                      <SelectItem value="pass">Pass</SelectItem>
+                                      <SelectItem value="fail">Fail</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex gap-3">
+                        <div className="flex items-start w-full max-w-[35%]">
+                          <p>Comments</p>
+                        </div>
+                        <div className="w-full relative z-0">
+                          <FormField
+                            control={form.control}
+                            name="notes"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Textarea className="resize-y" {...field} />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
               </div>

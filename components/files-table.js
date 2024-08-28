@@ -13,6 +13,7 @@ const FilesTable = ({ data, columns, className }) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
   return (
     <table className="w-full">
       <thead>
@@ -43,8 +44,12 @@ const FilesTable = ({ data, columns, className }) => {
             {row.getVisibleCells().map((cell) => (
               <td
                 key={cell.id}
-                className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"
+                className={cn(
+                  "border-b border-[#eee] px-4 py-5 truncate pl-9 dark:border-strokedark xl:pl-11",
+                  cell.column.id === "file" && "max-w-[280px]"
+                )}
               >
+                {/* {JSON.stringify(cell.column)} */}
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}

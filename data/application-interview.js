@@ -31,3 +31,18 @@ export const getInterviewByInterviewID = async (interviewID) => {
     return null;
   }
 };
+
+export const getInterviewFilesByInterviewID = async (interviewID) => {
+  try {
+    const interviewFiles = await db.interviewFiles.findMany({
+      where: {
+        id: interviewID,
+      },
+    });
+
+    return interviewFiles;
+  } catch (error) {
+    console.log("[FETCHING_INTERVIEW_FILES_ERROR]", error);
+    return null;
+  }
+};

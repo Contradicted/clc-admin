@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -34,6 +35,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { DEFAULT_INTERVIEW_QUESTIONS } from "@/constants";
+import { getInterviewFilesByInterviewID } from "@/data/application-interview";
+import { db } from "@/lib/db";
 import { LoaderCircle, Paperclip, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
@@ -58,6 +61,8 @@ const InterviewQuestions = ({
   const [selectedQuestion, setSelectedQuestion] = useState("");
   const [customQuestion, setCustomQuestion] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [deletedFiles, setDeletedFiles] = useState([]);
+  const [data, setData] = useState(fileData);
   const [files, setFiles] = useState([]);
 
   const defaultQuestionIds = [18, 19, 20];
@@ -65,19 +70,13 @@ const InterviewQuestions = ({
   const router = useRouter();
   const { toast } = useToast();
 
-  console.log(fileData);
-
   const dropzone = {
     accept: {
-      "application/*": [
-        ".pdf",
-        ".doc",
-        ".docx",
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".webp",
-      ],
+      "application/*": [".pdf", ".doc", ".docx"],
+      "application/pdf": [".pdf"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [".docx", ".doc"],
+      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
     multiple: false,
     maxFiles: 4,
@@ -104,7 +103,7 @@ const InterviewQuestions = ({
   const form = useForm({
     defaultValues: {
       questions:
-        questionData.length > 0
+        questionData?.length > 0
           ? questionData.map((q) => ({
               id: q.id,
               text: matchTitle(q.question) || q.question,
@@ -119,7 +118,7 @@ const InterviewQuestions = ({
     },
   });
 
-  const { fields, prepend, append, remove, move, swap } = useFieldArray({
+  const { fields, prepend, remove, move } = useFieldArray({
     control: form.control,
     name: "questions",
   });
@@ -158,6 +157,13 @@ const InterviewQuestions = ({
     }
   };
 
+  const handleDeleteFiles = (file) => {
+    const updatedData = data.filter((df) => df.id !== file.fileID);
+    setData(updatedData);
+
+    setDeletedFiles((prev) => [...prev, file]);
+  };
+
   useEffect(() => {
     const defaultQuestionValues = [
       "interviewer_confirm",
@@ -166,7 +172,7 @@ const InterviewQuestions = ({
     ];
 
     // Ensure default questions are present and move them if not already moved
-    if (!hasMovedDefaults.current && questionData.length > 0) {
+    if (!hasMovedDefaults.current && questionData?.length > 0) {
       const defaultFieldsIndexes = fields
         .map((field, index) => {
           if (defaultQuestionValues.includes(field.value)) {
@@ -188,6 +194,12 @@ const InterviewQuestions = ({
     }
   }, [questionData, fields, move]);
 
+  useEffect(() => {
+    if (!open) {
+      setDeletedFiles([]);
+    }
+  }, [open]);
+
   const onSubmit = (values) => {
     const fileData = new FormData();
 
@@ -198,14 +210,21 @@ const InterviewQuestions = ({
     }
 
     startTransition(() => {
-      interviewQuestions(values.questions, fileData, interviewID)
-        .then((data) => {
+      interviewQuestions(values.questions, fileData, deletedFiles, interviewID)
+        .then(async (data) => {
           if (data?.success) {
             onOpenChange(false);
             toast({
               variant: "success",
               title: data.success,
             });
+
+            if (data.uploadedFiles && data.uploadedFiles.length > 0) {
+              setData((prev) => [...prev, ...data.uploadedFiles]);
+            }
+
+            form.setValue("files", null);
+
             router.refresh();
           }
 
@@ -225,6 +244,8 @@ const InterviewQuestions = ({
         })
         .finally(() => {
           onOpenChange(false);
+          setDeletedFiles([]);
+          router.refresh();
         });
     });
   };
@@ -241,6 +262,7 @@ const InterviewQuestions = ({
         <DialogHeader>
           <DialogTitle>Interview Questions</DialogTitle>
           <div className="border-2 border-primary w-[25%] rounded-sm" />
+          <DialogDescription />
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -344,7 +366,9 @@ const InterviewQuestions = ({
                         {field.value.map((file, i) => (
                           <FileUploaderItem key={i} index={i}>
                             <Paperclip className="h-4 w-4 stroke-current" />
-                            <span>{file.name}</span>
+                            <span className="truncate max-w-125">
+                              {file.name}
+                            </span>
                           </FileUploaderItem>
                         ))}
                       </FileUploaderContent>
@@ -354,7 +378,12 @@ const InterviewQuestions = ({
               )}
             />
 
-            <FilesTable data={fileData} columns={fileColumns} />
+            {data && data.length > 0 && (
+              <FilesTable
+                data={data}
+                columns={fileColumns(handleDeleteFiles)}
+              />
+            )}
 
             <DialogFooter>
               <DialogClose>
