@@ -19,16 +19,8 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { toast, useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -84,6 +76,15 @@ const StatusModal = ({
             });
 
             router.refresh();
+          }
+
+          if (data?.error) {
+            setIsOpen(false);
+
+            toast({
+              variant: "destructive",
+              title: data.error,
+            });
           }
         })
         .catch((error) => {

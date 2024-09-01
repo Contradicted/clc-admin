@@ -48,7 +48,7 @@ export const columns = [
   },
 ];
 
-export const fileColumns = (onDeleteFile) => [
+export const interviewFileColumns = (onDeleteFile) => [
   {
     id: "file",
     accessorKey: "name",
@@ -87,6 +87,36 @@ export const fileColumns = (onDeleteFile) => [
             onClick={() => onDeleteFile({ fileID: fileID, fileKey: fileKey })}
           >
             <Trash2 className="size-4" />
+          </Button>
+        </div>
+      );
+    },
+  },
+];
+
+export const fileColumns = [
+  {
+    id: "file",
+    accessorKey: "name",
+    header: () => "File",
+    cell: (info) => {
+      return (
+        <span className="truncate overflow-hidden">{info.getValue()}</span>
+      );
+    },
+  },
+  {
+    id: "actions",
+    header: () => "Action",
+    cell: (info) => {
+      return (
+        <div className="flex items-center">
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => window.open(info.row.original.url, "file")}
+          >
+            <Eye className="size-4" />
           </Button>
         </div>
       );

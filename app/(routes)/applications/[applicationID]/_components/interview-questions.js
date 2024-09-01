@@ -1,5 +1,5 @@
 import { interviewQuestions } from "@/actions/interview";
-import { fileColumns } from "@/components/columns";
+import { interviewFileColumns } from "@/components/columns";
 import FilesTable from "@/components/files-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -381,7 +381,7 @@ const InterviewQuestions = ({
             {data && data.length > 0 && (
               <FilesTable
                 data={data}
-                columns={fileColumns(handleDeleteFiles)}
+                columns={interviewFileColumns(handleDeleteFiles)}
               />
             )}
 

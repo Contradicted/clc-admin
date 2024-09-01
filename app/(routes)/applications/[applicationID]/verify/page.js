@@ -1,11 +1,15 @@
-import DefaultLayout from "@/components/default-layout";
-import { getStudentByApplicationID } from "@/data/student";
 import Link from "next/link";
+
+import DefaultLayout from "@/components/default-layout";
 import VerifyApplicationButtons from "./_components/verify-application-buttons";
+
+import { getStudentByApplicationID } from "@/data/student";
+import { getApplicationByID } from "@/data/application";
 import { getDisplayStatus } from "@/lib/utils";
 
 export default async function VerifyApplication({ params }) {
   const student = await getStudentByApplicationID(params.applicationID);
+  const application = await getApplicationByID(params.applicationID);
 
   return (
     <DefaultLayout>
@@ -30,6 +34,7 @@ export default async function VerifyApplication({ params }) {
               <div className="col-span-3 flex items-center">
                 <VerifyApplicationButtons
                   applicationID={params.applicationID}
+                  applicationStatus={application.status}
                 />
               </div>
             </div>

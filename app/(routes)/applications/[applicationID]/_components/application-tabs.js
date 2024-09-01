@@ -21,7 +21,6 @@ const ApplicationTabs = ({ data, className }) => {
         <TabsTrigger value="additional-information">
           Additional Information
         </TabsTrigger>
-        <TabsTrigger value="files">Files</TabsTrigger>
       </TabsList>
       <TabsContent value="course-details" className="w-full">
         <CourseDetails

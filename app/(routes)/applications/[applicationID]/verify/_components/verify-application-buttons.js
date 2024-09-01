@@ -1,17 +1,28 @@
 import Link from "next/link";
 import StatusModal from "./status-modal";
 
-const VerifyApplicationButtons = ({ applicationID }) => {
+const VerifyApplicationButtons = ({ applicationID, applicationStatus }) => {
   return (
     <div className="flex gap-x-3">
-      <StatusModal
-        applicationID={applicationID}
-        status="Approved_for_Interview"
-        name="Approve for Interview"
-        title="Approve for Interview"
-        desc="Please enter a message"
-        className="bg-meta-3 hover:bg-meta-3/90"
-      />
+      {["Interview_successful", "Approved"].includes(applicationStatus) ? (
+        <StatusModal
+          applicationID={applicationID}
+          status="Approved"
+          name="Approve Application"
+          title="Approve Application"
+          desc="Please enter a message"
+          className="bg-meta-3 hover:bg-meta-3/90"
+        />
+      ) : (
+        <StatusModal
+          applicationID={applicationID}
+          status="Approved_for_Interview"
+          name="Approve for Interview"
+          title="Approve for Interview"
+          desc="Please enter a message"
+          className="bg-meta-3 hover:bg-meta-3/90"
+        />
+      )}
       <StatusModal
         applicationID={applicationID}
         status="Rejected"

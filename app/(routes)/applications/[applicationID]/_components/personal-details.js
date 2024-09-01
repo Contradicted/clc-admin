@@ -1,3 +1,5 @@
+import { fileColumns } from "@/components/columns";
+import FilesTable from "@/components/files-table";
 import { formatDate } from "@/lib/utils";
 
 const PersonalDetails = ({ application }) => {
@@ -89,21 +91,42 @@ const PersonalDetails = ({ application }) => {
     },
   ];
 
+  const fileData = [];
+
+  if (application.photoUrl) {
+    fileData.push({
+      name: "Profile Picture",
+      url: application.photoUrl,
+    });
+  }
+
+  if (application.identificationNoUrl) {
+    fileData.push({
+      name: "Identification",
+      url: application.identificationNoUrl,
+    });
+  }
+
   return (
-    <div className="border-b border-stroke space-y-4 mt-4">
-      <div className="w-full space-y-4 pb-4">
-        {data.map((pd) => (
-          <div className="flex gap-3" key={pd.id}>
-            <div className="flex items-start w-full max-w-[50%]">
-              <p>{pd.title}</p>
+    <>
+      <div className="border-b border-stroke space-y-4 my-5">
+        <div className="w-full space-y-4 pb-4">
+          {data.map((pd) => (
+            <div className="flex gap-3" key={pd.id}>
+              <div className="flex items-start w-full max-w-[50%]">
+                <p>{pd.title}</p>
+              </div>
+              <p className="flex flex-wrap font-medium text-black w-full">
+                {pd.value}
+              </p>
             </div>
-            <p className="flex flex-wrap font-medium text-black w-full">
-              {pd.value}
-            </p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+      {fileData.length > 0 && (
+        <FilesTable data={fileData} columns={fileColumns} />
+      )}
+    </>
   );
 };
 
