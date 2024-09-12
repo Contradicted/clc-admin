@@ -20,6 +20,11 @@ export const getApplicationByID = async (applicationID) => {
           files: true,
         },
       },
+      course: {
+        include: {
+          course_study_mode: true,
+        },
+      },
     },
   });
 

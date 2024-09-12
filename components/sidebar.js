@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SidebarItem from "@/components/sidebar-item";
 import { useState } from "react";
+import { Book } from "lucide-react";
 
 const menuGroups = [
   {
@@ -56,6 +57,11 @@ const menuGroups = [
         ),
         label: "Applications",
         route: "/applications",
+      },
+      {
+        icon: <Book className="size-[18px] stroke-current" />,
+        label: "Courses",
+        route: "/courses",
       },
     ],
   },

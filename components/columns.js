@@ -1,27 +1,86 @@
 "use client";
 
-import { formatDate, getDisplayStatus } from "@/lib/utils";
+import { formatDate, formatDateTime, getDisplayStatus } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { Eye, Trash2 } from "lucide-react";
-import { handleDeleteFiles } from "./files-table";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowUpDown } from "lucide-react";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { Statuses } from "@/constants";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+
+dayjs.extend(isBetween);
 
 export const columns = [
   {
-    id: "id",
     accessorKey: "id",
-    header: () => "Application ID",
-    cell: (info) => {
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Application ID" />
+    ),
+    cell: (info) => info.getValue(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "courseTitle",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Course Title" />
+    ),
+    cell: (info) => info.getValue(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: (info) => info.getValue(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Created At" />
+    ),
+    cell: (info) => formatDateTime(info.getValue()).dateLong,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue.length !== 2) return true;
+      const [start, end] = filterValue;
+      const rowDate = new Date(row.getValue(columnId));
+      return dayjs(rowDate).isBetween(start, end, "day", "[]");
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const appID = row.getValue("id");
       return (
-        <Link href="#" className="hover:opacity-80 cursor-pointer ease-linear">
-          {info.getValue()}
+        <Link
+          href={`/applications/${appID}`}
+          className="inline-flex items-center justify-center bg-black px-10 py-2 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
+        >
+          View
         </Link>
       );
     },
   },
+];
+
+export const courseColumns = [
   {
-    id: "courseTitle",
-    accessorKey: "courseTitle",
+    id: "code",
+    accessorKey: "code",
+    header: () => "Course Code",
+    cell: (info) => info.getValue(),
+  },
+  {
+    id: "name",
+    accessorKey: "name",
     header: () => "Course Title",
     cell: (info) => info.getValue(),
   },
@@ -29,19 +88,27 @@ export const columns = [
     id: "status",
     accessorKey: "status",
     header: () => "Status",
-    cell: (info) => getDisplayStatus(info.getValue()),
+    cell: (info) => {
+      switch (info.getValue()) {
+        case "Active":
+          return <Badge variant="success">Active</Badge>;
+        case "Inactive":
+          return <Badge variant="inactive">Inactive</Badge>;
+        default:
+          return <Badge>Undefined</Badge>;
+      }
+    },
   },
   {
-    id: "actions",
-    cell: ({ row }) => {
-      const appID = row.getValue("id");
-
+    id: "Action",
+    header: () => "Action",
+    cell: (info) => {
+      const courseId = info.row.original.id;
       return (
-        <Link
-          href={`/applications/${appID}`}
-          className="inline-flex items-center justify-center bg-black px-10 py-2 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
-        >
-          View
+        <Link href={`/courses/${courseId}`}>
+          <Button variant="ghost" type="button">
+            <Pencil className="size-4" />
+          </Button>
         </Link>
       );
     },

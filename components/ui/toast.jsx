@@ -56,11 +56,8 @@ const Toast = React.forwardRef(({ className, variant, ...props }, ref) => {
         )}
 
         {variant === "destructive" && (
-          <div
-            className="flex items-center justify-center rounded-lg bg-[#F87171]"
-            style={{ width: "36px", height: "36px" }}
-          >
-            <X className="text-white" />
+          <div className="flex items-center justify-center rounded-lg bg-[#F87171] p-1">
+            <X className="text-white size-6" />
           </div>
         )}
         <div className="flex flex-col justify-center flex-1">
@@ -103,7 +100,7 @@ const ToastTitle = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitives.Title
     ref={ref}
     className={cn(
-      "text-base font-semibold text-black whitespace-nowrap text-ellipsis",
+      "text-base font-semibold text-black whitespace-normal break-word",
       className
     )}
     {...props}

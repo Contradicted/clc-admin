@@ -1,3 +1,5 @@
+import { getCourses } from "@/data/course";
+
 export const DEFAULT_INTERVIEW_QUESTIONS = [
   {
     id: 1,
@@ -93,3 +95,55 @@ export const DEFAULT_INTERVIEW_QUESTIONS = [
   { id: 20, value: "interviewer_name", text: "Interviewer's name" },
   { id: 21, value: "notes", text: "Interviewer's Notes" },
 ];
+
+export const Statuses = [
+  {
+    value: "Submitted",
+    label: "Submitted",
+  },
+  {
+    value: "Approved",
+    label: "Approved",
+  },
+  {
+    value: "Rejected",
+    label: "Rejected",
+  },
+  {
+    value: "Waiting_For_Change",
+    label: "Waiting for Change",
+  },
+  {
+    value: "Re_Submitted",
+    label: "Re-Submitted",
+  },
+  {
+    value: "Approved_for_Interview",
+    label: "Approved for Interview",
+  },
+  {
+    value: "Interview_successful",
+    label: "Interview Successful",
+  },
+  {
+    value: "Unfinished",
+    label: "Unfinished",
+  },
+  {
+    value: "Finished",
+    label: "Finished",
+  },
+  {
+    value: "Void",
+    label: "Void",
+  },
+];
+
+export const Courses = async () => {
+  const data = await getCourses();
+
+  return data.map((course) => ({
+    value: course.name,
+    label: course.name,
+  }));
+};

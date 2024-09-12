@@ -1,5 +1,5 @@
 import DefaultLayout from "@/components/default-layout";
 
 export default async function Home() {
-  return <DefaultLayout>Hello</DefaultLayout>;
+  return <DefaultLayout></DefaultLayout>;
 }

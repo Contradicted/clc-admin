@@ -1,3 +1,5 @@
+import { formatStudyMode } from "@/lib/utils";
+
 const CourseDetails = ({ courseTitle, studyMode }) => {
   return (
     <div className="border-b border-stroke space-y-4 mt-4">
@@ -14,7 +16,7 @@ const CourseDetails = ({ courseTitle, studyMode }) => {
         <div className="flex gap-3">
           <div className="flex items-start w-full max-w-[50%]">Study Mode</div>
           <p className="flex flex-wrap font-medium text-black w-full">
-            {studyMode}
+            {formatStudyMode(studyMode)}
           </p>
         </div>
       </div>

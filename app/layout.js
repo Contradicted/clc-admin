@@ -1,9 +1,12 @@
+import { SessionProvider } from "next-auth/react";
+import NextTopLoader from "nextjs-toploader";
+
 import "@/css/satoshi.css";
 import "@/app/globals.css";
+
+import { auth } from "@/auth";
 import { QueryProvider } from "@/providers/query-provider";
 import { Toaster } from "@/components/ui/toaster";
-import { auth } from "@/auth";
-import { SessionProvider } from "next-auth/react";
 
 export const metadata = {
   title: "Create Next App",
@@ -18,6 +21,7 @@ export default async function RootLayout({ children }) {
       <html lang="en">
         <body suppressHydrationWarning={true}>
           <QueryProvider>
+            <NextTopLoader />
             {children}
             <Toaster />
           </QueryProvider>

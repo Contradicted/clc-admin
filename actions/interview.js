@@ -28,6 +28,20 @@ export const interview = async (values, applicationID) => {
     return { error: "Student does not exist!" };
   }
 
+  if (
+    ![
+      "Approved_for_Interview",
+      "Interview_successful",
+      "Rejected",
+      "Finished",
+      "Unfinished",
+      "Void",
+      "Approved",
+    ].includes(existingApplication.status)
+  ) {
+    return { error: "Application must be approved for interview!" };
+  }
+
   const validatedField = InterviewSchema.safeParse(values);
 
   if (!validatedField.success) {

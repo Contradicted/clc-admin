@@ -612,6 +612,7 @@ const DateTimePicker = React.forwardRef(
       onChange,
       hourCycle = 12,
       yearRange = 50,
+      granularity,
       disabled = false,
       displayFormat,
       placeholder = "Pick a date",
@@ -664,6 +665,18 @@ const DateTimePicker = React.forwardRef(
       };
     }
 
+    const formatDate = (date) => {
+      if (!date) return "";
+      if (granularity === "day") {
+        return format(date, "PP", { locale: loc });
+      }
+      return format(
+        date,
+        hourCycle === 24 ? initHourFormat.hour24 : initHourFormat.hour12,
+        { locale: loc }
+      );
+    };
+
     return (
       <Popover>
         <PopoverTrigger asChild disabled={disabled}>
@@ -676,19 +689,7 @@ const DateTimePicker = React.forwardRef(
             ref={buttonRef}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {value ? (
-              format(
-                value,
-                hourCycle === 24
-                  ? initHourFormat.hour24
-                  : initHourFormat.hour12,
-                {
-                  locale: loc,
-                }
-              )
-            ) : (
-              <span>{placeholder}</span>
-            )}
+            {value ? formatDate(value) : <span>{placeholder}</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0 z-[9999999999] bg-white">
@@ -703,9 +704,11 @@ const DateTimePicker = React.forwardRef(
             disabled={(date) => date < new Date("1900-01-01")}
             {...props}
           />
-          <div className="border-t border-border p-3">
-            <TimePicker onChange={onChange} date={value} hourCycle={12} />
-          </div>
+          {granularity !== "day" && (
+            <div className="border-t border-border p-3">
+              <TimePicker onChange={onChange} date={value} hourCycle={12} />
+            </div>
+          )}
         </PopoverContent>
       </Popover>
     );
