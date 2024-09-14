@@ -15,7 +15,7 @@ const FilesTable = ({ data, columns, className }) => {
   });
 
   return (
-    <table className="w-full">
+    <table className={cn("w-full", className)}>
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr

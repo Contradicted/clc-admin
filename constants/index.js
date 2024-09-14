@@ -139,11 +139,177 @@ export const Statuses = [
   },
 ];
 
-export const Courses = async () => {
-  const data = await getCourses();
-
-  return data.map((course) => ({
-    value: course.name,
-    label: course.name,
-  }));
-};
+export const applicationHeaders = [
+  {
+    label: "ID",
+    value: "id",
+  },
+  {
+    label: "Course Title",
+    value: "courseTitle",
+  },
+  {
+    label: "Study Mode",
+    value: "studyMode",
+  },
+  {
+    label: "Title",
+    value: "title",
+  },
+  {
+    label: "First Name",
+    value: "firstName",
+  },
+  {
+    label: "Last Name",
+    value: "lastName",
+  },
+  {
+    label: "Gender",
+    value: "gender",
+  },
+  {
+    label: "Date of Birth",
+    value: "dateOfBirth",
+  },
+  {
+    label: "Place of Birth",
+    value: "placeOfBirth",
+  },
+  {
+    label: "Country of Birth",
+    value: "countryOfBirth",
+  },
+  {
+    label: "Passport / National ID Card No.",
+    value: "identificationNo",
+  },
+  {
+    label: "Nationality",
+    value: "nationality",
+  },
+  {
+    label: "Address Line 1",
+    value: "addressLine1",
+  },
+  {
+    label: "Address Line 2",
+    value: "addressLine2",
+  },
+  {
+    label: "City",
+    value: "city",
+  },
+  {
+    label: "Zip / Postal Code",
+    value: "postcode",
+  },
+  {
+    label: "Email",
+    value: "email",
+  },
+  {
+    label: "Mobile No.",
+    value: "mobileNo",
+  },
+  {
+    label: "Tuition Fee",
+    value: "tuitionFees",
+  },
+  {
+    label: "Is English Your First Langauge",
+    value: "isEnglishFirstLanguage",
+  },
+  {
+    label: "Qualification Title",
+    value: "title",
+  },
+  {
+    label: "Examining Body",
+    value: "examiningBody",
+  },
+  {
+    label: "Date Awarded",
+    value: "dateAwarded",
+  },
+  {
+    label: "Do you have any pending qualifications?",
+    value: "hasPendingResults",
+  },
+  {
+    label: "(Pending) Qualification Title",
+    value: "title",
+  },
+  {
+    label: "(Pending) Examining Body",
+    value: "examiningBody",
+  },
+  {
+    label: "(Pending) Date of Results",
+    value: "dateOfResults",
+  },
+  {
+    label: "(Pending) Subjects Passed",
+    value: "subjectsPassed",
+  },
+  {
+    label: "Do you have any work experience?",
+    value: "hasWorkExperience",
+  },
+  {
+    label: "Job Title",
+    value: "title",
+  },
+  {
+    label: "Name of Organisation",
+    value: "nameOfOrganisation",
+  },
+  {
+    label: "Nature of Job",
+    value: "natureOfJob",
+  },
+  {
+    label: "Job Start Date",
+    value: "jobStartDate",
+  },
+  {
+    label: "Job End Date",
+    value: "jobEndDate",
+  },
+  {
+    label: "Do you have any special needs?",
+    value: "specialNeeds",
+  },
+  {
+    label: "Reasons for choosing this course",
+    value: "reasonsForChoosingProgram",
+  },
+  {
+    label: "What are your future educational plans?",
+    value: "futureEduPlans",
+  },
+  {
+    label: "What employment do you intend to pursue after your studies?",
+    value: "intentedEmployment",
+  },
+  {
+    label: "Do you have any criminal convictions?",
+    value: "criminalRecord",
+  },
+  {
+    label: "Hobbies and Interests",
+    value: "hobbies",
+  },
+  {
+    label: "Ethnic Origin",
+    value: "ethnicity",
+  },
+  {
+    label: "Religion",
+    value: "religion",
+  },
+  {
+    label: "How did you hear about the college?",
+    value: "marketing",
+  },
+];

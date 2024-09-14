@@ -3,7 +3,7 @@
 import { formatDate, formatDateTime, getDisplayStatus } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { DownloadIcon, Eye, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpDown } from "lucide-react";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
@@ -165,7 +165,7 @@ export const fileColumns = [
   {
     id: "file",
     accessorKey: "name",
-    header: () => "File",
+    header: () => "File(s)",
     cell: (info) => {
       return (
         <span className="truncate overflow-hidden">{info.getValue()}</span>
@@ -184,6 +184,29 @@ export const fileColumns = [
             onClick={() => window.open(info.row.original.url, "file")}
           >
             <Eye className="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={async () => {
+              try {
+                const blob = await fetch(info.row.original.url).then((r) =>
+                  r.blob()
+                );
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = info.row.original.name;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+              } catch (error) {
+                console.error("Download failed:", error);
+              }
+            }}
+          >
+            <DownloadIcon className="size-4" />
           </Button>
         </div>
       );

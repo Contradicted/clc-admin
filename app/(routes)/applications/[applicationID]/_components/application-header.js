@@ -1,6 +1,9 @@
+import { Button } from "@/components/ui/button";
 import { formatDateTime, getDisplayStatus } from "@/lib/utils";
+import Actions from "./application-actions";
 
 const ApplicationHeader = ({
+  data,
   applicationID,
   studentID,
   emailTimestamp,
@@ -27,6 +30,9 @@ const ApplicationHeader = ({
         <span className="text-black text-sm font-medium">
           {getDisplayStatus(status)}
         </span>
+      </div>
+      <div className="ml-auto flex items-center>">
+        <Actions data={data} />
       </div>
     </div>
   );

@@ -24,6 +24,7 @@ const ApplicationIDPage = async ({ params }) => {
     <DefaultLayout>
       <div className="max-w-screen-xl mx-auto">
         <ApplicationHeader
+          data={application}
           applicationID={application.id}
           studentID={student.id}
           emailTimestamp={application.emailSentAt}

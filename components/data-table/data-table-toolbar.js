@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import DataTableFacetedFilter from "@/components/data-table/data-table-faceted-filter";
-import { Courses, Statuses } from "@/constants";
+import { Statuses } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { DownloadIcon } from "lucide-react";
