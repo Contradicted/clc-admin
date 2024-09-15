@@ -312,4 +312,8 @@ export const applicationHeaders = [
     label: "How did you hear about the college?",
     value: "marketing",
   },
+  {
+    label: "Date of Submission",
+    value: "createdAt",
+  },
 ];
