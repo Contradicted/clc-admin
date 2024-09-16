@@ -53,7 +53,7 @@ const StudentTabs = ({ data }) => {
                 <p className="uppercase font-semibold text-sm">Date of Birth</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
-                {formatDate(data.dateOfBirth).short}
+                {formatDate(data.dateOfBirth)}
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
