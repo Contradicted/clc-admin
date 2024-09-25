@@ -30,9 +30,9 @@ const formSchema = z
       .optional(),
     last_join_date: z
       .date()
-      .refine((date) => date > new Date(), {
-        message: "Last join date cannot be before or on the current date",
-      })
+      // .refine((date) => date > new Date(), {
+      //   message: "Last join date cannot be before or on the current date",
+      // })
       .optional(),
     endDate: z
       .date()
@@ -47,18 +47,18 @@ const formSchema = z
       })
       .optional(),
   })
-  .refine(
-    (data) => {
-      if (data.startDate && data.last_join_date) {
-        return data.last_join_date >= data.startDate;
-      }
-      return true;
-    },
-    {
-      message: "Last join date must be on or after the start date",
-      path: ["last_join_date"],
-    }
-  )
+  .refine
+  // (data) => {
+  //   if (data.startDate && data.last_join_date) {
+  //     return data.last_join_date >= data.startDate;
+  //   }
+  //   return true;
+  // },
+  // {
+  //   message: "Last join date must be on or after the start date",
+  //   path: ["last_join_date"],
+  // }
+  ()
   .refine(
     (data) => {
       if (data.startDate && data.endDate) {
@@ -134,9 +134,9 @@ const formSchema = z
     }
 
     if (
-      !dates.startDate &&
-      !dates.last_join_date &&
-      !dates.endDate &&
+      !dates.startDate ||
+      !dates.last_join_date ||
+      !dates.endDate ||
       !dates.resultsDate
     ) {
       ctx.addIssue({

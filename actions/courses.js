@@ -1,9 +1,9 @@
 "use server";
 
 import { getCourseByID } from "@/data/course";
+import { getModuleByCode } from "@/data/module";
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { courseSchema } from "@/schemas";
 
 export const courses = async (values, courseID) => {
   try {
@@ -14,7 +14,7 @@ export const courses = async (values, courseID) => {
       return { error: "Unauthorised" };
     }
 
-    const { name, code, studyModes, ...rest } = values;
+    const { studyModes, modules, ...rest } = values;
 
     if (courseID) {
       const existingCourse = await getCourseByID(courseID);
@@ -91,14 +91,77 @@ export const courses = async (values, courseID) => {
           });
         }
 
+        // Update or create modules
+        if (modules) {
+          for (const m of modules) {
+            // Check if this is an existing module for this course
+            const existingModule = await db.module.findFirst({
+              where: {
+                courseID: courseID,
+                code: m.code,
+              },
+            });
+
+            // If it's not an existing module for this course, check if the code exists elsewhere
+            if (!existingModule) {
+              const moduleWithSameCode = await getModuleByCode(m.code);
+              if (
+                moduleWithSameCode &&
+                moduleWithSameCode.courseID !== courseID
+              ) {
+                return {
+                  error:
+                    "Module with this code already exists in another course!",
+                };
+              }
+            }
+
+            const assessmentString = m.assessment
+              .map((a) => `${a.type} ${a.percentage}%`)
+              .join(", ");
+
+            await db.module.upsert({
+              where: {
+                courseID: courseID,
+                code: m.code,
+              },
+              update: {
+                code: m.code,
+                title: m.title,
+                credits: parseInt(m.credits),
+                assessment: assessmentString,
+                term: m.term,
+                type: m.type,
+              },
+              create: {
+                courseID: courseID,
+                code: m.code,
+                title: m.title,
+                credits: parseInt(m.credits),
+                assessment: assessmentString,
+                term: m.term,
+                type: m.type,
+              },
+            });
+          }
+
+          // Delete modules
+          await db.module.deleteMany({
+            where: {
+              courseID: courseID,
+              code: { notIn: modules.map((m) => m.code) },
+            },
+          });
+        }
+
         return { success: "Successfully updated course!" };
       }
     }
 
     const course = await db.course.create({
       data: {
-        name,
-        code,
+        name: values.name,
+        code: values.code,
       },
     });
 

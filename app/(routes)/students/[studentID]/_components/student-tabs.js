@@ -81,7 +81,7 @@ const StudentTabs = ({ data }) => {
                 </p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
-                {data.addressLine2}
+                {data.addressLine2 || "-"}
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">

@@ -4,9 +4,14 @@ import DefaultLayout from "@/components/default-layout";
 import DataTable from "@/components/data-table";
 import { courseColumns } from "@/components/columns";
 import AddCourseModal from "./_components/add-course-modal";
+import ApplicationsTable from "@/components/applications-table";
 
 export default async function CoursesPage() {
-  const courses = await db.course.findMany();
+  const courses = await db.course.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
 
   return (
     <DefaultLayout>
@@ -15,7 +20,11 @@ export default async function CoursesPage() {
           <AddCourseModal />
         </div>
         {courses && courses.length > 0 ? (
-          <DataTable data={courses} columns={courseColumns} />
+          <ApplicationsTable
+            data={courses}
+            columns={courseColumns}
+            excludeFeatures={["datePicker", "toolbar"]}
+          />
         ) : (
           "0 Courses found."
         )}

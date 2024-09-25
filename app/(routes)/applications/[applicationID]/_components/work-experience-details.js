@@ -1,4 +1,5 @@
 import { fileColumns } from "@/components/columns";
+import FilesTable from "@/components/files-table";
 import { formatDate } from "@/lib/utils";
 
 const WorkExperienceDetails = ({ application }) => {
@@ -79,7 +80,7 @@ const WorkExperienceDetails = ({ application }) => {
         ))}
 
       {fileData.length > 0 && (
-        <FilesTable columns={fileColumns} data={fileData} className="mt-4" />
+        <FilesTable columns={fileColumns} data={fileData} />
       )}
     </div>
   );

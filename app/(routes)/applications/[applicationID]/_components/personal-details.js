@@ -1,6 +1,6 @@
 import { fileColumns } from "@/components/columns";
 import FilesTable from "@/components/files-table";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatImmigrationStatus } from "@/lib/utils";
 
 const PersonalDetails = ({ application }) => {
   const data = [
@@ -45,51 +45,82 @@ const PersonalDetails = ({ application }) => {
       value: application.identificationNo || "-",
     },
     {
-      id: "8",
+      id: "9",
       title: "Nationality",
       value: application.nationality || "-",
     },
     {
-      id: "9",
+      id: "10",
       title: "Address Line 1",
       value: application.addressLine1 || "-",
     },
     {
-      id: "10",
+      id: "11",
       title: "Address Line 2",
       value: application.addressLine2 || "-",
     },
     {
-      id: "11",
+      id: "12",
       title: "City",
       value: application.city || "-",
     },
     {
-      id: "12",
+      id: "13",
       title: "Zip / Postal Code",
       value: application.postcode || "-",
     },
     {
-      id: "13",
+      id: "14",
       title: "Email",
       value: application.email || "-",
     },
     {
-      id: "14",
+      id: "15",
       title: "Mobile No.",
       value: application.mobileNo || "-",
     },
     {
-      id: "15",
+      id: "16",
       title: "Tuition Fee",
       value: application.tuitionFees || "-",
     },
     {
-      id: "16",
+      id: "17",
       title: "Is English Your First Language",
       value: application.isEnglishFirstLanguage ? "Yes" : "No" || "-",
     },
   ];
+
+  if (application.entryDateToUk) {
+    data.splice(data.indexOf("Entry Date to UK") + 1, 0, {
+      id: "entry_date",
+      title: "Entry Date to UK",
+      value: formatDate(application.entryDateToUk) || "-",
+    });
+  }
+
+  if (application.immigration_status) {
+    // Always insert after "Nationality" or "Entry Date to UK" if it exists
+    const insertIndex =
+      data.findIndex(
+        (item) =>
+          item.title === "Entry Date to UK" || item.title === "Nationality"
+      ) + 1;
+
+    data.splice(insertIndex, 0, {
+      id: "immigration-status",
+      title: "Immigration Status",
+      value: formatImmigrationStatus(application.immigration_status) || "-",
+    });
+
+    if (application.share_code) {
+      data.splice(insertIndex + 1, 0, {
+        id: "share_code",
+        title: "Share Code",
+        value: application.share_code || "-",
+      });
+    }
+  }
 
   const fileData = [];
 
@@ -104,6 +135,20 @@ const PersonalDetails = ({ application }) => {
     fileData.push({
       name: "Identification",
       url: application.identificationNoUrl,
+    });
+  }
+
+  if (application.immigration_url) {
+    fileData.push({
+      name: "Immigration Document",
+      url: application.immigration_url,
+    });
+  }
+
+  if (application.signatureUrl) {
+    fileData.push({
+      name: "Signature",
+      url: application.signatureUrl,
     });
   }
 

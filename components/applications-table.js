@@ -24,7 +24,12 @@ import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableToolbar from "@/components/data-table/data-table-toolbar";
 import { DateRangePicker } from "./date-range-picker";
 
-const ApplicationsTable = ({ data, columns, className }) => {
+const ApplicationsTable = ({
+  data,
+  columns,
+  className,
+  excludeFeatures = [],
+}) => {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [date, setDate] = useState();
@@ -57,15 +62,19 @@ const ApplicationsTable = ({ data, columns, className }) => {
         className
       )}
     >
-      <DateRangePicker
-        table={table}
-        date={date}
-        setDate={setDate}
-        triggerSize="sm"
-        triggerClassName="ml-auto w-56 sm:w-60"
-        align="end"
-      />
-      <DataTableToolbar table={table} onReset={handleReset} />
+      {!excludeFeatures.includes("datePicker") && (
+        <DateRangePicker
+          table={table}
+          date={date}
+          setDate={setDate}
+          triggerSize="sm"
+          triggerClassName="ml-auto w-56 sm:w-60"
+          align="end"
+        />
+      )}
+      {!excludeFeatures.includes("toolbar") && (
+        <DataTableToolbar table={table} onReset={handleReset} />
+      )}
       <div className="max-w-full overflow-x-auto">
         <Table>
           <TableHeader>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
+import { useState } from "react";
 
 export default function DefaultLayout({ children }) {
   const [isOpen, setIsOpen] = useState(false);

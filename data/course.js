@@ -8,6 +8,7 @@ export const getCourseByID = async (courseID) => {
       },
       include: {
         course_study_mode: true,
+        modules: true,
       },
     });
     return course;

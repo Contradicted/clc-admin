@@ -21,7 +21,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { cn, formatDate, formatStudyMode } from "@/lib/utils";
+import {
+  cn,
+  convertMonthsToYears,
+  formatDate,
+  formatStudyMode,
+} from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, PencilIcon, PlusIcon, PoundSterling, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -34,7 +39,7 @@ const formSchema = z.object({
     .array(
       z.object({
         study_mode: z.string(),
-        duration: z.number().max(24, "Duration must be less than 24 months"),
+        duration: z.number().max(96, "Duration must be less than 96 months"),
         tuition_fees: z
           .number()
           .min(0, "Tuition fee must be a positive number")
@@ -64,7 +69,20 @@ const StudyModesTable = ({ data }) => {
               <td className="font-semibold p-3 border border-r w-1/4">
                 {label}:
               </td>
-              <td className="px-3">{value}</td>
+              <td className="px-3">
+                {value}{" "}
+                {label === "Duration" &&
+                  (() => {
+                    const numericValue = parseInt(value.match(/\d+/)[0]);
+                    return numericValue >= 12 ? (
+                      <span className="font-bold">
+                        ({convertMonthsToYears(numericValue)})
+                      </span>
+                    ) : (
+                      ""
+                    );
+                  })()}
+              </td>
             </tr>
           )),
           // Add a spacer row after each study mode, except the last one

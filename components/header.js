@@ -1,6 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+"use client";
+
 import DropdownUser from "@/components/dropdown-user";
+import { useState } from "react";
 
 const Header = ({ isOpen, setIsOpen }) => {
   return (

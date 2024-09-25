@@ -37,7 +37,7 @@ export const columns = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: (info) => info.getValue(),
+    cell: (info) => getDisplayStatus(info.getValue()),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },

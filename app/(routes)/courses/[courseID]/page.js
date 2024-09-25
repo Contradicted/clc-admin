@@ -13,6 +13,7 @@ import DatesForm from "./_components/dates-form";
 import StudyModeForm from "./_components/study-mode-form";
 import { cn } from "@/lib/utils";
 import Actions from "./_components/actions";
+import ModulesForm from "./_components/modules-form";
 
 const CourseIDPage = async ({ params }) => {
   const course = await getCourseByID(params.courseID);
@@ -33,6 +34,7 @@ const CourseIDPage = async ({ params }) => {
     course.endDate,
     course.resultsDate,
     course.course_study_mode.length > 0,
+    course.modules.length > 0,
   ];
 
   const totalFields = requiredFields.length;
@@ -81,14 +83,15 @@ const CourseIDPage = async ({ params }) => {
           <DescriptionForm initialData={course} courseID={course.id} />
           <CreditsForm initialData={course} courseID={course.id} />
           <AwardingBodyForm initialData={course} courseID={course.id} />
+          <LevelForm initialData={course} courseID={course.id} />
         </div>
         <div className="space-y-6">
-          <LevelForm initialData={course} courseID={course.id} />
           <DatesForm initialData={course} courseID={course.id} />
           <StudyModeForm
             initialData={course.course_study_mode}
             courseID={course.id}
           />
+          <ModulesForm initialData={course.modules} courseID={course.id} />
         </div>
       </div>
     </DefaultLayout>

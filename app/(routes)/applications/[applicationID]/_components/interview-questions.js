@@ -219,8 +219,8 @@ const InterviewQuestions = ({
               title: data.success,
             });
 
-            if (data.uploadedFiles && data.uploadedFiles.length > 0) {
-              setData((prev) => [...prev, ...data.uploadedFiles]);
+            if (data?.uploadedFiles && data?.uploadedFiles.length > 0) {
+              setData(...data.uploadedFiles);
             }
 
             form.setValue("files", null);

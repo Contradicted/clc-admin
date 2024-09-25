@@ -189,6 +189,18 @@ export const applicationHeaders = [
     value: "nationality",
   },
   {
+    label: "Entry Date to UK",
+    value: "entryDateToUK",
+  },
+  {
+    label: "Immigration Status",
+    value: "immigration_status",
+  },
+  {
+    label: "Share Code",
+    value: "share_code",
+  },
+  {
     label: "Address Line 1",
     value: "addressLine1",
   },
@@ -311,6 +323,14 @@ export const applicationHeaders = [
   {
     label: "How did you hear about the college?",
     value: "marketing",
+  },
+  {
+    label: "Terms and Conditions",
+    value: "terms",
+  },
+  {
+    label: "Name of Recruitment Agent",
+    value: "recruitment_agent",
   },
   {
     label: "Date of Submission",

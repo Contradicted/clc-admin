@@ -76,6 +76,26 @@ const AdditionalDetails = ({ application }) => {
             {application.marketing}
           </p>
         </div>
+
+        <div className="flex gap-3">
+          <div className="flex items-start w-full max-w-[50%]">
+            Agreed to Terms and Conditions
+          </div>
+          <p className="flex flex-wrap font-medium text-black w-full">
+            {application.terms ? "Yes" : "No"}
+          </p>
+        </div>
+
+        {application.recruitment_agent && (
+          <div className="flex gap-3">
+            <div className="flex items-start w-full max-w-[50%]">
+              Name of Recruitment Agent
+            </div>
+            <p className="flex flex-wrap font-medium text-black w-full">
+              {application.recruitment_agent}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

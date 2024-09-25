@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import SidebarItem from "@/components/sidebar-item";
-import { useState } from "react";
 import { Book, UserRound } from "lucide-react";
+import { useState } from "react";
+import Image from "next/image";
 
 const menuGroups = [
   {
@@ -82,10 +82,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       }`}
     >
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-        <Link href="/">
-          <h1 className="font-satoshi font-bold text-xl text-white">
-            City of London College
-          </h1>
+        <Link href="/" className="flex w-full justify-center">
+          <Image src="/clc.png" alt="logo" width={150} height={150} />
         </Link>
 
         <button
@@ -110,7 +108,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       </div>
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-        <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
+        <nav className="px-4 py-4 lg:px-6">
           {menuGroups.map((group, groupIndex) => (
             <div key={groupIndex}>
               <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
