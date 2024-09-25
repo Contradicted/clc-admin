@@ -20,7 +20,11 @@ export const getCourseByID = async (courseID) => {
 
 export const getCourses = async () => {
   try {
-    return await db.course.findMany();
+    return await db.course.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    });
   } catch (error) {
     console.log("[FETCHING_COURSES_ERROR]", error);
     return null;

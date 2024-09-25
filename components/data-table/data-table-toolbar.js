@@ -6,8 +6,15 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { DownloadIcon } from "lucide-react";
 import { exportTableToCSV } from "@/lib/export";
 import { DateRangePicker } from "../date-range-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const DataTableToolbar = ({ table, onReset }) => {
+const DataTableToolbar = ({ table, courses, onReset }) => {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
@@ -21,14 +28,23 @@ const DataTableToolbar = ({ table, onReset }) => {
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        <Input
-          placeholder="Filter by course title"
+        <Select
           value={table.getColumn("courseTitle")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("courseTitle")?.setFilterValue(event.target.value)
+          onValueChange={(value) =>
+            table.getColumn("courseTitle")?.setFilterValue(value)
           }
-          className="h-8 w-[150px] lg:w-[250px]"
-        />
+        >
+          <SelectTrigger className="h-8 w-[150px] lg:w-[250px]">
+            <SelectValue placeholder="Filter by course" />
+          </SelectTrigger>
+          <SelectContent>
+            {courses.map((course) => (
+              <SelectItem key={course.id} value={course.name}>
+                {course.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {table.getColumn("status") && (
           <DataTableFacetedFilter
             column={table.getColumn("status")}

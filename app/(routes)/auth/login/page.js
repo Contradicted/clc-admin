@@ -111,7 +111,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full text-center cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+              className="flex w-full justify-center cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
             >
               {isPending ? (
                 <LoaderCircle className="animate-spin" />
@@ -121,14 +121,14 @@ const LoginPage = () => {
             </button>
           </div>
 
-          <div className="mt-6 text-center" disabled={isPending}>
+          {/* <div className="mt-6 text-center" disabled={isPending}>
             <p>
               Don’t have any account?{" "}
               <Link href="/auth/register" className="text-primary">
                 Sign Up
               </Link>
             </p>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

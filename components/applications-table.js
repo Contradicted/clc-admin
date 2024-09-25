@@ -27,6 +27,7 @@ import { DateRangePicker } from "./date-range-picker";
 const ApplicationsTable = ({
   data,
   columns,
+  courses,
   className,
   excludeFeatures = [],
 }) => {
@@ -73,7 +74,11 @@ const ApplicationsTable = ({
         />
       )}
       {!excludeFeatures.includes("toolbar") && (
-        <DataTableToolbar table={table} onReset={handleReset} />
+        <DataTableToolbar
+          table={table}
+          courses={courses}
+          onReset={handleReset}
+        />
       )}
       <div className="max-w-full overflow-x-auto">
         <Table>

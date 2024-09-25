@@ -12,6 +12,12 @@ export const authRoutes = ["/auth/login", "/auth/register"];
 export const apiAuthPrefix = "/api/auth";
 
 /**
+ * An array of routes that are disabled
+ * These routes will redirect to the default login redirect
+ */
+export const disabledRoutes = ["/auth/register"];
+
+/**
  * The default redirect path after logging in
  */
 export const DEFAULT_LOGIN_REDIRECT = "/";

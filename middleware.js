@@ -1,7 +1,12 @@
 import NextAuth from "next-auth";
 
 import authConfig from "@/auth.config";
-import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes } from "@/routes";
+import {
+  DEFAULT_LOGIN_REDIRECT,
+  apiAuthPrefix,
+  authRoutes,
+  disabledRoutes,
+} from "@/routes";
 
 const { auth } = NextAuth(authConfig);
 
@@ -11,9 +16,14 @@ export default auth((req) => {
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const isDisabledRoute = disabledRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
     return null;
+  }
+
+  if (isDisabledRoute) {
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
 
   if (isAuthRoute) {

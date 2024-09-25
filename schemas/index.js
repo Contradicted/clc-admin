@@ -39,3 +39,25 @@ export const InterviewSchema = z.object({
     required_error: "Please enter a date/time",
   }),
 });
+
+export const UpdateUserSchema = z.object({
+  title: z.string().optional(),
+  firstName: z
+    .string()
+    .min(1, {
+      message: "First name is required",
+    })
+    .optional(),
+  lastName: z
+    .string()
+    .min(1, {
+      message: "Last name is required",
+    })
+    .optional(),
+  password: z
+    .string()
+    .min(6, {
+      message: "Password must be at least 6 characters",
+    })
+    .optional(),
+});

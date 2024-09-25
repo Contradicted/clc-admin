@@ -21,7 +21,7 @@ export const columns = [
     ),
     cell: (info) => info.getValue(),
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+      return row.getValue(id).includes(value);
     },
   },
   {
