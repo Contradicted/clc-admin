@@ -1,10 +1,9 @@
 import { db } from "@/lib/db";
 
 import DefaultLayout from "@/components/default-layout";
-import DataTable from "@/components/data-table";
 import { courseColumns } from "@/components/columns";
 import AddCourseModal from "./_components/add-course-modal";
-import ApplicationsTable from "@/components/applications-table";
+import ApplicationsTable from "@/components/data-table";
 
 export default async function CoursesPage() {
   const courses = await db.course.findMany({

@@ -1,4 +1,4 @@
-import ApplicationsTable from "@/components/applications-table";
+import ApplicationsTable from "@/components/data-table";
 import { columns } from "@/components/columns";
 import DefaultLayout from "@/components/default-layout";
 import { Skeleton } from "@/components/ui/skeleton";

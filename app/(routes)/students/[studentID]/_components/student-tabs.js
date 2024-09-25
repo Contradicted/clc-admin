@@ -1,9 +1,9 @@
-import ApplicationsTable from "@/components/applications-table";
+import ApplicationsTable from "@/components/data-table";
 import { columns } from "@/components/columns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDate } from "@/lib/utils";
 
-const StudentTabs = ({ data }) => {
+const StudentTabs = ({ data, courses }) => {
   return (
     <Tabs
       defaultValue="user-details"
@@ -125,6 +125,7 @@ const StudentTabs = ({ data }) => {
         <ApplicationsTable
           data={data.applications}
           columns={columns}
+          courses={courses}
           className="border-none shadow-none"
         />
       </TabsContent>

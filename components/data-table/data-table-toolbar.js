@@ -14,8 +14,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const DataTableToolbar = ({ table, courses, onReset }) => {
+const DataTableToolbar = ({ table, courses, onReset, type }) => {
   const isFiltered = table.getState().columnFilters.length > 0;
+
+  if (!courses) return null;
 
   return (
     <div className="flex items-center justify-between flex-grow">
@@ -28,24 +30,48 @@ const DataTableToolbar = ({ table, courses, onReset }) => {
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        <Select
-          value={table.getColumn("courseTitle")?.getFilterValue() ?? ""}
-          onValueChange={(value) =>
-            table.getColumn("courseTitle")?.setFilterValue(value)
-          }
-        >
-          <SelectTrigger className="h-8 w-[150px] lg:w-[250px]">
-            <SelectValue placeholder="Filter by course" />
-          </SelectTrigger>
-          <SelectContent>
-            {courses.map((course) => (
-              <SelectItem key={course.id} value={course.name}>
-                {course.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {table.getColumn("status") && (
+        {type === "students" && (
+          <div className="flex space-x-2">
+            <Input
+              placeholder="Filter by first name"
+              value={table.getColumn("firstName")?.getFilterValue() ?? ""}
+              onChange={(event) => {
+                table
+                  .getColumn("firstName")
+                  ?.setFilterValue(event.target.value);
+              }}
+              className="h-8 w-[150px] lg:w-[250px]"
+            />
+            <Input
+              placeholder="Filter by last name"
+              value={table.getColumn("lastName")?.getFilterValue() ?? ""}
+              onChange={(event) => {
+                table.getColumn("lastName")?.setFilterValue(event.target.value);
+              }}
+              className="h-8 w-[150px] lg:w-[250px]"
+            />
+          </div>
+        )}
+        {type === "applications" && (
+          <Select
+            value={table.getColumn("courseTitle")?.getFilterValue() ?? ""}
+            onValueChange={(value) =>
+              table.getColumn("courseTitle")?.setFilterValue(value)
+            }
+          >
+            <SelectTrigger className="h-8 w-[150px] lg:w-[250px]">
+              <SelectValue placeholder="Filter by course" />
+            </SelectTrigger>
+            <SelectContent position="top">
+              {courses.map((course) => (
+                <SelectItem key={course.id} value={course.name}>
+                  {course.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {type === "applications" && table.getColumn("status") && (
           <DataTableFacetedFilter
             column={table.getColumn("status")}
             title="Status"
@@ -72,7 +98,7 @@ const DataTableToolbar = ({ table, courses, onReset }) => {
           size="sm"
           onClick={() =>
             exportTableToCSV(table, {
-              filename: "applications",
+              filename: type === "applications" ? "applications" : type,
               excludeColumns: ["select", "actions"],
             })
           }

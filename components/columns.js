@@ -57,11 +57,73 @@ export const columns = [
   },
   {
     id: "actions",
+    header: () => "Action",
     cell: ({ row }) => {
       const appID = row.getValue("id");
       return (
         <Link
           href={`/applications/${appID}`}
+          className="inline-flex items-center justify-center bg-black px-10 py-2 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
+        >
+          View
+        </Link>
+      );
+    },
+  },
+];
+
+export const studentColumns = [
+  {
+    accessorKey: "id",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Student ID" />
+    ),
+    cell: (info) => info.getValue(),
+    filterFn: (row, id, value) => {
+      return row.getValue(id).includes(value);
+    },
+  },
+  {
+    accessorKey: "firstName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="First Name" />
+    ),
+    cell: (info) => info.getValue(),
+    filterFn: (row, id, value) => {
+      return row.getValue(id).toLowerCase().includes(value.toLowerCase());
+    },
+  },
+  {
+    accessorKey: "lastName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Last Name" />
+    ),
+    cell: (info) => info.getValue(),
+    filterFn: (row, id, value) => {
+      return row.getValue(id).toLowerCase().includes(value.toLowerCase());
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Registered" />
+    ),
+    cell: (info) => formatDateTime(info.getValue()).dateLong,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue.length !== 2) return true;
+      const [start, end] = filterValue;
+      const rowDate = new Date(row.getValue(columnId));
+      return dayjs(rowDate).isBetween(start, end, "day", "[]");
+    },
+  },
+  {
+    id: "actions",
+    header: () => "Action",
+    cell: ({ row }) => {
+      const studentID = row.getValue("id");
+      return (
+        <Link
+          href={`/students/${studentID}`}
           className="inline-flex items-center justify-center bg-black px-10 py-2 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
         >
           View

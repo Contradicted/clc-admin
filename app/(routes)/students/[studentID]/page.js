@@ -7,9 +7,11 @@ import StudentTabs from "./_components/student-tabs";
 
 import { getStudentByID } from "@/data/student";
 import StudentActions from "./_components/student-actions";
+import { getCourses } from "@/data/course";
 
 export default async function StudentPage({ params }) {
   const student = await getStudentByID(params.studentID);
+  const courses = await getCourses();
   const hasApplication = student.applications?.length > 0;
 
   return (
@@ -37,7 +39,7 @@ export default async function StudentPage({ params }) {
           <div className="flex justify-end px-4">
             <StudentActions studentID={student.id} />
           </div>
-          <StudentTabs data={student} />
+          <StudentTabs data={student} courses={courses} />
         </div>
       </div>
     </DefaultLayout>
