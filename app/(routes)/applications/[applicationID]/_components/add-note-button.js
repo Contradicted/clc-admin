@@ -47,7 +47,7 @@ const AddNoteButton = ({ application }) => {
     if (!open) {
       form.reset();
     }
-  }, [form]);
+  }, [form, open]);
 
   const handleOpenChange = (open) => {
     if (isPending) {

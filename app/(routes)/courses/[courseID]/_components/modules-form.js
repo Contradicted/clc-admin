@@ -391,6 +391,9 @@ const ModulesForm = ({ initialData, courseID }) => {
                                 <SelectItem value="Semester B">
                                   Semester B
                                 </SelectItem>
+                                <SelectItem value="Term 1">Term 1</SelectItem>
+                                <SelectItem value="Term 2">Term 2</SelectItem>
+                                <SelectItem value="Term 3">Term 3</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />

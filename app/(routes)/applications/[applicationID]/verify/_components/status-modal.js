@@ -50,7 +50,7 @@ const StatusModal = ({
     if (!open) {
       form.reset();
     }
-  }, [form]);
+  }, [form, open]);
 
   const handleOpenChange = (open) => {
     if (isPending) {

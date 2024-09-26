@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DayPicker } from "react-day-picker";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // ---------- utils start ----------
 /**
@@ -241,9 +242,9 @@ function Calendar({
       };
     }
     return genMonths(locale);
-  }, []);
+  }, [props.locale]);
 
-  const YEARS = React.useMemo(() => genYears(yearRange), []);
+  const YEARS = React.useMemo(() => genYears(yearRange), [yearRange]);
 
   return (
     <DayPicker
