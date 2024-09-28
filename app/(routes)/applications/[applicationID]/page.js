@@ -14,11 +14,12 @@ import { getStudentByApplicationID } from "@/data/student";
 
 const ApplicationIDPage = async ({ params }) => {
   const application = await getApplicationByID(params.applicationID);
-  const student = await getStudentByApplicationID(application.id);
 
   if (!application) {
     return redirect("/applications");
   }
+
+  const student = await getStudentByApplicationID(application.id);
 
   return (
     <DefaultLayout>
