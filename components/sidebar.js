@@ -68,6 +68,11 @@ const menuGroups = [
         label: "Students",
         route: "/students",
       },
+      {
+        icon: <UserRound className="size-[18px] stroke-current" />,
+        label: "Staff",
+        route: "#",
+      },
     ],
   },
 ];
