@@ -22,6 +22,9 @@ jobs:
         run: node -v
 
       - name: Deploy to Prod Server
+        env:
+          TARGET_DIR: /var/www/html/admin/clc-admin
+          APP_NAME: clc-admin #should match the name of the server block
         run: |
             cd $TARGET_DIR
             git pull origin main
