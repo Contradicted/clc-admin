@@ -68,7 +68,8 @@ export const updateStatus = async (emailMsg, applicationID, status) => {
     }
   } else if (status === "Waiting_for_Change") {
     const updateApplicationToken = await generateUpdateApplicationToken(
-      student.email
+      student.email,
+      application.id
     );
     await updateStatusEmail(
       status,
