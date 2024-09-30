@@ -22,19 +22,9 @@ jobs:
         run: node -v
 
       - name: Deploy to Prod Server
-        env:
-          HOST: 192.168.51.104
-          USERNAME: clc-admin
-          TARGET_DIR: /var/www/html/admin/clc-admin
-          APP_NAME: clc-admin #should match the name of the server block
-          PORT: 3000
-          #if multiple deploys are needed from different branches
-          #TARGET_DIR: ${{ github.ref == 'refs/heads/deploytest' && '/var/www/folder_name' || github.ref == 'refs/heads/deployprod' && '/var/www/another-location' }}
-          #APP_NAME: ${{ github.ref == 'refs/heads/deploytest' && 'folder_name' || github.ref == 'refs/heads/deployprod' && 'folder_name_2' }}
-          #PORT: ${{ github.ref == 'refs/heads/deploytest' && '3000' || github.ref == 'refs/heads/deployprod' && '3001' }}
         run: |
             cd $TARGET_DIR
-            git pull origin ${GITHUB_REF#refs/heads/}
+            git pull origin main
             npm install
             npm run build
             if pm2 list | grep -q $APP_NAME; then
