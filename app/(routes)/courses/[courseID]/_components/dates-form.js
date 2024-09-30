@@ -22,12 +22,7 @@ import { z } from "zod";
 
 const formSchema = z
   .object({
-    startDate: z
-      .date()
-      .refine((date) => date >= new Date(), {
-        message: "Start date cannot be before the current date",
-      })
-      .optional(),
+    startDate: z.date().optional(),
     last_join_date: z
       .date()
       // .refine((date) => date > new Date(), {
@@ -47,18 +42,6 @@ const formSchema = z
       })
       .optional(),
   })
-  .refine
-  // (data) => {
-  //   if (data.startDate && data.last_join_date) {
-  //     return data.last_join_date >= data.startDate;
-  //   }
-  //   return true;
-  // },
-  // {
-  //   message: "Last join date must be on or after the start date",
-  //   path: ["last_join_date"],
-  // }
-  ()
   .refine(
     (data) => {
       if (data.startDate && data.endDate) {
@@ -351,10 +334,7 @@ const DatesForm = ({ initialData, courseID }) => {
                 </div>
               </div>
               <div className="flex items-center gap-x-2">
-                <Button
-                  type="submit"
-                  disabled={isPending || !form.formState.isValid}
-                >
+                <Button type="submit" disabled={isPending}>
                   {isPending ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : (
