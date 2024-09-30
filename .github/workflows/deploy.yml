@@ -33,7 +33,6 @@ jobs:
           #APP_NAME: ${{ github.ref == 'refs/heads/deploytest' && 'folder_name' || github.ref == 'refs/heads/deployprod' && 'folder_name_2' }}
           #PORT: ${{ github.ref == 'refs/heads/deploytest' && '3000' || github.ref == 'refs/heads/deployprod' && '3001' }}
         run: |
-            export PATH=/home/clc-admin/.nvm/versions/node/v20.17.0/bin:$PATH #'which pm2' command on terminal will give the right path
             cd $TARGET_DIR
             git pull origin ${GITHUB_REF#refs/heads/}
             npm install
