@@ -29,7 +29,7 @@ export default async function StudentPage({ params }) {
                 alt="user-photo"
                 width={180}
                 height={180}
-                className="bg-contain"
+                className="h-full w-full bg-contain"
               />
             </div>
             <p className="font-medium text-black text-lg">
