@@ -3,6 +3,7 @@ import SidebarItem from "@/components/sidebar-item";
 import { Book, UserRound } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
+import { useCurrentRole } from "@/hooks/useCurrentRole";
 
 const menuGroups = [
   {
@@ -38,6 +39,7 @@ const menuGroups = [
         ),
         label: "Dashboard",
         route: "/",
+        visible: ["Admin", "Staff"],
       },
       {
         icon: (
@@ -56,22 +58,31 @@ const menuGroups = [
           </svg>
         ),
         label: "Applications",
-        route: "/applications",
+        route: "#",
+        visible: ["Admin"],
+        children: [
+          { label: "London Centre", route: "/applications/london" },
+          { label: "Bristol Centre", route: "/applications/bristol" },
+          { label: "All", route: "/applications" },
+        ],
       },
       {
         icon: <Book className="size-[18px] stroke-current" />,
         label: "Courses",
         route: "/courses",
+        visible: ["Admin"],
       },
       {
         icon: <UserRound className="size-[18px] stroke-current" />,
         label: "Students",
         route: "/students",
+        visible: ["Admin"],
       },
       {
         icon: <UserRound className="size-[18px] stroke-current" />,
         label: "Staff",
-        route: "#",
+        route: "/staff",
+        visible: ["Admin", "Staff"],
       },
     ],
   },
@@ -79,6 +90,15 @@ const menuGroups = [
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const [pageName, setPageName] = useState("dashboard");
+
+  const currentRole = useCurrentRole();
+
+  const roleBasedMenuGroups = menuGroups.map((group) => ({
+    ...group,
+    menuItems: group.menuItems.filter((item) =>
+      item.visible.includes(currentRole)
+    ),
+  }));
 
   return (
     <aside
@@ -114,7 +134,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         <nav className="px-4 py-4 lg:px-6">
-          {menuGroups.map((group, groupIndex) => (
+          {roleBasedMenuGroups.map((group, groupIndex) => (
             <div key={groupIndex}>
               <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
                 {group.name}

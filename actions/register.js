@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { RegisterSchema } from "@/schemas";
 import { getUserByEmail } from "@/data/student";
 import { db } from "@/lib/db";
-import { generateUserID } from "@/lib/utils";
+import { generateStaffID, generateUserID } from "@/lib/utils";
 
 export const register = async (values) => {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -21,7 +21,8 @@ export const register = async (values) => {
     return { error: "Email already in use!" };
   }
 
-  const id = generateUserID();
+  // const id = generateUserID();
+  const id = generateStaffID();
 
   await db.user.create({
     data: {
@@ -31,7 +32,16 @@ export const register = async (values) => {
       lastName,
       email,
       password: hashedPassword,
-      role: "Admin",
+      role: "Staff",
+    },
+  });
+
+  await db.staff.create({
+    data: {
+      id,
+      firstName,
+      lastName,
+      email,
     },
   });
 

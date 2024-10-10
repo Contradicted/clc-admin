@@ -58,11 +58,42 @@ export const FileUploader = forwardRef(
     const {
       accept = {
         "image/*": [".jpg", ".jpeg", ".png", ".gif"],
+        "application/msword": [".doc"],
+        "application/pdf": [".pdf"],
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+          [".docx"],
       },
-      maxFiles = 1,
+      maxFiles = 4,
       maxSize = 4 * 1024 * 1024,
       multiple = true,
     } = dropzoneOptions;
+
+    function validateFile(file) {
+      if (file.size > maxSize) {
+        return {
+          code: "file-too-large",
+          message: `File is too large. Max size is ${maxSize / 1024 / 1024}MB`,
+        };
+      }
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        return {
+          code: "file-invalid-type",
+          message: "Invalid file type. Please try a different file",
+        };
+      }
+
+      return null;
+    }
 
     const reSelectAll = maxFiles === 1 ? true : reSelect;
     const direction = dir === "rtl" ? "rtl" : "ltr";
@@ -190,6 +221,7 @@ export const FileUploader = forwardRef(
     const dropzoneState = useDropzone({
       ...opts,
       onDrop,
+      validator: validateFile,
       onDropRejected: () => setIsFileTooBig(true),
       onDropAccepted: () => setIsFileTooBig(false),
     });
@@ -222,6 +254,11 @@ export const FileUploader = forwardRef(
           {...props}
         >
           {children}
+          {dropzoneState.fileRejections.length > 0 && (
+            <p className="text-sm text-red mt-1">
+              {dropzoneState.fileRejections[0].errors[1]?.message}
+            </p>
+          )}
         </div>
       </FileUploaderContext.Provider>
     );

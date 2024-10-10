@@ -19,9 +19,10 @@ export const login = async (values, callbackURL) => {
   if (!existingUser || !existingUser.email || !existingUser.password)
     return { error: "User does not exist!" };
 
-  const isAdmin = existingUser.role === "Admin";
+  const isAllowed =
+    existingUser.role === "Admin" || existingUser.role === "Staff";
 
-  if (!isAdmin) return { error: "Insufficient Privileges!" };
+  if (!isAllowed) return { error: "Insufficient Privileges!" };
 
   try {
     await signIn("credentials", {

@@ -25,9 +25,9 @@ export default {
 
           if (!passwordMatch) return null;
 
-          const isAdmin = user.role === "Admin";
+          const isAllowed = user.role === "Admin" || user.role === "Staff";
 
-          if (isAdmin) return user;
+          if (isAllowed) return user;
         }
 
         return null;

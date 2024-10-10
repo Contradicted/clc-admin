@@ -26,6 +26,7 @@ const ApplicationTabs = ({ data, className }) => {
         <CourseDetails
           courseTitle={data.courseTitle}
           studyMode={data.studyMode}
+          campus={data.campus}
         />
       </TabsContent>
       <TabsContent value="personal-details" className="w-full">

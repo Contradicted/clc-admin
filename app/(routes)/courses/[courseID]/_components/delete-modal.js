@@ -19,8 +19,8 @@ const DeleteModal = ({ children, onConfirm, isPending }) => {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            course and all of its content.
+            This action cannot be undone. This will permanently delete this
+            staff and all of its content.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
