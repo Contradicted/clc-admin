@@ -14,7 +14,7 @@ const Actions = ({ data }) => {
   // console.log(data);
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button>Actions</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

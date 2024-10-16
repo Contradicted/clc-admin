@@ -53,6 +53,7 @@
     "nextjs-toploader": "^3.6.15",
     "node-appwrite": "^13.0.0",
     "node-fetch": "^3.3.2",
+    "nodemailer": "^6.9.15",
     "pdf-lib": "^1.17.1",
     "react": "^18",
     "react-day-picker": "^8.10.1",

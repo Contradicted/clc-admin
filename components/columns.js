@@ -25,6 +25,15 @@ export const columns = [
     },
   },
   {
+    accessorKey: "user",
+    header: () => "Student",
+    cell: (info) => {
+      const firstName = info.row.original.firstName;
+      const lastName = info.row.original.lastName;
+      return `${firstName} ${lastName}`;
+    },
+  },
+  {
     accessorKey: "courseTitle",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Course Title" />

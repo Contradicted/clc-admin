@@ -1,5 +1,3 @@
-import { getCourses } from "@/data/course";
-
 export const DEFAULT_INTERVIEW_QUESTIONS = [
   {
     id: 1,
@@ -390,3 +388,82 @@ export const departments = [
   "Pharmaceuticals",
   "Education and Training",
 ];
+
+export const ethnicities = [
+  { label: "African", value: "black_african" },
+  { label: "Any other Asian background", value: "asian_other" },
+  { label: "Any other White background", value: "white_other" },
+  { label: "Arab", value: "arab" },
+  {
+    label: "Asian or Asian British - Bangladeshi",
+    value: "asian_or_asian_british_bangladeshi",
+  },
+  {
+    label: "Asian or Asian British - Indian",
+    value: "asian_or_asian_british_indian",
+  },
+  {
+    label: "Asian or Asian British - Pakistani",
+    value: "asian_or_asian_british_pakistani",
+  },
+  {
+    label: "Black or Black British - African",
+    value: "black_or_black_british_african",
+  },
+  {
+    label: "Black or Black British - Caribbean",
+    value: "black_or_black_british_caribbean",
+  },
+  { label: "Caribbean", value: "black_caribbean" },
+  { label: "Chinese", value: "asian_chinese" },
+  { label: "Gypsy or Traveller", value: "gypsy_traveller" },
+  { label: "Irish", value: "white_irish" },
+  { label: "Prefer not to say", value: "prefer_not_to_say" },
+  { label: "White and Asian", value: "mixed_white_asian" },
+  { label: "White and Black African", value: "mixed_white_black_african" },
+  { label: "White and Black Caribbean", value: "mixed_white_black_caribbean" },
+  {
+    label: "White Welsh, Scottish or British",
+    value: "white_british",
+  },
+];
+
+export const religions = [
+  { label: "Baháʼí Faith", value: "bahai" },
+  { label: "Buddhism", value: "buddhism" },
+  { label: "Christianity", value: "christianity" },
+  { label: "Hinduism", value: "hindu" },
+  { label: "Islam", value: "islam" },
+  { label: "Judaism", value: "judaism" },
+  { label: "No religion", value: "no_religion" },
+  { label: "Pagan", value: "pagan" },
+  { label: "Prefer not to say", value: "prefer_not_to_say" },
+  { label: "Sikhism", value: "sikhism" },
+];
+
+export const marketing = [
+  {
+    label: "Newspaper/Magazine",
+    value: "Newspaper/Magazine",
+  },
+  {
+    label: "Relative/Friend",
+    value: "Relative/Friend",
+  },
+  {
+    label: "Google",
+    value: "Google",
+  },
+  {
+    label: "Facebook",
+    value: "Facebook",
+  },
+  {
+    label: "Recruitment Agent",
+    value: "Recruitment Agent",
+  },
+];
+
+export const popularCountries = ["United Kingdom", "Bangladesh", "Romania"];
+
+export const popularNationalities = ["British", "Bangladeshi", "Romanian"];

@@ -6,8 +6,11 @@ import PersonalDetails from "./personal-details";
 import QualificationDetails from "./qualification-details";
 import WorkExperienceDetails from "./work-experience-details";
 import AdditionalDetails from "./additional-details";
+import { getActiveCourses } from "@/data/course";
 
-const ApplicationTabs = ({ data, className }) => {
+const ApplicationTabs = async ({ data, className }) => {
+  const courses = await getActiveCourses();
+
   return (
     <Tabs
       defaultValue="course-details"
@@ -27,6 +30,8 @@ const ApplicationTabs = ({ data, className }) => {
           courseTitle={data.courseTitle}
           studyMode={data.studyMode}
           campus={data.campus}
+          courses={courses}
+          applicationID={data.id}
         />
       </TabsContent>
       <TabsContent value="personal-details" className="w-full">
