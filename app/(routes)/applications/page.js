@@ -7,7 +7,12 @@ import { db } from "@/lib/db";
 import { Suspense } from "react";
 
 export default async function ApplicationsPage() {
-  const applications = await db.application.findMany();
+  const applications = await db.application.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  
   const courses = await getCourses();
 
   return (

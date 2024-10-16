@@ -9,6 +9,9 @@ export default async function LondonAppPage() {
     where: {
       campus: "London",
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   const courses = await getCourses();
 

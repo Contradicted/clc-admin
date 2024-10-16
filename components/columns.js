@@ -57,6 +57,8 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Created At" />
     ),
     cell: (info) => formatDateTime(info.getValue()).dateLong,
+    sortingFn: "datetime",
+    sortDescFirst: true,
     filterFn: (row, columnId, filterValue) => {
       if (!filterValue || filterValue.length !== 2) return true;
       const [start, end] = filterValue;

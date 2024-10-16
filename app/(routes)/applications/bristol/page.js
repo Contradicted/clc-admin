@@ -9,6 +9,9 @@ export default async function BristolAppPage() {
     where: {
       campus: "Bristol",
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   const courses = await getCourses();
   return (
