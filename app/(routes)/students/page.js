@@ -8,7 +8,11 @@ export default async function StudentsPage() {
     where: {
       role: "Student",
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
+  
   return (
     <DefaultLayout>
       <ApplicationsTable
