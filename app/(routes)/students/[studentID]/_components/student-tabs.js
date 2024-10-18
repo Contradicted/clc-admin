@@ -53,7 +53,7 @@ const StudentTabs = ({ data, courses }) => {
                 <p className="uppercase font-semibold text-sm">Date of Birth</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
-                {formatDate(data.dateOfBirth)}
+                {data.dateOfBirth ? formatDate(data.dateOfBirth) : "-"}
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
@@ -61,7 +61,7 @@ const StudentTabs = ({ data, courses }) => {
                 <p className="uppercase font-semibold text-sm">Gender</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
-                {data.gender}
+                {data.gender || "-"}
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
@@ -71,7 +71,7 @@ const StudentTabs = ({ data, courses }) => {
                 </p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
-                {data.addressLine1}
+                {data.addressLine1 || "-"}
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
@@ -89,7 +89,7 @@ const StudentTabs = ({ data, courses }) => {
                 <p className="uppercase font-semibold text-sm">City</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
-                {data.city}
+                {data.city || "-"}
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
@@ -97,7 +97,7 @@ const StudentTabs = ({ data, courses }) => {
                 <p className="uppercase font-semibold text-sm">Postcode</p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
-                {data.postcode}
+                {data.postcode || "-"}
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
@@ -107,7 +107,7 @@ const StudentTabs = ({ data, courses }) => {
                 </p>
               </div>
               <p className="flex flex-wrap font-medium text-black w-full">
-                {data.homeTelephoneNo}
+                {data.homeTelephoneNo || "-"}
               </p>
             </div>
             <div className="flex gap-3 bg-zinc-100 items-center py-3">
