@@ -30,3 +30,31 @@ export const getApplicationByID = async (applicationID) => {
 
   return application;
 };
+
+export const getDashboardApplications = async () => {
+  try {
+    const applications = await db.application.findMany();
+
+    const submitted = applications.filter((app) => app.status === "Submitted");
+    const approved = applications.filter((app) => app.status === "Approved");
+    const rejected = applications.filter((app) => app.status === "Rejected");
+    const revision = applications.filter(
+      (app) => app.status === "Waiting_for_Change"
+    );
+
+    return {
+      submitted,
+      approved,
+      rejected,
+      revision,
+    };
+  } catch (error) {
+    console.error("[FETCHING_DASHBOARD_APPLICATIONS]", error);
+    return {
+      submitted: [],
+      approved: [],
+      rejected: [],
+      revision: [],
+    };
+  }
+};
