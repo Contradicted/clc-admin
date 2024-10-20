@@ -3,8 +3,9 @@
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
-export default function DefaultLayout({ children }) {
+export default function DefaultLayout({ children, className }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -15,7 +16,12 @@ export default function DefaultLayout({ children }) {
         <Header isOpen={isOpen} setIsOpen={setIsOpen} />
 
         <main>
-          <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+          <div
+            className={cn(
+              "mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10",
+              className
+            )}
+          >
             {children}
           </div>
         </main>
