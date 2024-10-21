@@ -175,6 +175,16 @@ export const applicationHeaders = [
   { label: "Zip / Postal Code", value: "postcode", id: "field_postcode" },
   { label: "Email", value: "email", id: "field_email" },
   { label: "Mobile No.", value: "mobileNo", id: "field_mobileNo" },
+  {
+    label: "Emergency Contact Name",
+    value: "emergency_contact_name",
+    id: "field_emergencyContactName",
+  },
+  {
+    label: "Emergency Contact No.",
+    value: "emergency_contact_no",
+    id: "field_emergencyContactNo",
+  },
   { label: "Tuition Fee", value: "tuitionFees", id: "field_tuitionFees" },
   {
     label: "Is English Your First Language",
@@ -264,7 +274,6 @@ export const applicationHeaders = [
     value: "marketing",
     id: "field_marketing",
   },
-  { label: "Terms and Conditions", value: "terms", id: "field_terms" },
   {
     label: "Name of Recruitment Agent",
     value: "recruitment_agent",
