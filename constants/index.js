@@ -280,6 +280,7 @@ export const applicationHeaders = [
     id: "field_recruitmentAgent",
   },
   { label: "Date of Submission", value: "createdAt", id: "field_createdAt" },
+  { id: "files", label: "Files", value: "" },
 ];
 
 export const departments = [
