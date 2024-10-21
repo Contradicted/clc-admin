@@ -1,6 +1,6 @@
 import Link from "next/link";
 import SidebarItem from "@/components/sidebar-item";
-import { Book, UserRound } from "lucide-react";
+import { Book, UserRound, ChartNoAxesCombined } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import { useCurrentRole } from "@/hooks/useCurrentRole";
@@ -83,6 +83,17 @@ const menuGroups = [
         label: "Staff",
         route: "/staff",
         visible: ["Admin", "Staff"],
+      },
+    ],
+  },
+  {
+    name: "REPORTING",
+    menuItems: [
+      {
+        icon: <ChartNoAxesCombined className="size-[18px] stroke-current" />,
+        label: "Data",
+        route: "/export",
+        visible: ["Admin"],
       },
     ],
   },

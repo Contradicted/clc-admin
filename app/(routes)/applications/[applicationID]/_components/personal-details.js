@@ -4,6 +4,7 @@ import { CalendarIcon, Loader2, PaperclipIcon, UploadIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 import countries from "i18n-iso-countries";
 import nationalities from "i18n-nationality";
 import countriesEnglish from "i18n-iso-countries/langs/en.json";
@@ -205,6 +206,8 @@ const PersonalDetails = ({ application }) => {
       email: application.email,
       mobileNo: application.mobileNo,
       homeTelephoneNo: application.homeTelephoneNo,
+      emergency_contact_name: application.emergency_contact_name,
+      emergency_contact_no: application.emergency_contact_no,
       tuitionFees: application.tuitionFees,
       isEnglishFirstLanguage: application.isEnglishFirstLanguage,
       files: {
@@ -1024,7 +1027,12 @@ const PersonalDetails = ({ application }) => {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormControl>
-                        <PhoneInput {...field} disabled={isSaving} />
+                        <PhoneInput
+                          {...field}
+                          disabled={isSaving}
+                          international
+                          defaultCountry="GB"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1032,7 +1040,7 @@ const PersonalDetails = ({ application }) => {
                 />
               ) : (
                 <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.mobileNo}
+                  {formatPhoneNumberIntl(application.mobileNo)}
                 </p>
               )}
             </div>
@@ -1048,7 +1056,12 @@ const PersonalDetails = ({ application }) => {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormControl>
-                        <PhoneInput {...field} disabled={isSaving} />
+                        <PhoneInput
+                          {...field}
+                          disabled={isSaving}
+                          international
+                          defaultCountry="GB"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1056,7 +1069,61 @@ const PersonalDetails = ({ application }) => {
                 />
               ) : (
                 <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.homeTelephoneNo}
+                  {formatPhoneNumberIntl(application.homeTelephoneNo)}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <div className="flex items-start w-full max-w-[50%]">
+                Emergency Contact Name
+              </div>
+              {isEditing ? (
+                <FormField
+                  name="emergency_contact_name"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <Input {...field} disabled={isSaving} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                <p className="flex flex-wrap font-medium text-black w-full">
+                  {application.emergency_contact_name || "-"}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <div className="flex items-start w-full max-w-[50%]">
+                Emergency Contact No.
+              </div>
+              {isEditing ? (
+                <FormField
+                  name="emergency_contact_no"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <PhoneInput
+                          {...field}
+                          disabled={isSaving}
+                          international
+                          defaultCountry="GB"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                <p className="flex flex-wrap font-medium text-black w-full">
+                  {formatPhoneNumberIntl(application.emergency_contact_no) ||
+                    "-"}
                 </p>
               )}
             </div>

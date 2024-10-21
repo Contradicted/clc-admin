@@ -138,202 +138,139 @@ export const Statuses = [
 ];
 
 export const applicationHeaders = [
-  {
-    label: "ID",
-    value: "id",
-  },
-  {
-    label: "Course Title",
-    value: "courseTitle",
-  },
-  {
-    label: "Study Mode",
-    value: "studyMode",
-  },
-  {
-    label: "Title",
-    value: "title",
-  },
-  {
-    label: "First Name",
-    value: "firstName",
-  },
-  {
-    label: "Last Name",
-    value: "lastName",
-  },
-  {
-    label: "Gender",
-    value: "gender",
-  },
-  {
-    label: "Date of Birth",
-    value: "dateOfBirth",
-  },
-  {
-    label: "Place of Birth",
-    value: "placeOfBirth",
-  },
+  { label: "ID", value: "id", id: "field_id" },
+  { label: "Course Title", value: "courseTitle", id: "field_courseTitle" },
+  { label: "Study Mode", value: "studyMode", id: "field_studyMode" },
+  { label: "Title", value: "title", id: "field_personalTitle" },
+  { label: "First Name", value: "firstName", id: "field_firstName" },
+  { label: "Last Name", value: "lastName", id: "field_lastName" },
+  { label: "Gender", value: "gender", id: "field_gender" },
+  { label: "Date of Birth", value: "dateOfBirth", id: "field_dateOfBirth" },
+  { label: "Place of Birth", value: "placeOfBirth", id: "field_placeOfBirth" },
   {
     label: "Country of Birth",
     value: "countryOfBirth",
+    id: "field_countryOfBirth",
   },
   {
     label: "Passport / National ID Card No.",
     value: "identificationNo",
+    id: "field_identificationNo",
   },
-  {
-    label: "Nationality",
-    value: "nationality",
-  },
+  { label: "Nationality", value: "nationality", id: "field_nationality" },
   {
     label: "Entry Date to UK",
     value: "entryDateToUK",
+    id: "field_entryDateToUK",
   },
   {
     label: "Immigration Status",
     value: "immigration_status",
+    id: "field_immigrationStatus",
   },
+  { label: "Share Code", value: "share_code", id: "field_shareCode" },
+  { label: "Address Line 1", value: "addressLine1", id: "field_addressLine1" },
+  { label: "Address Line 2", value: "addressLine2", id: "field_addressLine2" },
+  { label: "City", value: "city", id: "field_city" },
+  { label: "Zip / Postal Code", value: "postcode", id: "field_postcode" },
+  { label: "Email", value: "email", id: "field_email" },
+  { label: "Mobile No.", value: "mobileNo", id: "field_mobileNo" },
+  { label: "Tuition Fee", value: "tuitionFees", id: "field_tuitionFees" },
   {
-    label: "Share Code",
-    value: "share_code",
-  },
-  {
-    label: "Address Line 1",
-    value: "addressLine1",
-  },
-  {
-    label: "Address Line 2",
-    value: "addressLine2",
-  },
-  {
-    label: "City",
-    value: "city",
-  },
-  {
-    label: "Zip / Postal Code",
-    value: "postcode",
-  },
-  {
-    label: "Email",
-    value: "email",
-  },
-  {
-    label: "Mobile No.",
-    value: "mobileNo",
-  },
-  {
-    label: "Tuition Fee",
-    value: "tuitionFees",
-  },
-  {
-    label: "Is English Your First Langauge",
+    label: "Is English Your First Language",
     value: "isEnglishFirstLanguage",
+    id: "field_isEnglishFirstLanguage",
   },
   {
     label: "Qualification Title",
     value: "title",
+    id: "field_qualificationTitle",
   },
   {
     label: "Examining Body",
     value: "examiningBody",
+    id: "field_examiningBody",
   },
-  {
-    label: "Date Awarded",
-    value: "dateAwarded",
-  },
+  { label: "Date Awarded", value: "dateAwarded", id: "field_dateAwarded" },
   {
     label: "Do you have any pending qualifications?",
     value: "hasPendingResults",
+    id: "field_hasPendingResults",
   },
   {
     label: "(Pending) Qualification Title",
     value: "title",
+    id: "field_pendingQualificationTitle",
   },
   {
     label: "(Pending) Examining Body",
     value: "examiningBody",
+    id: "field_pendingExaminingBody",
   },
   {
     label: "(Pending) Date of Results",
     value: "dateOfResults",
+    id: "field_dateOfResults",
   },
   {
     label: "(Pending) Subjects Passed",
     value: "subjectsPassed",
+    id: "field_subjectsPassed",
   },
   {
     label: "Do you have any work experience?",
     value: "hasWorkExperience",
+    id: "field_hasWorkExperience",
   },
-  {
-    label: "Job Title",
-    value: "title",
-  },
+  { label: "Job Title", value: "title", id: "field_jobTitle" },
   {
     label: "Name of Organisation",
     value: "nameOfOrganisation",
+    id: "field_nameOfOrganisation",
   },
-  {
-    label: "Nature of Job",
-    value: "natureOfJob",
-  },
-  {
-    label: "Job Start Date",
-    value: "jobStartDate",
-  },
-  {
-    label: "Job End Date",
-    value: "jobEndDate",
-  },
+  { label: "Nature of Job", value: "natureOfJob", id: "field_natureOfJob" },
+  { label: "Job Start Date", value: "jobStartDate", id: "field_jobStartDate" },
+  { label: "Job End Date", value: "jobEndDate", id: "field_jobEndDate" },
   {
     label: "Do you have any special needs?",
     value: "specialNeeds",
+    id: "field_specialNeeds",
   },
   {
     label: "Reasons for choosing this course",
     value: "reasonsForChoosingProgram",
+    id: "field_reasonsForChoosingProgram",
   },
   {
     label: "What are your future educational plans?",
     value: "futureEduPlans",
+    id: "field_futureEduPlans",
   },
   {
     label: "What employment do you intend to pursue after your studies?",
     value: "intentedEmployment",
+    id: "field_intentedEmployment",
   },
   {
     label: "Do you have any criminal convictions?",
     value: "criminalRecord",
+    id: "field_criminalRecord",
   },
-  {
-    label: "Hobbies and Interests",
-    value: "hobbies",
-  },
-  {
-    label: "Ethnic Origin",
-    value: "ethnicity",
-  },
-  {
-    label: "Religion",
-    value: "religion",
-  },
+  { label: "Hobbies and Interests", value: "hobbies", id: "field_hobbies" },
+  { label: "Ethnic Origin", value: "ethnicity", id: "field_ethnicity" },
+  { label: "Religion", value: "religion", id: "field_religion" },
   {
     label: "How did you hear about the college?",
     value: "marketing",
+    id: "field_marketing",
   },
-  {
-    label: "Terms and Conditions",
-    value: "terms",
-  },
+  { label: "Terms and Conditions", value: "terms", id: "field_terms" },
   {
     label: "Name of Recruitment Agent",
     value: "recruitment_agent",
+    id: "field_recruitmentAgent",
   },
-  {
-    label: "Date of Submission",
-    value: "createdAt",
-  },
+  { label: "Date of Submission", value: "createdAt", id: "field_createdAt" },
 ];
 
 export const departments = [

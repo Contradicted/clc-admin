@@ -31,30 +31,58 @@ export const getApplicationByID = async (applicationID) => {
   return application;
 };
 
-export const getDashboardApplications = async () => {
+export const getApplicationsByStatus = async (status) => {
   try {
-    const applications = await db.application.findMany();
+    const applications = await db.application.findMany({
+      where: {
+        status,
+      },
+    });
 
-    const submitted = applications.filter((app) => app.status === "Submitted");
-    const approved = applications.filter((app) => app.status === "Approved");
-    const rejected = applications.filter((app) => app.status === "Rejected");
-    const revision = applications.filter(
-      (app) => app.status === "Waiting_for_Change"
+    return applications;
+  } catch (error) {
+    console.error("[FETCHING_APPLICATIONS_BY_STATUS_ERROR]", error);
+    return [];
+  }
+};
+
+export const getDashboardStats = async () => {
+  try {
+    const statuses = [
+      "Submitted",
+      "Rejected",
+      "Approved",
+      "Waiting_for_Change",
+      "Re_Submitted",
+    ];
+    const courses = await db.course.findMany({
+      where: {
+        status: "Active",
+      },
+    });
+
+    const courseStats = await Promise.all(
+      statuses.map(async (status) => {
+        const applications = await getApplicationsByStatus(status);
+        const totalCount = applications.length;
+
+        const courseCount = courses.map((course) => ({
+          courseTitle: course.name,
+          count: applications.filter((app) => app.courseID === course.id)
+            .length,
+        }));
+
+        return {
+          status,
+          totalCount,
+          courses: courseCount,
+        };
+      })
     );
 
-    return {
-      submitted,
-      approved,
-      rejected,
-      revision,
-    };
+    return courseStats;
   } catch (error) {
-    console.error("[FETCHING_DASHBOARD_APPLICATIONS]", error);
-    return {
-      submitted: [],
-      approved: [],
-      rejected: [],
-      revision: [],
-    };
+    console.error("[FETCHING_DASHBOARD_STATS]", error);
+    return [];
   }
 };
