@@ -797,7 +797,9 @@ const PersonalDetails = ({ application }) => {
                   />
                 ) : (
                   <p className="flex flex-wrap font-medium text-black w-full">
-                    {formatDate(application.entryDateToUK)}
+                    {application.entryDateToUK
+                      ? formatDate(application.entryDateToUK)
+                      : "-"}
                   </p>
                 )}
               </div>
