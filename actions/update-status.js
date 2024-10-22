@@ -75,7 +75,8 @@ export const updateStatus = async (emailMsg, applicationID, status) => {
       status,
       application,
       student,
-      updateApplicationToken.token
+      updateApplicationToken.token,
+      emailMsg
     );
 
     return { success: "Successfully updated status!" };
