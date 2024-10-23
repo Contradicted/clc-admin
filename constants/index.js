@@ -108,7 +108,7 @@ export const Statuses = [
     label: "Rejected",
   },
   {
-    value: "Waiting_For_Change",
+    value: "Waiting_for_Change",
     label: "Waiting for Change",
   },
   {
