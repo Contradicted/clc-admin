@@ -278,11 +278,11 @@ const PersonalDetails = ({ application }) => {
     }
   }, [nationality, form]);
 
-  useEffect(() => {
-    if (immigrationStatus !== "pre_settled") {
-      form.setValue("share_code", "");
-    }
-  }, [immigrationStatus, form]);
+  // useEffect(() => {
+  //   if (immigrationStatus !== "pre_settled") {
+  //     form.setValue("share_code", "");
+  //   }
+  // }, [immigrationStatus, form]);
 
   const toggleEdit = () => setIsEditing(!isEditing);
 
@@ -417,6 +417,7 @@ const PersonalDetails = ({ application }) => {
                             <SelectItem value="Mr">Mr</SelectItem>
                             <SelectItem value="Mrs">Mrs</SelectItem>
                             <SelectItem value="Ms">Ms</SelectItem>
+                            <SelectItem value="Miss">Miss</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -850,7 +851,7 @@ const PersonalDetails = ({ application }) => {
               </div>
             )}
 
-            {immigrationStatus === "pre_settled" && (
+            {immigrationStatus && (
               <div className="flex gap-3">
                 <div className="flex items-start w-full max-w-[50%]">
                   Share Code
@@ -884,7 +885,7 @@ const PersonalDetails = ({ application }) => {
                   />
                 ) : (
                   <p className="flex flex-wrap font-medium text-black w-full">
-                    {application.share_code}
+                    {application.share_code || "-"}
                   </p>
                 )}
               </div>

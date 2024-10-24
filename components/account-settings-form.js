@@ -113,6 +113,7 @@ const AccountSettingsForm = ({ user }) => {
                                   <SelectItem value="Mr">Mr</SelectItem>
                                   <SelectItem value="Mrs">Mrs</SelectItem>
                                   <SelectItem value="Ms">Ms</SelectItem>
+                                  <SelectItem value="Miss">Miss</SelectItem>
                                 </SelectGroup>
                               </SelectContent>
                             </Select>
