@@ -56,7 +56,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 countries.registerLocale(countriesEnglish);
 nationalities.registerLocale(nationalitiesEnglish);
 
-const nameRegex = /^[A-Za-z\s]+$/;
+const nameRegex = /^[A-Za-z\s-]+$/;
 
 const formSchema = z
   .object({
@@ -65,7 +65,7 @@ const formSchema = z
       message: "First name cannot contain numbers",
     }),
     lastName: z.string().min(1, "Last name is required").regex(nameRegex, {
-      message: "First name cannot contain numbers",
+      message: "Last name cannot contain numbers",
     }),
     gender: z.string().min(1, "Gender is required"),
     dateOfBirth: z
