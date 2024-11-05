@@ -1072,7 +1072,7 @@ const PersonalDetails = ({ application }) => {
                 />
               ) : (
                 <p className="flex flex-wrap font-medium text-black w-full">
-                  {formatPhoneNumberIntl(application.homeTelephoneNo)}
+                  {formatPhoneNumberIntl(application.homeTelephoneNo) || "-"}
                 </p>
               )}
             </div>

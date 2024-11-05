@@ -2,6 +2,7 @@
 
 import { courses } from "@/actions/courses";
 import { DateTimePicker } from "@/components/date-time-picker";
+import MonthYearPicker from "@/components/month-year-picker";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,144 +12,180 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { cn, formatDate } from "@/lib/utils";
+import {
+  calculateWeeksBetweenDates,
+  checkIsActive,
+  cn,
+  formatDate,
+} from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, PencilIcon } from "lucide-react";
+import { addWeeks, compareAsc, format, parse } from "date-fns";
+import { Loader2, PencilIcon, PlusIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState, useTransition } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
-const formSchema = z
-  .object({
-    startDate: z.date().optional(),
-    last_join_date: z
-      .date()
-      // .refine((date) => date > new Date(), {
-      //   message: "Last join date cannot be before or on the current date",
-      // })
-      .optional(),
-    endDate: z
-      .date()
-      .refine((date) => date > new Date(), {
-        message: "End date cannot be before or on the current date",
-      })
-      .optional(),
-    resultsDate: z
-      .date()
-      .refine((date) => date >= new Date(), {
-        message: "Results date cannot be before the current date",
-      })
-      .optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.startDate && data.endDate) {
-        return data.endDate > data.startDate;
-      }
-      return true;
-    },
-    {
-      message: "End date must be after the start date",
-      path: ["endDate"],
-    }
-  )
-  .refine(
-    (data) => {
-      if (data.last_join_date && data.endDate) {
-        return data.endDate > data.last_join_date;
-      }
-      return true;
-    },
-    {
-      message: "End date must be after the last join date",
-      path: ["endDate"],
-    }
-  )
-  .refine(
-    (data) => {
-      if (data.startDate && data.resultsDate) {
-        return data.resultsDate > data.startDate;
-      }
-      return true;
-    },
-    {
-      message: "Results date must be after the start date",
-      path: ["resultsDate"],
-    }
-  )
-  .refine(
-    (data) => {
-      if (data.last_join_date && data.resultsDate) {
-        return data.resultsDate > data.last_join_date;
-      }
-      return true;
-    },
-    {
-      message: "Results date must be after the last join date",
-      path: ["resultsDate"],
-    }
-  )
-  .refine(
-    (data) => {
-      if (data.endDate && data.resultsDate) {
-        return data.resultsDate >= data.endDate;
-      }
-      return true;
-    },
-    {
-      message: "Results date must be on or after the end date",
-      path: ["resultsDate"],
-    }
-  )
-  .superRefine((dates, ctx) => {
-    const initialDates = ctx.initialData || {};
-    const hasChanges = Object.keys(dates).some(
-      (key) =>
-        dates[key] && dates[key].getTime() !== initialDates[key]?.getTime()
-    );
-
-    if (!hasChanges) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "At least one date must be changed to save",
-      });
-    }
-
-    if (
-      !dates.startDate ||
-      !dates.last_join_date ||
-      !dates.endDate ||
-      !dates.resultsDate
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "At least one date must be set",
-      });
-    }
-  });
+const formSchema = z.object({
+  course_instances: z
+    .array(
+      z
+        .object({
+          instance_name: z.union([
+            z.date(),
+            z.string().min(1, { message: "Commencement is required" }),
+          ]),
+          start_date: z
+            .date({ invalid_type_error: "Start date is required" })
+            .optional(),
+          last_join_weeks: z.string().optional(),
+          last_join_date: z
+            .date({
+              invalid_type_error: "Last join date is required",
+            })
+            // .refine((date) => date > new Date(), {
+            //   message: "Last join date cannot be before or on the current date",
+            // })
+            .optional(),
+          end_date: z
+            .date({ invalid_type_error: "End date is required" })
+            // .refine((date) => date > new Date(), {
+            //   message: "End date cannot be before or on the current date",
+            // })
+            .optional(),
+          results_date: z
+            .date({ invalid_type_error: "Results date is required" })
+            // .refine((date) => date >= new Date(), {
+            //   message: "Results date cannot be before the current date",
+            // })
+            .optional(),
+        })
+        .refine(
+          (data) => {
+            if (data.start_date && data.end_date) {
+              return data.end_date > data.start_date;
+            }
+            return true;
+          },
+          {
+            message: "End date must be after the start date",
+            path: ["end_date"],
+          }
+        )
+        .refine(
+          (data) => {
+            if (data.last_join_date && data.end_date) {
+              return data.end_date > data.last_join_date;
+            }
+            return true;
+          },
+          {
+            message: "End date must be after the last join date",
+            path: ["end_date"],
+          }
+        )
+        .refine(
+          (data) => {
+            if (data.start_date && data.results_date) {
+              return data.results_date > data.start_date;
+            }
+            return true;
+          },
+          {
+            message: "Results date must be after the start date",
+            path: ["results_date"],
+          }
+        )
+        .refine(
+          (data) => {
+            if (data.last_join_date && data.results_date) {
+              return data.results_date > data.last_join_date;
+            }
+            return true;
+          },
+          {
+            message: "Results date must be after the last join date",
+            path: ["results_date"],
+          }
+        )
+        .refine(
+          (data) => {
+            if (data.end_date && data.results_date) {
+              return data.results_date >= data.end_date;
+            }
+            return true;
+          },
+          {
+            message: "Results date must be on or after the end date",
+            path: ["results_date"],
+          }
+        )
+    )
+    .min(1, "At least one commencement is required"),
+});
 
 const DatesTable = ({ courseDates }) => {
+  const sortedDates = [...courseDates].sort((a, b) =>
+    compareAsc(new Date(a.instance_name), new Date(b.instance_name))
+  );
+
   return (
     <table className="w-full">
       <tbody>
-        {[
-          { label: "Start Date", value: courseDates[0] },
-          { label: "Last Join Date", value: courseDates[1] },
-          { label: "End Date", value: courseDates[2] },
-          { label: "Results Date", value: courseDates[3] },
-        ].map(
-          ({ label, value }) =>
-            value && (
-              <tr key={label} className="border border-stroke">
-                <td className="font-semibold p-3 border border-r w-1/4">
-                  {label}:
-                </td>
-                <td className="px-3">{formatDate(value)}</td>
-              </tr>
-            )
-        )}
+        {sortedDates.flatMap((instance, index) => [
+          ...[
+            // Spread the array of objects for each study mode
+            {
+              label: "Commencement Term",
+              value: format(instance.instance_name, "MMMM yyyy"),
+            },
+            { label: "Start Date", value: formatDate(instance.start_date) },
+            {
+              label: "Last Join Date",
+              value: formatDate(instance.last_join_date),
+            },
+            { label: "End Date", value: formatDate(instance.end_date) },
+            { label: "Results Date", value: formatDate(instance.results_date) },
+            {
+              label: "Open for Enrollment",
+              value: instance.status ? "Yes" : "No",
+            },
+          ].map(({ label, value }, rowIndex) => (
+            <tr key={`${index}-${label}`} className="border border-stroke">
+              <td className="font-semibold p-3 border border-r w-1/2">
+                {label}:
+              </td>
+              <td
+                className={cn(
+                  "px-3",
+                  label === "Open for Enrollment"
+                    ? value === "Yes"
+                      ? "text-emerald-500 font-medium"
+                      : "text-red font-medium"
+                    : ""
+                )}
+              >
+                {value}
+              </td>
+            </tr>
+          )),
+          // Add a spacer row after each study mode, except the last one
+          ...(index < courseDates.length - 1
+            ? [
+                <tr key={`spacer-${index}`} className="h-4">
+                  <td colSpan="2"></td>
+                </tr>,
+              ]
+            : []),
+        ])}
       </tbody>
     </table>
   );
@@ -160,20 +197,39 @@ const DatesForm = ({ initialData, courseID }) => {
 
   const form = useForm({
     defaultValues: {
-      startDate: initialData.startDate || undefined,
-      last_join_date: initialData.last_join_date || undefined,
-      endDate: initialData.endDate || undefined,
-      resultsDate: initialData.resultsDate || undefined,
+      course_instances:
+        initialData.length > 0
+          ? initialData.map((instance) => ({
+              ...instance,
+              results_weeks: calculateWeeksBetweenDates(
+                instance.end_date,
+                instance.results_date
+              ),
+            }))
+          : [
+              {
+                instance_name: "",
+                start_date: "",
+                last_join_weeks: "4",
+                last_join_date: "",
+                end_date: "",
+                results_weeks: "2",
+                results_date: "",
+              },
+            ],
     },
     resolver: zodResolver(formSchema),
   });
 
-  const courseDates = [
-    initialData.startDate,
-    initialData.last_join_date,
-    initialData.endDate,
-    initialData.resultsDate,
-  ];
+  const { fields, append, remove } = useFieldArray({
+    name: "course_instances",
+    control: form.control,
+  });
+
+  const sortedFields = [...fields].sort((a, b) => {
+    if (!a.instance_name || !b.instance_name) return 0;
+    return compareAsc(new Date(a.instance_name), new Date(b.instance_name));
+  });
 
   const router = useRouter();
   const { toast } = useToast();
@@ -182,8 +238,32 @@ const DatesForm = ({ initialData, courseID }) => {
     setIsEditing(!isEditing);
   };
 
+  const calculateLastJoinDate = (startDate, weeks, index) => {
+    if (startDate && weeks) {
+      const weeksNumber = parseInt(weeks, 10);
+      const lastJoinDate = addWeeks(new Date(startDate), weeksNumber);
+      form.setValue(`course_instances.${index}.last_join_date`, lastJoinDate);
+    }
+  };
+
+  const calculateResultsDate = (endDate, weeks, index) => {
+    if (endDate && weeks) {
+      const weeksNumber = parseInt(weeks, 10);
+      const resultsDate = addWeeks(new Date(endDate), weeksNumber);
+      form.setValue(`course_instances.${index}.results_date`, resultsDate);
+    }
+  };
+
+  // console.log("values", form.getValues());
+  // console.log("errors", form.formState.errors);
+
   const onSubmit = (values) => {
-    console.log(form.formState.errors);
+    if (values.course_instances.length > 0) {
+      values.course_instances.map((instance) => {
+        instance.instance_name = format(instance.instance_name, "MMMM yyyy");
+      });
+    }
+
     startTransition(() => {
       courses(values, courseID)
         .then((data) => {
@@ -217,6 +297,16 @@ const DatesForm = ({ initialData, courseID }) => {
     });
   };
 
+  useEffect(() => {
+    if (initialData && initialData.length > 0) {
+      initialData.map((data) => {
+        if (data.instance_name) {
+          data.instance_name = new Date(data.instance_name);
+        }
+      });
+    }
+  }, [initialData]);
+
   return (
     <div className="flex flex-col gap-9 mt-6">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -234,105 +324,250 @@ const DatesForm = ({ initialData, courseID }) => {
           </Button>
         </div>
         {!isEditing && (
-          <p
+          <div
             className={cn(
               "text-sm mt-2 px-6.5 py-4",
-              !courseDates.every(Boolean) && "italic"
+              !initialData.length > 0 && "italic"
             )}
           >
-            {courseDates.some(Boolean) ? (
-              <DatesTable courseDates={courseDates} />
+            {initialData.some(Boolean) ? (
+              <DatesTable courseDates={initialData} />
             ) : (
               "No course dates have been set"
             )}
-          </p>
+          </div>
         )}
         {isEditing && (
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4 mt-4 px-6.5 py-4"
+              className="space-y-4 px-6.5 py-4"
             >
-              <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                <div className="w-full xl:w-1/2">
-                  <FormField
-                    control={form.control}
-                    name="startDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Course Start Date</FormLabel>
-                        <FormControl>
-                          <DateTimePicker
-                            granularity="day"
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="w-full xl:w-1/2">
-                  <FormField
-                    control={form.control}
-                    name="last_join_date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Course Last Join Date</FormLabel>
-                        <FormControl>
-                          <DateTimePicker
-                            granularity="day"
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              <div className="flex items-center gap-x-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  className="size-8 p-0"
+                  onClick={() =>
+                    append({
+                      instance_name: "",
+                      start_date: "",
+                      last_join_weeks: "4",
+                      last_join_date: "",
+                      end_date: "",
+                      results_weeks: "2",
+                      results_date: "",
+                    })
+                  }
+                >
+                  <PlusIcon className="size-4" />
+                </Button>
               </div>
-              <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                <div className="w-full xl:w-1/2">
-                  <FormField
-                    control={form.control}
-                    name="endDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Course End Date</FormLabel>
-                        <FormControl>
-                          <DateTimePicker
-                            granularity="day"
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+
+              {sortedFields.map((item, index) => (
+                <div key={item.id} className={index > 0 ? "pt-4" : undefined}>
+                  <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                    <div className="w-full xl:w-1/2">
+                      <FormField
+                        control={form.control}
+                        name={`course_instances.${index}.instance_name`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Commencement</FormLabel>
+                            <FormControl>
+                              <MonthYearPicker
+                                value={field.value && new Date(field.value)}
+                                onChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="w-full xl:w-1/2" />
+                  </div>
+                  <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                    <div className="w-full xl:w-1/2">
+                      <FormField
+                        control={form.control}
+                        name={`course_instances.${index}.start_date`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Course Start Date</FormLabel>
+                            <FormControl>
+                              <DateTimePicker
+                                granularity="day"
+                                value={field.value}
+                                onChange={(date) => {
+                                  field.onChange(date);
+                                  const weeks = form.getValues(
+                                    `course_instances.${index}.last_join_weeks`
+                                  );
+                                  calculateLastJoinDate(date, weeks, index);
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="w-full xl:w-1/2">
+                      <FormField
+                        control={form.control}
+                        name={`course_instances.${index}.last_join_weeks`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Weeks Allowed for Last Join</FormLabel>
+                            <Select
+                              onValueChange={(e) => {
+                                field.onChange(e);
+                                const startDate = form.getValues(
+                                  `course_instances.${index}.start_date`
+                                );
+
+                                calculateLastJoinDate(startDate, e, index);
+                              }}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select weeks" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {[1, 2, 3, 4, 5, 6].map((week) => (
+                                  <SelectItem
+                                    key={week}
+                                    value={week.toString()}
+                                  >
+                                    {week} week{week > 1 ? "s" : ""}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                    <div className="w-full xl:w-1/2">
+                      <FormField
+                        control={form.control}
+                        name={`course_instances.${index}.last_join_date`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Course Last Join Date</FormLabel>
+                            <FormControl>
+                              <DateTimePicker
+                                granularity="day"
+                                value={field.value}
+                                onChange={field.onChange}
+                                disabled
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="w-full xl:w-1/2">
+                      <FormField
+                        control={form.control}
+                        name={`course_instances.${index}.end_date`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Course End Date</FormLabel>
+                            <FormControl>
+                              <DateTimePicker
+                                granularity="day"
+                                value={field.value}
+                                onChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                    <div className="w-full xl:w-1/2">
+                      <FormField
+                        control={form.control}
+                        name={`course_instances.${index}.results_weeks`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Weeks for Results Date</FormLabel>
+                            <Select
+                              onValueChange={(e) => {
+                                field.onChange(e);
+                                const endDate = form.getValues(
+                                  `course_instances.${index}.end_date`
+                                );
+
+                                calculateResultsDate(endDate, e, index);
+                              }}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select weeks" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {[1, 2, 3, 4, 5, 6, 7, 8].map((week) => (
+                                  <SelectItem
+                                    key={week}
+                                    value={week.toString()}
+                                  >
+                                    {week} week{week > 1 ? "s" : ""}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="w-full xl:w-1/2">
+                      <FormField
+                        control={form.control}
+                        name={`course_instances.${index}.results_date`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Course Results Date</FormLabel>
+                            <FormControl>
+                              <DateTimePicker
+                                granularity="day"
+                                value={field.value}
+                                onChange={field.onChange}
+                                disabled
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  {index > 0 && (
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => remove(index)}
+                      className="size-8 p-0 lg:mb-4"
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  )}
                 </div>
-                <div className="w-full xl:w-1/2">
-                  <FormField
-                    control={form.control}
-                    name="resultsDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Course Results Date</FormLabel>
-                        <FormControl>
-                          <DateTimePicker
-                            granularity="day"
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
+              ))}
               <div className="flex items-center gap-x-2">
                 <Button type="submit" disabled={isPending}>
                   {isPending ? (

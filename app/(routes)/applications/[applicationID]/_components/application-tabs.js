@@ -29,6 +29,7 @@ const ApplicationTabs = async ({ data, className }) => {
         <CourseDetails
           courseTitle={data.courseTitle}
           studyMode={data.studyMode}
+          commencement={data.commencement}
           campus={data.campus}
           courses={courses}
           applicationID={data.id}

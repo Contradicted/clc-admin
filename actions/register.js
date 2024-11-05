@@ -32,7 +32,7 @@ export const register = async (values) => {
       lastName,
       email,
       password: hashedPassword,
-      role: "Staff",
+      role: "Admin",
     },
   });
 

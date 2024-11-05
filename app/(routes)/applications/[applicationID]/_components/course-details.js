@@ -19,6 +19,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { formatStudyMode } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { compareAsc } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -36,6 +37,7 @@ const formSchema = z.object({
 const CourseDetails = ({
   courseTitle,
   studyMode,
+  commencement,
   campus,
   courses,
   applicationID,
@@ -50,6 +52,7 @@ const CourseDetails = ({
     defaultValues: {
       courseTitle: courseTitle || "",
       studyMode: studyMode || "",
+      commencement: commencement || "",
       campus: campus || "",
     },
     resolver: zodResolver(formSchema),
@@ -94,12 +97,27 @@ const CourseDetails = ({
       const availableModes = selectedCourse.course_study_mode.map(
         (mode) => mode.study_mode
       );
+      const availableCommencements = selectedCourse.course_instances.map(
+        (instance) => instance.instance_name
+      );
       const currentMode = form.getValues("studyMode");
+      const currentCommencement = form.getValues("commencement");
+
       if (currentMode && !availableModes.includes(currentMode)) {
         form.setValue("studyMode", "");
       } else if (!currentMode && availableModes.length > 0) {
         // Set the first available mode if no mode is currently selected
         form.setValue("studyMode", availableModes[0]);
+      }
+
+      if (
+        currentCommencement &&
+        !availableCommencements.includes(currentCommencement)
+      ) {
+        form.setValue("commencement", "");
+      } else if (!currentCommencement && availableCommencements.length > 0) {
+        // Set the first available mode if no mode is currently selected
+        form.setValue("commencement", availableCommencements[0]);
       }
     }
   }, [watchCourseTitle, courses, form]);
@@ -218,6 +236,63 @@ const CourseDetails = ({
               ) : (
                 <p className="flex flex-wrap font-medium text-black w-full">
                   {formatStudyMode(studyMode)}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <div className="flex items-start w-full max-w-[50%]">
+                Commencement
+              </div>
+              {isEditing ? (
+                <FormField
+                  name="commencement"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          disabled={isSaving}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a commencement term" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {courses
+                              .find(
+                                (course) =>
+                                  course.name === form.watch("courseTitle")
+                              )
+                              ?.course_instances.sort((a, b) =>
+                                compareAsc(
+                                  new Date(a.instance_name),
+                                  new Date(b.instance_name)
+                                )
+                              )
+                              .map((instance) => (
+                                <SelectItem
+                                  key={instance.id}
+                                  value={instance.instance_name}
+                                >
+                                  {instance.instance_name}
+                                </SelectItem>
+                              )) || (
+                              <SelectItem value="" disabled>
+                                No commencement terms available
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                <p className="flex flex-wrap font-medium text-black w-full">
+                  {commencement}
                 </p>
               )}
             </div>

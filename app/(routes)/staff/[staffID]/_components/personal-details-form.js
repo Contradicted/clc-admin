@@ -365,7 +365,7 @@ const PersonalDetailsForm = ({ initialData, staffID }) => {
                 <div className="flex flex-col gap-y-2 break-words">
                   <p className="text-sm text-zinc-400 font-medium">Title</p>
                   <span className="text-sm font-medium text-graydark">
-                    {initialData.title}
+                    {initialData.title || "-"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-y-2 break-words">
@@ -387,7 +387,9 @@ const PersonalDetailsForm = ({ initialData, staffID }) => {
                     Date of Birth
                   </p>
                   <span className="text-sm font-medium text-graydark">
-                    {formatDateTime(initialData.dateOfBirth).date || "-"}
+                    {initialData.dateOfBirth
+                      ? formatDateTime(initialData.dateOfBirth).date
+                      : "-"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-y-2 break-words">

@@ -9,6 +9,7 @@ export const getCourseByID = async (courseID) => {
       include: {
         course_study_mode: true,
         modules: true,
+        course_instances: true,
       },
     });
     return course;
@@ -59,6 +60,7 @@ export const getActiveCourses = async () => {
         id: true,
         name: true,
         course_study_mode: true,
+        course_instances: true,
       },
       orderBy: {
         name: "asc",

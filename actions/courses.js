@@ -4,6 +4,7 @@ import { getCourseByID } from "@/data/course";
 import { getModuleByCode } from "@/data/module";
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { checkIsActive } from "@/lib/utils";
 
 export const courses = async (values, courseID) => {
   try {
@@ -14,7 +15,7 @@ export const courses = async (values, courseID) => {
       return { error: "Unauthorised" };
     }
 
-    const { studyModes, modules, ...rest } = values;
+    const { studyModes, course_instances, modules, ...rest } = values;
 
     if (courseID) {
       const existingCourse = await getCourseByID(courseID);
@@ -57,6 +58,51 @@ export const courses = async (values, courseID) => {
             ...rest,
           },
         });
+
+        // Update or create commencements
+        if (course_instances) {
+          for (const instance of course_instances) {
+            await db.courseInstance.upsert({
+              where: {
+                course_id_instance_name: {
+                  course_id: courseID,
+                  instance_name: instance.instance_name,
+                },
+              },
+              update: {
+                instance_name: instance.instance_name,
+                start_date: instance.start_date,
+                last_join_weeks: instance.last_join_weeks,
+                last_join_date: instance.last_join_date,
+                end_date: instance.end_date,
+                results_date: instance.results_date,
+                status: true, // -> For now, all with be active, later it will be 'checkIsActive(instance.last_join_date)'
+              },
+              create: {
+                course_id: courseID,
+                instance_name: instance.instance_name,
+                start_date: instance.start_date,
+                last_join_weeks: instance.last_join_weeks,
+                last_join_date: instance.last_join_date,
+                end_date: instance.end_date,
+                results_date: instance.results_date,
+                status: true, // -> For now, all with be active, later it will be 'checkIsActive(instance.last_join_date)'
+              },
+            });
+          }
+
+          // Delete course instances
+          await db.courseInstance.deleteMany({
+            where: {
+              course_id: courseID,
+              instance_name: {
+                notIn: course_instances.map(
+                  (instance) => instance.instance_name
+                ),
+              },
+            },
+          });
+        }
 
         // Update or create study modes
         if (studyModes) {

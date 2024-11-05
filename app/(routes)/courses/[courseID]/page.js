@@ -33,6 +33,7 @@ const CourseIDPage = async ({ params }) => {
     course.last_join_date,
     course.endDate,
     course.resultsDate,
+    course.course_instances.length > 0,
     course.course_study_mode.length > 0,
     course.modules.length > 0,
   ];
@@ -86,7 +87,10 @@ const CourseIDPage = async ({ params }) => {
           <LevelForm initialData={course} courseID={course.id} />
         </div>
         <div className="space-y-6">
-          <DatesForm initialData={course} courseID={course.id} />
+          <DatesForm
+            initialData={course.course_instances}
+            courseID={course.id}
+          />
           <StudyModeForm
             initialData={course.course_study_mode}
             courseID={course.id}

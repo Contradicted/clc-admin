@@ -182,7 +182,7 @@ const StudyModeForm = ({ initialData, courseID }) => {
           </Button>
         </div>
         {!isEditing && (
-          <p
+          <div
             className={cn(
               "text-sm mt-2 px-6.5 py-4",
               !initialData.length > 0 && "italic"
@@ -193,7 +193,7 @@ const StudyModeForm = ({ initialData, courseID }) => {
             ) : (
               "No study modes have been set"
             )}
-          </p>
+          </div>
         )}
         {isEditing && (
           <Form {...form}>

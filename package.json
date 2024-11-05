@@ -39,6 +39,7 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
+    "dotenv": "^16.4.5",
     "file-saver": "^2.0.5",
     "flatpickr": "^4.6.13",
     "i18n-iso-countries": "^7.12.0",
