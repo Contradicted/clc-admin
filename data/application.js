@@ -23,6 +23,7 @@ export const getApplicationByID = async (applicationID) => {
       course: {
         include: {
           course_study_mode: true,
+          course_instances: true,
         },
       },
     },
