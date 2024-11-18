@@ -220,6 +220,7 @@ const VisaDetailsForm = ({ initialData, staffID }) => {
                                 date > new Date() ||
                                 date < new Date("1900-01-01")
                               }
+                              weekStartsOn={1}
                               initialFocus
                             />
                           </PopoverContent>
@@ -264,6 +265,7 @@ const VisaDetailsForm = ({ initialData, staffID }) => {
                               fromYear={now.getFullYear()}
                               toYear={now.getFullYear() + 10}
                               onSelect={field.onChange}
+                              weekStartsOn={1}
                               disabled={true} // Calendar is always disabled
                               initialFocus
                             />

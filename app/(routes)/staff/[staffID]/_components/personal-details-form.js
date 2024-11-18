@@ -275,6 +275,7 @@ const PersonalDetailsForm = ({ initialData, staffID }) => {
                                 date > new Date() ||
                                 date < new Date("1900-01-01")
                               }
+                              weekStartsOn={1}
                               initialFocus
                             />
                           </PopoverContent>

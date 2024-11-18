@@ -26,7 +26,7 @@ export const register = async (values) => {
 
   await db.user.create({
     data: {
-      id,
+      id: generateUserID(),
       title: "Mr",
       firstName,
       lastName,

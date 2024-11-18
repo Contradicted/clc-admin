@@ -701,6 +701,7 @@ const DateTimePicker = React.forwardRef(
             initialFocus
             captionLayout="dropdown-buttons"
             yearRange={yearRange}
+            weekStartsOn={1}
             locale={locale}
             disabled={(date) => date < new Date("1900-01-01")}
             {...props}

@@ -461,6 +461,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
     control: form.control,
   });
 
+  const now = new Date();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -1376,10 +1377,14 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                     >
                                       <Calendar
                                         mode="single"
-                                        selected={field.value}
-                                        onSelect={field.onChange}
+                                        selected={new Date(field.value)}
+                                        captionLayout="dropdown-buttons"
+                                        fromYear={1920}
+                                        toYear={now.getFullYear()}
+                                        onSelect={(date) =>
+                                          field.onChange(new Date(date))
+                                        }
                                         disabled={(date) =>
-                                          date < new Date() ||
                                           date > new Date("2100-01-01")
                                         }
                                         initialFocus

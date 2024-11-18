@@ -1,16 +1,25 @@
 "use client";
 
 import { login } from "@/actions/login";
+import { Button } from "@/components/ui/button";
 import { FormField, FormItem } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
-import { LoaderCircle, LockKeyhole, LockKeyholeIcon, Mail } from "lucide-react";
+import {
+  EyeIcon,
+  EyeOffIcon,
+  LoaderCircle,
+  LockKeyhole,
+  LockKeyholeIcon,
+  Mail,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
 const LoginPage = () => {
+  const [isVisible, setIsVisible] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const { toast } = useToast();
@@ -43,93 +52,112 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="h-full grid grid-cols-1 lg:grid-cols-2 bg-white">
-      <div className="flex items-center justify-center border-r-2 border-r-stroke">
-        <Image src="/clc.png" width={400} height={400} alt="Logo" />
+    <div className="min-h-screen flex flex-col lg:flex-row bg-white">
+      {/* Logo Section */}
+      <div className="lg:w-1/2 flex items-center justify-center p-8 lg:p-12 bg-gray-50 border-b lg:border-b-0 lg:border-r border-gray-200">
+        <div className="relative w-full max-w-[400px] aspect-square">
+          <Image
+            src="/clc.png"
+            fill
+            className="object-contain"
+            alt="CLC Logo"
+            priority
+          />
+        </div>
       </div>
-      <div className="w-full p-4 sm:p-12.5 xl:p-17.5 flex flex-col justify-center">
-        <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-          Sign In to CLC Admin
-        </h2>
 
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="mb-4">
+      {/* Form Section */}
+      <div className="lg:w-1/2 flex flex-col justify-center px-6 py-12 lg:px-16 xl:px-24">
+        <div className="max-w-[450px] mx-auto w-full">
+          <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+            Welcome back
+          </h2>
+          <p className="text-gray-600 mb-8">
+            Sign in to your CLC Admin account
+          </p>
+
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               name="email"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Email
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email address
                   </label>
                   <div className="relative">
                     <input
                       {...field}
                       type="email"
                       disabled={isPending}
-                      placeholder="Email"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      placeholder="Enter your email"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pl-6 pr-10 text-sm 
+                    transition-colors placeholder:text-gray-400
+                    focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary
+                    disabled:cursor-not-allowed disabled:opacity-50"
                     />
-
-                    <span className="absolute right-4 top-4">
-                      <Mail className="stroke-[1.5] text-neutral-400" />
-                    </span>
+                    <Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   </div>
                 </FormItem>
               )}
             />
-          </div>
 
-          <div className="mb-6">
             <FormField
               name="password"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Password
                   </label>
                   <div className="relative">
                     <input
                       {...field}
-                      type="password"
-                      placeholder="Password"
+                      type={isVisible ? "text" : "password"}
+                      placeholder="Enter your password"
                       disabled={isPending}
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pl-6 pr-20 text-sm 
+                    transition-colors placeholder:text-gray-400
+                    focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary
+                    disabled:cursor-not-allowed disabled:opacity-50"
                     />
-
-                    <span className="absolute right-4 top-4">
-                      <LockKeyhole className="stroke-[1.5] text-neutral-400" />
-                    </span>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        disabled={isPending}
+                        onClick={() => setIsVisible(!isVisible)}
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground transition-colors hover:bg-transparent"
+                      >
+                        {isVisible ? (
+                          <EyeOffIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                        ) : (
+                          <EyeIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                        )}
+                      </Button>
+                      <LockKeyhole className="h-5 w-5 text-gray-400" />
+                    </div>
                   </div>
                 </FormItem>
               )}
             />
-          </div>
 
-          <div className="mb-5">
-            <button
+            <Button
               type="submit"
               disabled={isPending}
-              className="flex w-full justify-center cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+              className="w-full py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg
+            transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+            disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isPending ? (
-                <LoaderCircle className="animate-spin" />
+                <LoaderCircle className="h-5 w-5 animate-spin" />
               ) : (
-                <p>Sign in</p>
+                "Sign in"
               )}
-            </button>
-          </div>
-
-          {/* <div className="mt-6 text-center" disabled={isPending}>
-            <p>
-              Don’t have any account?{" "}
-              <Link href="/auth/register" className="text-primary">
-                Sign Up
-              </Link>
-            </p>
-          </div> */}
-        </form>
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );
