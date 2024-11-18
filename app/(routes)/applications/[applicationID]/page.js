@@ -25,7 +25,9 @@ const ApplicationIDPage = async ({ params }) => {
 
   return (
     <DefaultLayout>
-      <div className="max-w-screen-xl mx-auto">
+      <div className="max-w-screen-xl mx-auto px-4">
+        {" "}
+        {/* Added padding */}
         <ApplicationHeader
           data={application}
           applicationID={application.id}
@@ -33,8 +35,11 @@ const ApplicationIDPage = async ({ params }) => {
           emailTimestamp={application.emailSentAt}
           status={application.status}
         />
-        <div className="flex flex-col gap-x-4 space-y-5 lg:flex-row lg:flex-grow lg:space-y-0">
-          <div className="h-fit max-h-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark flex-1">
+        <div className="flex flex-col gap-6 xl:flex-row">
+          {" "}
+          {/* Simplified flex classes */}
+          {/* Main content area */}
+          <div className="w-full lg:flex-1 h-fit rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="grid grid-cols-6 border-b border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
               <div className="col-span-3 flex items-center">
                 <ApplicationButtons
@@ -51,8 +56,8 @@ const ApplicationIDPage = async ({ params }) => {
               />
             </div>
           </div>
-
-          <div className="h-fit rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark lg:w-[350px] flex-shrink-0">
+          {/* Notes section */}
+          <div className="w-full xl:w-[350px] h-fit rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="flex items-center justify-between p-4 border-b border-stroke">
               <h4 className="text-lg font-semibold text-black dark:text-white">
                 Notes

@@ -41,6 +41,15 @@ const ApplicationTabs = ({ data, courses, className }) => {
     }
   };
 
+  // Add scroll buttons handler
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = window.innerWidth > 1024 ? 300 : 200;
+      scrollRef.current.scrollLeft +=
+        direction === "left" ? -scrollAmount : scrollAmount;
+    }
+  };
+
   useEffect(() => {
     const scrollElement = scrollRef.current;
     if (scrollElement) {
@@ -77,17 +86,18 @@ const ApplicationTabs = ({ data, courses, className }) => {
               className="absolute left-0 top-0 h-full w-36 pointer-events-none bg-gradient-to-r from-background via-background/50 to-transparent z-20"
               aria-hidden="true"
             />
-            <div
-              className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity z-30"
-              aria-hidden="true"
+            <button
+              onClick={() => scroll("left")}
+              className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-30 cursor-pointer"
+              aria-label="Scroll tabs left"
             >
               <ChevronLeft className="h-4 w-4" />
-            </div>
+            </button>
           </>
         )}
         <div
           ref={scrollRef}
-          className="w-full lg:max-w-[730px] overflow-x-auto scrollbar-hide"
+          className="w-full lg:max-w-[800px] xl:mx-auto overflow-x-auto scrollbar-hide scroll-smooth"
           onKeyDown={handleKeyDown}
           tabIndex={0}
           role="tablist"
@@ -113,12 +123,13 @@ const ApplicationTabs = ({ data, courses, className }) => {
               className="absolute right-0 top-0 h-full w-36 pointer-events-none bg-gradient-to-l from-background via-background/50 to-transparent z-20"
               aria-hidden="true"
             />
-            <div
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity z-30"
-              aria-hidden="true"
+            <button
+              onClick={() => scroll("right")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-30 cursor-pointer"
+              aria-label="Scroll tabs right"
             >
               <ChevronRight className="h-4 w-4" />
-            </div>
+            </button>
           </>
         )}
         {/* Optional: Touch indicator */}
