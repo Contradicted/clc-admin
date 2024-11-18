@@ -11,9 +11,11 @@ import { Button } from "@/components/ui/button";
 import AddNoteButton from "./_components/add-note-button";
 import { cn, formatDate, formatDateTime } from "@/lib/utils";
 import { getStudentByApplicationID } from "@/data/student";
+import { getActiveCourses } from "@/data/course";
 
 const ApplicationIDPage = async ({ params }) => {
   const application = await getApplicationByID(params.applicationID);
+  const courses = await getActiveCourses();
 
   if (!application) {
     return redirect("/applications");
@@ -42,47 +44,56 @@ const ApplicationIDPage = async ({ params }) => {
               </div>
             </div>
             <div className="px-4 py-4.5 md:px-6 2xl:px-7.5">
-              <ApplicationTabs data={application} className="px-0" />
+              <ApplicationTabs
+                data={application}
+                courses={courses}
+                className="px-0"
+              />
             </div>
           </div>
 
-          <div className="w-full h-fit rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark flex-grow-0 flex-shrink-0 lg:w-1/4">
-            <div className="flex items-center py-4 px-5 justify-between">
-              <h4 className="text-xl font-semibold text-black dark:text-white">
+          <div className="h-fit rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark lg:w-[350px] flex-shrink-0">
+            <div className="flex items-center justify-between p-4 border-b border-stroke">
+              <h4 className="text-lg font-semibold text-black dark:text-white">
                 Notes
               </h4>
               <AddNoteButton application={application} />
             </div>
-            {application.notes.map((note, index) => (
-              <div
-                className={cn("w-full flex gap-x-4 px-5 mb-5")}
-                key={note.id}
-              >
-                <div className="flex flex-col items-center text-sm">
-                  <span className="font-medium">
-                    {formatDateTime(note.createdAt).date}
-                  </span>
-                  <span className="italic text-xs">
-                    {formatDateTime(note.createdAt).time}
-                  </span>
-                  <Button
-                    size="sm"
-                    className="mt-2 rounded-full bg-meta-1 px-3 py-1 text-xs hover:bg-meta-1 hover:cursor-default"
-                  >
-                    {note.type}
-                  </Button>
-                </div>
-                <div className="flex-1 min-w-0 flex flex-col justify-between">
-                  <p className="text-sm break-words whitespace-pre-wrap mb-2">
-                    {note.content}
-                  </p>
-                  <div className="flex items-center font-medium text-sm">
-                    <Minus className="size-4 stroke-1 mr-2" />
-                    {note.user.firstName + " " + note.user.lastName}
+
+            <div className="divide-y divide-stroke">
+              {application.notes.map((note) => (
+                <div key={note.id} className="p-4 flex gap-3">
+                  {/* Date and type column */}
+                  <div className="flex flex-col items-center text-xs space-y-1">
+                    <span className="font-medium whitespace-nowrap">
+                      {formatDateTime(note.createdAt).date}
+                    </span>
+                    <span className="italic whitespace-nowrap">
+                      {formatDateTime(note.createdAt).time}
+                    </span>
+                    <Button
+                      size="sm"
+                      className="mt-1 rounded-full bg-meta-1 px-2 py-0.5 text-xs hover:bg-meta-1 hover:cursor-default"
+                    >
+                      {note.type}
+                    </Button>
+                  </div>
+
+                  {/* Note content */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm break-words whitespace-pre-wrap mb-2">
+                      {note.content}
+                    </p>
+                    <div className="flex items-center text-xs font-medium">
+                      <Minus className="size-3 stroke-1 mr-1" />
+                      <span className="truncate">
+                        {note.user.firstName + " " + note.user.lastName}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

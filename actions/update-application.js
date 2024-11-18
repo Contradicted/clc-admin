@@ -497,6 +497,8 @@ export const updatePersonalDetails = async (formData, applicationID) => {
       email: formData.get("email"),
       mobileNo: formData.get("mobileNo"),
       homeTelephoneNo: formData.get("homeTelephoneNo"),
+      emergency_contact_name: formData.get("emergency_contact_name"),
+      emergency_contact_no: formData.get("emergency_contact_no"),
       tuitionFees: formData.get("tuitionFees"),
       isEnglishFirstLanguage: formData.get("isEnglishFirstLanguage") === "true",
       entryDateToUK:
@@ -618,6 +620,108 @@ export const updateCourseDetails = async (values, applicationID) => {
     return { success: "Course details updated successfully" };
   } catch (error) {
     console.error("[UPDATING_COURSE_DETAILS_ERROR]", error);
+    return { error: "Something went wrong" };
+  }
+};
+
+export const updatePaymentPlan = async (values, applicationID) => {
+  try {
+    const utapi = new UTApi();
+
+    const paymentPlanData = {
+      paymentOption: "SLC",
+      hasSlcAccount: values.get("hasSlcAccount") === "Yes",
+      previouslyReceivedFunds: values.get("previouslyReceivedFunds") === "Yes",
+      previousFundingYear:
+        values.get("previousFundingYear") !== "undefined"
+          ? values.get("previousFundingYear")
+          : null,
+      appliedForCourse: values.get("appliedForCourse") === "Yes",
+      crn: values.get("crn") || null,
+      slcStatus: values.get("slcStatus") || null,
+      ssn: values.get("ssn") || null,
+      tuitionFeeAmount: !isNaN(values.get("tuitionFeeAmount"))
+        ? Number(values.get("tuitionFeeAmount"))
+        : null,
+      maintenanceLoanAmount: !isNaN(values.get("maintenanceLoanAmount"))
+        ? Number(values.get("maintenanceLoanAmount"))
+        : null,
+      courseFee: values.get("courseFee")
+        ? Number(values.get("courseFee"))
+        : null,
+      usingMaintenanceForTuition:
+        values.get("usingMaintenanceForTuition") === "true" || null,
+      expectedPayments: JSON.parse(values.get("expectedPayments") || []),
+      shortfall: JSON.parse(values.get("shortfall") || null),
+      paymentStatus: JSON.parse(values.get("paymentStatus") || null),
+    };
+
+    // Handle document upload
+    const file = values.get("tuition_doc");
+    const existingFile = values.get("tuition_doc_existing");
+
+    let fileData = {};
+
+    if (file && file instanceof File) {
+      // Check if a file is already present in the DB
+      const existingTuitionDoc = await db.application.findUnique({
+        where: {
+          id: applicationID,
+        },
+        select: { tuition_doc_url: true },
+      });
+
+      // If file already exists, delete and replace
+      if (existingTuitionDoc?.tuition_doc_url) {
+        const fileKey = existingTuitionDoc.tuition_doc_url.split("f/")[1];
+        await utapi.deleteFiles([fileKey]);
+      }
+
+      const uploadedFile = await utapi.uploadFiles(file);
+      fileData = {
+        tuition_doc_url: uploadedFile.data.url,
+        tuition_doc_name: uploadedFile.data.name,
+      };
+    } else if (!existingFile) {
+      // Remove file
+      const existingDoc = await db.application.findUnique({
+        where: { id: applicationID },
+        select: { tuition_doc_url: true },
+      });
+
+      if (existingDoc?.tuition_doc_url) {
+        const fileKey = existingDoc.tuition_doc_url.split("f/")[1];
+        await utapi.deleteFiles([fileKey]);
+      }
+      fileData = {
+        tuition_doc_url: null,
+        tuition_doc_name: null,
+      };
+    }
+
+    // Create transaction
+    const transactions = [
+      db.paymentPlan.upsert({
+        where: { applicationID },
+        create: { applicationID, ...paymentPlanData },
+        update: paymentPlanData,
+      }),
+    ];
+
+    // Only update application if file has changed
+    if (fileData) {
+      transactions.push(
+        db.application.update({
+          where: { id: applicationID },
+          data: fileData,
+        })
+      );
+    }
+
+    await db.$transaction(transactions);
+    return { success: "Student finance details updated successfully" };
+  } catch (error) {
+    console.error("[UPDATING_PAYMENT_PLAN_ERROR]", error);
     return { error: "Something went wrong" };
   }
 };

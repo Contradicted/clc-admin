@@ -89,6 +89,21 @@ const formSchema = z
     email: z.string().email("Invalid email address"),
     mobileNo: z.string().min(1, "Mobile number is required"),
     homeTelephoneNo: z.string().optional(),
+    emergency_contact_name: z
+      .string({
+        required_error: "Emergency contact name is required",
+      })
+      .min(1, { message: "Emergency contact name is required" })
+      .regex(nameRegex, {
+        message: "Emergency contact name cannot contain numbers",
+      }),
+    emergency_contact_no: z
+      .string({
+        required_error: "Emergency contact number is required",
+      })
+      .trim()
+      .min(1, { message: "Emergency contact number is required" })
+      .max(13, { message: "Maximum 12 digits allowed" }),
     tuitionFees: z.string().min(1, "Tuition fees are required"),
     isEnglishFirstLanguage: z.boolean(),
     entryDateToUK: z

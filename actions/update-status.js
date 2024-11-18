@@ -79,6 +79,15 @@ export const updateStatus = async (emailMsg, applicationID, status) => {
       emailMsg
     );
 
+    await db.note.create({
+      data: {
+        content: `Application requested for change. ${emailMsg ? `Message: ${emailMsg}` : ""}`,
+        type: "Admin",
+        applicationID: application.id,
+        userID: currentAdmin.id,
+      },
+    });
+
     return { success: "Successfully updated status!" };
   } else {
     await updateStatusEmail(status, application, student, "", emailMsg);
