@@ -1380,7 +1380,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                         selected={new Date(field.value)}
                                         captionLayout="dropdown-buttons"
                                         fromYear={1920}
-                                        toYear={now.getFullYear()}
+                                        toYear={now.getFullYear() + 3}
                                         onSelect={(date) =>
                                           field.onChange(new Date(date))
                                         }
