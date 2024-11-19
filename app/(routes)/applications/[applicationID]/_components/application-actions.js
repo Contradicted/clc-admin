@@ -11,7 +11,7 @@ import { downloadFiles } from "@/lib/download";
 import { exportApplicationToCSV } from "@/lib/export";
 
 const Actions = ({ data }) => {
-  // console.log(data);
+  console.log(data);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

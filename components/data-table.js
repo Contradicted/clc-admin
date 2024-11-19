@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -53,8 +53,18 @@ const ApplicationsTable = ({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  // Effect to update date filter when date range changes
+  useEffect(() => {
+    if (date?.from && date?.to) {
+      table.getColumn("date")?.setFilterValue([date.from, date.to]);
+    } else {
+      table.getColumn("date")?.setFilterValue(undefined);
+    }
+  }, [date]);
+
   const handleReset = () => {
     setDate({ from: undefined, to: undefined });
+    table.resetColumnFilters();
   };
 
   return (
@@ -78,8 +88,9 @@ const ApplicationsTable = ({
         <DataTableToolbar
           table={table}
           courses={courses}
-          type={type}
           onReset={handleReset}
+          type={type}
+          data={data}
         />
       )}
       <div className="max-w-full overflow-x-auto">

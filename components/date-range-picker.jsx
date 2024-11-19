@@ -26,6 +26,8 @@ export function DateRangePicker({
   className,
   ...props
 }) {
+  const now = new Date();
+
   React.useEffect(() => {
     if (!date?.from || !date?.to) return;
 
@@ -63,6 +65,9 @@ export function DateRangePicker({
         <PopoverContent className={cn("w-auto p-0", className)} {...props}>
           <Calendar
             initialFocus
+            captionLayout="dropdown-buttons"
+            fromYear={1920}
+            toYear={now.getFullYear()}
             mode="range"
             defaultMonth={date?.from}
             selected={date}

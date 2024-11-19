@@ -69,6 +69,7 @@ export const columns = [
   {
     id: "actions",
     header: () => "Action",
+    enableSorting: false,
     cell: ({ row }) => {
       const appID = row.getValue("id");
       return (
@@ -201,6 +202,81 @@ export const staffColumns = [
           View
         </Link>
       );
+    },
+  },
+];
+
+export const interviewColumns = [
+  {
+    accessorKey: "id",
+    header: "Interview ID",
+    cell: (info) => info.getValue(),
+  },
+  {
+    accessorKey: "applicationID",
+    header: "Application ID",
+    cell: ({ row }) => {
+      const appID = row.getValue("applicationID");
+      return (
+        <Link
+          href={`/applications/${appID}`}
+          className="text-primary hover:underline"
+        >
+          {appID}
+        </Link>
+      );
+    },
+  },
+  {
+    accessorKey: "studentName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Student Name" />
+    ),
+  },
+  {
+    accessorKey: "date",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Interview Date" />
+    ),
+    cell: (info) => formatDateTime(info.getValue()).dateTime,
+    sortingFn: "datetime",
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue.length !== 2) return true;
+      const [start, end] = filterValue;
+      if (!start || !end) return true;
+
+      const rowDate = dayjs(row.getValue(columnId));
+      return rowDate.isBetween(start, end, "day", "[]"); // [] means inclusive
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.getValue("status");
+      return (
+        <span
+          className={`${
+            status === "pass"
+              ? "text-green-600"
+              : status === "fail"
+                ? "text-red"
+                : "text-yellow-600"
+          }`}
+        >
+          {status
+            ? status.charAt(0).toUpperCase() + status.slice(1)
+            : "Pending"}
+        </span>
+      );
+    },
+    filterFn: (row, id, value) => {
+      if (!value.length) return true; // If no filters selected, show all
+      const status = row.getValue(id);
+      // Handle 'Pending' case (where status is null)
+      if (value.includes(null) && !status) return true;
+      // Handle other cases
+      return value.includes(status);
     },
   },
 ];

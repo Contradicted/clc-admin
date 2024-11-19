@@ -17,18 +17,30 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import { PlusCircledIcon } from "@radix-ui/react-icons";
 
 const DataTableFacetedFilter = ({ column, title, options }) => {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() ?? []);
 
-  console.log(selectedValues);
+  // Helper function to get accurate count for each option
+  const getOptionCount = (option) => {
+    if (option.value === null) {
+      // Count rows where status is null or undefined
+      return (
+        column
+          ?.getFacetedRowModel()
+          ?.rows.filter((row) => !row.getValue(column.id)).length || 0
+      );
+    }
+    return facets?.get(option.value) || 0;
+  };
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="h-8 border-dashed">
-          <PlusCircleIcon className="mr-2 size-4" />
+        <Button variant="outline" size="sm" className="h-8 border-dashed">
+          <PlusCircledIcon className="mr-2 size-4" />
           {title}
           {selectedValues?.size > 0 && (
             <>
@@ -69,20 +81,20 @@ const DataTableFacetedFilter = ({ column, title, options }) => {
         <Command>
           <CommandInput placeholder={title} />
           <CommandList>
-            <CommandEmpty>No results found</CommandEmpty>
+            <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => {
+                const count = getOptionCount(option);
                 const isSelected = selectedValues.has(option.value);
                 return (
                   <CommandItem
-                    key={option.value}
+                    key={option.value ?? "null"}
                     onSelect={() => {
                       if (isSelected) {
                         selectedValues.delete(option.value);
                       } else {
                         selectedValues.add(option.value);
                       }
-
                       const filterValues = Array.from(selectedValues);
                       column?.setFilterValue(
                         filterValues.length ? filterValues : undefined
@@ -99,29 +111,16 @@ const DataTableFacetedFilter = ({ column, title, options }) => {
                     >
                       <CheckIcon className={cn("size-4")} />
                     </div>
-                    <span>{option.label}</span>
-                    {facets?.get(option.value) && (
-                      <span className="ml-auto flex size-4 items-center justify-center text-xs">
-                        {facets.get(option.value)}
+                    {option.label}
+                    {count !== undefined && (
+                      <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">
+                        {count}
                       </span>
                     )}
                   </CommandItem>
                 );
               })}
             </CommandGroup>
-            {selectedValues.size > 0 && (
-              <>
-                <CommandSeparator />
-                <CommandGroup>
-                  <CommandItem
-                    onSelect={() => column?.setFilterValue(undefined)}
-                    className="justify-center text-center"
-                  >
-                    Clear filters
-                  </CommandItem>
-                </CommandGroup>
-              </>
-            )}
           </CommandList>
         </Command>
       </PopoverContent>

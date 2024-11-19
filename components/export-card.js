@@ -27,7 +27,20 @@ const ExportCard = ({ data }) => {
   };
 
   const handleExport = () => {
-    exportAllApplicationToCSV(data, selectedFields);
+    // Format data to remove any whitespace in values
+    const formattedData = data.map((row) => {
+      const formattedRow = { ...row };
+
+      Object.keys(formattedRow).forEach((key) => {
+        if (typeof formattedRow[key] === "string") {
+          formattedRow[key] = formattedRow[key].trim();
+        }
+      });
+
+      return formattedRow;
+    });
+
+    exportAllApplicationToCSV(formattedData, selectedFields);
   };
 
   return (
