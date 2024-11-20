@@ -59,7 +59,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { updatePaymentPlan } from "@/actions/update-application";
 
 const expectedPaymentSchema = z.object({
-  date: z.date({
+  date: z.coerce.date({
     required_error: "Date is required",
     invalid_type_error: "That's not a valid date",
   }),
