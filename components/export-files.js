@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { downloadFiles } from "@/lib/download";
 import { useToast } from "@/components/ui/use-toast";
 
 const ExportFiles = ({ data, courses }) => {
@@ -36,12 +35,28 @@ const ExportFiles = ({ data, courses }) => {
     }
   }, [courseTitle, commencements, commencement]);
 
-  // Check if form is valid
-  const isValid = useMemo(() => {
-    return courseTitle && campus && commencement;
-  }, [courseTitle, campus, commencement]);
+  // Check if form is valid and get matching applications count
+  const { isValid, matchingCount } = useMemo(() => {
+    const valid = courseTitle && campus && commencement;
+    const count = valid
+      ? data.filter(
+          (app) =>
+            app.courseTitle === courseTitle &&
+            app.campus === campus &&
+            app.commencement === commencement
+        ).length
+      : 0;
+    return { isValid: valid, matchingCount: count };
+  }, [courseTitle, campus, commencement, data]);
 
-  const handleDownload = async () => {
+  // Reset form function
+  const resetForm = () => {
+    setCourseTitle("");
+    setCampus("");
+    setCommencement("");
+  };
+
+  const handleDownload = async () => {    
     if (!isValid) {
       toast({
         title: "Invalid selection",
@@ -51,38 +66,69 @@ const ExportFiles = ({ data, courses }) => {
       return;
     }
 
+    if (matchingCount === 0) {
+      toast({
+        title: "No applications found",
+        description: "No applications match your selected criteria",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsLoading(true);
-
-      const filtered = data.filter((app) => {
-        return (
-          app.courseTitle === courseTitle &&
-          app.campus === campus &&
-          app.commencement === commencement
-        );
+      
+      toast({
+        title: "Preparing download",
+        description: `Gathering files for ${matchingCount} application${matchingCount === 1 ? '' : 's'}...`,
+        variant: "success",
       });
 
-      if (filtered.length === 0) {
-        toast({
-          title: "No applications found",
-          description: "No applications match your selected criteria",
-          variant: "destructive",
-        });
-        return;
+      const response = await fetch('/api/download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          courseTitle,
+          campus,
+          commencement,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Download failed');
       }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.style.display = 'none';
+      link.href = url;
+      link.download = `applications_${new Date().toISOString().split('T')[0]}.zip`;
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
 
       toast({
         variant: "success",
-        title: "Starting download",
-        description: `Preparing files for ${filtered.length} application${filtered.length === 1 ? "" : "s"}...`,
+        title: "Download started",
+        description: "Your files will be saved to your downloads folder",
       });
 
-      await downloadFiles(filtered);
+      // Reset form after successful download
+      resetForm();
     } catch (error) {
       console.error("Download failed:", error);
       toast({
         title: "Download failed",
-        description: "Failed to download files",
+        description: error.message || "Failed to download files",
         variant: "destructive",
       });
     } finally {
@@ -140,22 +186,15 @@ const ExportFiles = ({ data, courses }) => {
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-4">
           {isValid && (
             <p className="text-sm text-muted-foreground">
-              {
-                data.filter(
-                  (app) =>
-                    app.courseTitle === courseTitle &&
-                    app.campus === campus &&
-                    app.commencement === commencement
-                ).length
-              }{" "}
-              applications match your criteria
+              {matchingCount} application{matchingCount === 1 ? '' : 's'} match your criteria
             </p>
           )}
 
           <Button
+            type="submit"
             onClick={handleDownload}
             disabled={isLoading || !isValid}
             className="w-full"
@@ -163,7 +202,7 @@ const ExportFiles = ({ data, courses }) => {
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Downloading...
+                Preparing Download...
               </>
             ) : (
               <>
@@ -173,7 +212,7 @@ const ExportFiles = ({ data, courses }) => {
             )}
           </Button>
         </div>
-      </div>
+      </div> 
     </div>
   );
 };
