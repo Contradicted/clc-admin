@@ -32,6 +32,7 @@ const formSchema = z.object({
     errorMap: () => ({ message: "Please select a study mode" }),
   }),
   campus: z.string().min(1, "Campus is required"),
+  commencement: z.string().min(1, "Commencement is required"),
 });
 
 const CourseDetails = ({

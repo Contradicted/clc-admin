@@ -604,7 +604,8 @@ export const updateCourseDetails = async (values, applicationID) => {
     if (
       existingApplication.courseID === existingCourse.id &&
       existingApplication.studyMode === values.studyMode &&
-      existingApplication.campus === values.campus
+      existingApplication.campus === values.campus &&
+      existingApplication.commencement === values.commencement
     ) {
       return;
     }
