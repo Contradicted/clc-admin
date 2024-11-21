@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AmountInput from "@/components/amount-input";
 import {
@@ -1666,9 +1666,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                 (payment, index) => (
                                   <TableRow key={index}>
                                     <TableCell className="whitespace-nowrap">
-                                      {new Date(
-                                        payment.date
-                                      ).toLocaleDateString()}
+                                      {formatDate(payment.date)}
                                     </TableCell>
                                     <TableCell>
                                       {formatCurrency(payment.amount)}
