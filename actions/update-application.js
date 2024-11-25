@@ -515,6 +515,11 @@ export const updatePersonalDetails = async (formData, applicationID) => {
           : null,
     };
 
+    const userDetails = {
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+    };
+
     const fileTypes = [
       { formName: "photo", urlField: "photoUrl", nameField: "photoName" },
       {
@@ -557,6 +562,29 @@ export const updatePersonalDetails = async (formData, applicationID) => {
         }
         personalDetails[urlField] = null;
         if (nameField) personalDetails[nameField] = null;
+      }
+    }
+
+    if (
+      userDetails.firstName?.trim() ||
+      userDetails.lastName?.trim()
+    ) {
+      const currentUser = await db.user.findUnique({
+        where: {
+          id: existingApplication.userID
+        }
+      });
+
+      if (currentUser.firstName !== userDetails.firstName || currentUser.lastName !== userDetails.lastName) {
+        await db.user.update({
+          where: {
+            id: existingApplication.userID,
+          },
+          data: {
+            firstName: userDetails.firstName,
+            lastName: userDetails.lastName,
+          },
+        });
       }
     }
 
