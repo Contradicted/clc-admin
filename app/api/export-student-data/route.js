@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 import { exportStudentData } from "@/lib/export";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
@@ -9,12 +12,6 @@ export async function GET(req) {
     const courseTitle = url.searchParams.get('courseTitle');
     const campus = url.searchParams.get('campus');
     const commencement = url.searchParams.get('commencement');
-
-    console.log("Received request with parameters:", {
-      courseTitle,
-      campus,
-      commencement,
-    });
 
     // Get all applications matching the criteria
     const applications = await db.application.findMany({
@@ -38,8 +35,6 @@ export async function GET(req) {
         emergency_contact_no: true,
       },
     });
-
-    console.log("Found applications:", applications.length);
 
     const { csvContent, error } = await exportStudentData(applications, {
       courseTitle,
