@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import { Download, Loader2, FileText } from "lucide-react";
+import { Download, Loader2, FileText, BanknotePound, CircleDollarSign } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -17,9 +17,7 @@ const ExportFiles = ({ data, courses }) => {
   const [courseTitle, setCourseTitle] = useState("");
   const [campus, setCampus] = useState("");
   const [commencement, setCommencement] = useState("");
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
-
+  const [loading, setLoading] = useState({ type: null });
   const { toast } = useToast();
 
   // Get commencements for selected course
@@ -36,118 +34,46 @@ const ExportFiles = ({ data, courses }) => {
     }
   }, [courseTitle, commencements, commencement]);
 
-  // Check if form is valid and get matching applications count
-  const { isValid, matchingCount } = useMemo(() => {
+  // Check if form is valid and get counts
+  const { isValid, counts } = useMemo(() => {
     const valid = courseTitle && campus && commencement;
-    const count = valid
-      ? data.filter(
-          (app) =>
-            app.courseTitle === courseTitle &&
-            app.campus === campus &&
-            app.commencement === commencement
-        ).length
-      : 0;
-    return { isValid: valid, matchingCount: count };
+    if (!valid) return { isValid: false, counts: { total: 0, slc: 0 } };
+    
+    const matches = data.filter(app => 
+      app.courseTitle === courseTitle && 
+      app.campus === campus && 
+      app.commencement === commencement
+    );
+    
+    return { 
+      isValid: valid, 
+      counts: {
+        total: matches.length,
+        slc: matches.filter(app => app.tuitionFees === 'Student Loan Company England (SLC)').length
+      }
+    };
   }, [courseTitle, campus, commencement, data]);
 
-  // Reset form function
-  const resetForm = () => {
-    setCourseTitle("");
-    setCampus("");
-    setCommencement("");
-  };
-
-  const handleDownload = async () => {    
+  const handleExport = async (type) => {
     if (!isValid) {
       toast({
         title: "Invalid selection",
-        description: "Please select all fields before downloading",
+        description: "Please select all fields before proceeding",
         variant: "destructive",
       });
       return;
     }
 
-    if (matchingCount === 0) {
+    if (type === 'finance' && counts.slc === 0) {
       toast({
-        title: "No applications found",
-        description: "No applications match your selected criteria",
+        title: "No SLC applications found",
+        description: "No Student Finance England applications match your selected criteria",
         variant: "destructive",
       });
       return;
     }
 
-    try {
-      setIsDownloading(true);
-      
-      toast({
-        title: "Preparing download",
-        description: `Gathering files for ${matchingCount} application${matchingCount === 1 ? '' : 's'}...`,
-        variant: "success",
-      });
-
-      const response = await fetch('/api/download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          courseTitle,
-          campus,
-          commencement,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Download failed');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.style.display = 'none';
-      link.href = url;
-      link.download = `applications_${new Date().toISOString().split('T')[0]}.zip`;
-      
-      document.body.appendChild(link);
-      link.click();
-      
-      setTimeout(() => {
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      }, 100);
-
-      toast({
-        variant: "success",
-        title: "Download started",
-        description: "Your files will be saved to your downloads folder",
-      });
-
-      // Reset form after successful download
-      resetForm();
-    } catch (error) {
-      console.error("Download failed:", error);
-      toast({
-        title: "Download failed",
-        description: error.message || "Failed to download files",
-        variant: "destructive",
-      });
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  const handleExportStudentData = async () => {
-    if (!isValid) {
-      toast({
-        title: "Invalid selection",
-        description: "Please select all fields before exporting",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (matchingCount === 0) {
+    if (type !== 'finance' && counts.total === 0) {
       toast({
         title: "No applications found",
         description: "No applications match your selected criteria",
@@ -158,17 +84,24 @@ const ExportFiles = ({ data, courses }) => {
 
     let link = null;
     try {
-      setIsExporting(true);
+      setLoading({ type });
       
-      // Build URL with query parameters
-      const params = new URLSearchParams({
-        courseTitle,
-        campus,
-        commencement,
-      });
+      const endpoints = {
+        download: '/api/download',
+        student: '/api/export-student-data',
+        finance: '/api/export-student-finance'
+      };
+
+      const method = type === 'download' ? 'POST' : 'GET';
+      const params = new URLSearchParams({ courseTitle, campus, commencement });
+      const url = type === 'download' ? endpoints[type] : `${endpoints[type]}?${params}`;
       
-      const response = await fetch(`/api/export-student-data?${params.toString()}`, {
-        method: 'GET',
+      const response = await fetch(url, {
+        method,
+        ...(type === 'download' && {
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ courseTitle, campus, commencement }),
+        }),
       });
 
       if (!response.ok) {
@@ -177,37 +110,49 @@ const ExportFiles = ({ data, courses }) => {
       }
 
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      const downloadUrl = window.URL.createObjectURL(blob);
       link = document.createElement('a');
       link.style.display = 'none';
-      link.href = url;
-      link.download = `student_data_${new Date().toISOString().split('T')[0]}.csv`;
+      link.href = downloadUrl;
+
+      const date = new Date().toISOString().split('T')[0];
+      const fileNames = {
+        download: `applications_${date}.zip`,
+        student: `student_data_${date}.csv`,
+        finance: `student_finance_${date}.csv`
+      };
+      link.download = fileNames[type];
       
       document.body.appendChild(link);
       link.click();
 
+      const messages = {
+        download: "Files downloaded successfully",
+        student: "Student data has been exported to CSV",
+        finance: "Student finance data has been exported to CSV"
+      };
+
       toast({
         variant: "success",
         title: "Export successful",
-        description: "Student data has been exported to CSV",
+        description: messages[type],
       });
 
-      // Reset form after successful export
-      resetForm();
+      setCourseTitle("");
+      setCampus("");
+      setCommencement("");
     } catch (error) {
       console.error("Export failed:", error);
       toast({
         title: "Export failed",
-        description: error.message || "Failed to export student data",
+        description: error.message || "Failed to export data",
         variant: "destructive",
       });
     } finally {
-      setIsExporting(false);
-      // Clean up
-      if (link && document.body.contains(link)) {
+      setLoading({ type: null });
+      if (link?.parentNode === document.body) {
         document.body.removeChild(link);
       }
-      // Release the URL object
       if (link?.href) {
         window.URL.revokeObjectURL(link.href);
       }
@@ -264,14 +209,14 @@ const ExportFiles = ({ data, courses }) => {
           </Select>
         </div>
 
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center flex-wrap">
           <Button
             type="submit"
-            onClick={handleDownload}
-            disabled={isDownloading || isExporting || !isValid}
+            onClick={() => handleExport('download')}
+            disabled={loading.type || !isValid}
             className="bg-blue-500 hover:bg-blue-600 text-white w-fit"
           >
-            {isDownloading ? (
+            {loading.type === 'download' ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Preparing Download...
@@ -279,19 +224,19 @@ const ExportFiles = ({ data, courses }) => {
             ) : (
               <>
                 <Download className="w-4 h-4 mr-2" />
-                Download Application Files{isValid && matchingCount > 0 ? ` (${matchingCount})` : ''}
+                Download Application Files{isValid && counts.total > 0 ? ` (${counts.total})` : ''}
               </>
             )}
           </Button>
 
           <Button
             type="submit"
-            onClick={handleExportStudentData}
-            disabled={isDownloading || isExporting || !isValid}
+            onClick={() => handleExport('student')}
+            disabled={loading.type || !isValid}
             variant="outline"
             className="border-blue-500 text-blue-500 hover:bg-blue-50 w-fit"
           >
-            {isExporting ? (
+            {loading.type === 'student' ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Preparing Export...
@@ -299,7 +244,27 @@ const ExportFiles = ({ data, courses }) => {
             ) : (
               <>
                 <FileText className="w-4 h-4 mr-2" />
-                Export as Spreadsheet{isValid && matchingCount > 0 ? ` (${matchingCount})` : ''}
+                Export Student Details{isValid && counts.total > 0 ? ` (${counts.total})` : ''}
+              </>
+            )}
+          </Button>
+
+          <Button
+            type="submit"
+            onClick={() => handleExport('finance')}
+            disabled={loading.type || !isValid}
+            variant="outline"
+            className="border-blue-500 text-blue-500 hover:bg-blue-50 w-fit"
+          >
+            {loading.type === 'finance' ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Preparing Export...
+              </>
+            ) : (
+              <>
+                <CircleDollarSign className="w-4 h-4 mr-2" />
+                Export Finance Details{isValid && counts.slc > 0 ? ` (${counts.slc})` : ''}
               </>
             )}
           </Button>

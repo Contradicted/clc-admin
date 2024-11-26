@@ -13,6 +13,12 @@ export async function GET(req) {
     const campus = url.searchParams.get('campus');
     const commencement = url.searchParams.get('commencement');
 
+    // console.log("Received request with parameters:", {
+    //   courseTitle,
+    //   campus,
+    //   commencement,
+    // });
+
     // Get all applications matching the criteria
     const applications = await db.application.findMany({
       where: {
@@ -35,6 +41,8 @@ export async function GET(req) {
         emergency_contact_no: true,
       },
     });
+
+    console.log("Found applications:", applications.length);
 
     const { csvContent, error } = await exportStudentData(applications, {
       courseTitle,
