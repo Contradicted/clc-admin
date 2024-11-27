@@ -1,15 +1,15 @@
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
-
 import { exportStudentFinanceData } from "@/lib/export";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
   try {
-    const { searchParams } = new URL(request.url);
+    const searchParams = new URL(request.url).searchParams;
     const courseTitle = searchParams.get("courseTitle");
     const campus = searchParams.get("campus");
     const commencement = searchParams.get("commencement");
+    const slcStatus = searchParams.get("slcStatus");
+    const month = searchParams.get("month");
+    const year = searchParams.get("year");
 
     if (!courseTitle || !campus || !commencement) {
       return NextResponse.json(
@@ -18,31 +18,34 @@ export async function GET(request) {
       );
     }
 
-    const csvData = await exportStudentFinanceData(courseTitle, campus, commencement);
+    const csvContent = await exportStudentFinanceData(
+      courseTitle,
+      campus,
+      commencement,
+      slcStatus,
+      month,
+      year
+    );
 
-    if (!csvData) {
+    if (!csvContent) {
       return NextResponse.json(
-        { error: "No matching applications found" },
+        { error: "No applications found matching the criteria" },
         { status: 404 }
       );
     }
 
-    // Set headers for CSV download
-    const headers = new Headers();
-    headers.set("Content-Type", "text/csv");
-    headers.set(
-      "Content-Disposition",
-      `attachment; filename="student_finance_${new Date().toISOString().split("T")[0]}.csv"`
-    );
-
-    return new NextResponse(csvData, {
-      status: 200,
-      headers,
+    return new NextResponse(csvContent, {
+      headers: {
+        "Content-Type": "text/csv",
+        "Content-Disposition": `attachment; filename=student_finance_${new Date()
+          .toISOString()
+          .split("T")[0]}.csv`,
+      },
     });
   } catch (error) {
     console.error("[EXPORT_STUDENT_FINANCE_ERROR]", error);
     return NextResponse.json(
-      { error: error.message || "Failed to export student finance data" },
+      { error: error.message || "Failed to export data" },
       { status: 500 }
     );
   }

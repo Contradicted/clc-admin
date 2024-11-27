@@ -7,11 +7,11 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-
 import { Button } from "@/components/ui/button";
-import { Download, Loader2, FileText, BanknotePound, CircleDollarSign } from "lucide-react";
+import { Download, Loader2, FileText } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import ExportFinance from "./export-finance";
 
 const ExportFiles = ({ data, courses }) => {
   const [courseTitle, setCourseTitle] = useState("");
@@ -35,9 +35,9 @@ const ExportFiles = ({ data, courses }) => {
   }, [courseTitle, commencements, commencement]);
 
   // Check if form is valid and get counts
-  const { isValid, counts } = useMemo(() => {
+  const { isValid, count } = useMemo(() => {
     const valid = courseTitle && campus && commencement;
-    if (!valid) return { isValid: false, counts: { total: 0, slc: 0 } };
+    if (!valid) return { isValid: false, count: 0 };
     
     const matches = data.filter(app => 
       app.courseTitle === courseTitle && 
@@ -45,13 +45,7 @@ const ExportFiles = ({ data, courses }) => {
       app.commencement === commencement
     );
     
-    return { 
-      isValid: valid, 
-      counts: {
-        total: matches.length,
-        slc: matches.filter(app => app.tuitionFees === 'Student Loan Company England (SLC)').length
-      }
-    };
+    return { isValid: valid, count: matches.length };
   }, [courseTitle, campus, commencement, data]);
 
   const handleExport = async (type) => {
@@ -64,16 +58,7 @@ const ExportFiles = ({ data, courses }) => {
       return;
     }
 
-    if (type === 'finance' && counts.slc === 0) {
-      toast({
-        title: "No SLC applications found",
-        description: "No Student Finance England applications match your selected criteria",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (type !== 'finance' && counts.total === 0) {
+    if (count === 0) {
       toast({
         title: "No applications found",
         description: "No applications match your selected criteria",
@@ -89,7 +74,6 @@ const ExportFiles = ({ data, courses }) => {
       const endpoints = {
         download: '/api/download',
         student: '/api/export-student-data',
-        finance: '/api/export-student-finance'
       };
 
       const method = type === 'download' ? 'POST' : 'GET';
@@ -119,7 +103,6 @@ const ExportFiles = ({ data, courses }) => {
       const fileNames = {
         download: `applications_${date}.zip`,
         student: `student_data_${date}.csv`,
-        finance: `student_finance_${date}.csv`
       };
       link.download = fileNames[type];
       
@@ -129,7 +112,6 @@ const ExportFiles = ({ data, courses }) => {
       const messages = {
         download: "Files downloaded successfully",
         student: "Student data has been exported to CSV",
-        finance: "Student finance data has been exported to CSV"
       };
 
       toast({
@@ -160,116 +142,100 @@ const ExportFiles = ({ data, courses }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
-        <h2 className="text-2xl font-bold">Application Files</h2>
-        <p className="text-blue-100 mt-2">Download or export application data</p>
-      </div>
-
-      <div className="p-6 space-y-6">
-        <div className="grid gap-4 md:grid-cols-3">
-          <Select value={courseTitle} onValueChange={setCourseTitle}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Course" />
-            </SelectTrigger>
-            <SelectContent position="top">
-              {courses.map((course) => (
-                <SelectItem key={course.id} value={course.name}>
-                  {course.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={campus} onValueChange={setCampus}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Campus" />
-            </SelectTrigger>
-            <SelectContent position="top">
-              <SelectItem value="London">London</SelectItem>
-              <SelectItem value="Bristol">Bristol</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={commencement}
-            onValueChange={setCommencement}
-            disabled={!courseTitle}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select Commencement" />
-            </SelectTrigger>
-            <SelectContent position="top">
-              {commencements.map((date) => (
-                <SelectItem key={date} value={date}>
-                  {date}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div className="space-y-6">
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
+          <h2 className="text-2xl font-bold">Application Files</h2>
+          <p className="text-blue-100 mt-2">Download or export application data</p>
         </div>
 
-        <div className="flex gap-4 items-center flex-wrap">
-          <Button
-            type="submit"
-            onClick={() => handleExport('download')}
-            disabled={loading.type || !isValid}
-            className="bg-blue-500 hover:bg-blue-600 text-white w-fit"
-          >
-            {loading.type === 'download' ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Preparing Download...
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4 mr-2" />
-                Download Application Files{isValid && counts.total > 0 ? ` (${counts.total})` : ''}
-              </>
-            )}
-          </Button>
+        <div className="p-6 space-y-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            <Select value={courseTitle} onValueChange={setCourseTitle}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Course" />
+              </SelectTrigger>
+              <SelectContent position="top">
+                {courses.map((course) => (
+                  <SelectItem key={course.id} value={course.name}>
+                    {course.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Button
-            type="submit"
-            onClick={() => handleExport('student')}
-            disabled={loading.type || !isValid}
-            variant="outline"
-            className="border-blue-500 text-blue-500 hover:bg-blue-50 w-fit"
-          >
-            {loading.type === 'student' ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Preparing Export...
-              </>
-            ) : (
-              <>
-                <FileText className="w-4 h-4 mr-2" />
-                Export Student Details{isValid && counts.total > 0 ? ` (${counts.total})` : ''}
-              </>
-            )}
-          </Button>
+            <Select value={campus} onValueChange={setCampus}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Campus" />
+              </SelectTrigger>
+              <SelectContent position="top">
+                <SelectItem value="London">London</SelectItem>
+                <SelectItem value="Bristol">Bristol</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Button
-            type="submit"
-            onClick={() => handleExport('finance')}
-            disabled={loading.type || !isValid}
-            variant="outline"
-            className="border-blue-500 text-blue-500 hover:bg-blue-50 w-fit"
-          >
-            {loading.type === 'finance' ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Preparing Export...
-              </>
-            ) : (
-              <>
-                <CircleDollarSign className="w-4 h-4 mr-2" />
-                Export Finance Details{isValid && counts.slc > 0 ? ` (${counts.slc})` : ''}
-              </>
-            )}
-          </Button>
+            <Select
+              value={commencement}
+              onValueChange={setCommencement}
+              disabled={!courseTitle}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Commencement" />
+              </SelectTrigger>
+              <SelectContent position="top">
+                {commencements.map((date) => (
+                  <SelectItem key={date} value={date}>
+                    {date}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex gap-4 items-center flex-wrap">
+            <Button
+              type="submit"
+              onClick={() => handleExport('download')}
+              disabled={loading.type || !isValid}
+              className="bg-blue-500 hover:bg-blue-600 text-white w-fit"
+            >
+              {loading.type === 'download' ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Preparing Download...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Application Files{isValid && count > 0 ? ` (${count})` : ''}
+                </>
+              )}
+            </Button>
+
+            <Button
+              type="submit"
+              onClick={() => handleExport('student')}
+              disabled={loading.type || !isValid}
+              variant="outline"
+              className="border-blue-500 text-blue-500 hover:bg-blue-50 w-fit"
+            >
+              {loading.type === 'student' ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Preparing Export...
+                </>
+              ) : (
+                <>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Export Student Details{isValid && count > 0 ? ` (${count})` : ''}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
+
+      <ExportFinance data={data} courses={courses} />
     </div>
   );
 };
