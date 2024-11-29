@@ -1663,7 +1663,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                 Amount
                               </TableHead>
                               <TableHead className="whitespace-nowrap">
-                                University
+                                University/College
                               </TableHead>
                               <TableHead className="whitespace-nowrap">
                                 Course
