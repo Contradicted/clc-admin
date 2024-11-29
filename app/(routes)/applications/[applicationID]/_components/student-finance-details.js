@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn, formatCurrency, formatDate } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AmountInput from "@/components/amount-input";
 import {
@@ -430,7 +430,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
         ? "Yes"
         : "No",
       crn: application.paymentPlan?.crn || "",
-      courseFee: application.paymentPlan?.courseFee,
+      courseFee: application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees || 0,
       slcStatus: application.paymentPlan?.slcStatus,
       tuitionFeeAmount: application.paymentPlan?.tuitionFeeAmount || undefined,
       maintenanceLoanAmount:
@@ -455,6 +455,8 @@ export const StudentFinanceDetails = ({ application, courses }) => {
     resolver: zodResolver(formSchema),
     mode: "onSubmit",
   });
+
+  console.log(form.getValues("courseFee"))
 
   const { fields, append, remove } = useFieldArray({
     name: "expectedPayments",
@@ -533,7 +535,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
     console.log(values);
 
     let shortfall = null;
-    const selectedCourseFee = application.paymentPlan?.courseFee || 0;
+    const selectedCourseFee = application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees || 0;
     const formData = new FormData();
 
     // Capture all data besides file and expected payments
@@ -587,7 +589,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
     formData.append(
       "paymentStatus",
       JSON.stringify({
-        courseFee: application?.paymentPlan?.courseFee,
+        courseFee: application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees,
         totalAmount,
         insufficientTuition:
           shortfall?.type === "tuition" && !values.usingMaintenanceForTuition,
@@ -631,12 +633,12 @@ export const StudentFinanceDetails = ({ application, courses }) => {
 
   useEffect(() => {
     // Only run if we have both tuition fee and course fee
-    if (!application.paymentPlan?.courseFee || !form.watch("tuitionFeeAmount"))
+    const courseFee = application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees || 0;
+    if (!courseFee || !form.watch("tuitionFeeAmount"))
       return;
 
     const tuitionAmount = Number(form.watch("tuitionFeeAmount"));
     const maintenanceAmount = Number(form.watch("maintenanceLoanAmount"));
-    const courseFee = Number(application.paymentPlan?.courseFee);
 
     // Calculate shortfall
     if (tuitionAmount < courseFee) {
@@ -670,6 +672,9 @@ export const StudentFinanceDetails = ({ application, courses }) => {
     watchSlcStatus,
     watchUsingMaintenanceForTuition,
     application.paymentPlan?.courseFee,
+    courses,
+    application.courseID,
+    application.studyMode
   ]);
 
   useEffect(() => {
@@ -685,7 +690,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
       Math.abs(
         totalAmount -
           (form.watch("usingMaintenanceForTuition")
-            ? application.paymentPlan?.courseFee -
+            ? (application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees || 0) -
               (form.watch("tuitionFeeAmount") || 0)
             : form.watch("tuitionFeeAmount") || 0)
       ) <= 0.01
@@ -696,11 +701,15 @@ export const StudentFinanceDetails = ({ application, courses }) => {
     totalAmount,
     form.watch("tuitionFeeAmount"),
     form.watch("usingMaintenanceForTuition"),
+    application.paymentPlan?.courseFee,
+    courses,
+    application.courseID,
+    application.studyMode
   ]);
 
   useEffect(() => {
     const tuitionFeeAmount = Number(form.watch("tuitionFeeAmount"));
-    const courseFee = Number(application.paymentPlan?.courseFee) || 0;
+    const courseFee = application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees || 0;
     const maintenanceLoanAmount =
       Number(form.watch("maintenanceLoanAmount")) || 0;
     const currentStatus = form.watch("slcStatus");
@@ -734,6 +743,9 @@ export const StudentFinanceDetails = ({ application, courses }) => {
     form.watch("maintenanceLoanAmount"),
     form.watch("slcStatus"),
     application.paymentPlan?.courseFee,
+    courses,
+    application.courseID,
+    application.studyMode
   ]);
 
   // Update fileData array with file
@@ -1165,7 +1177,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                 {formatCurrency(form.watch("tuitionFeeAmount"))}
                                 ) is less than the course fee (
                                 {formatCurrency(
-                                  application.paymentPlan?.courseFee
+                                  application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees || 0
                                 )}
                                 ).
                                 {showMaintenanceOption ? (
@@ -1425,7 +1437,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                           },
                                           0
                                         );
-                                        setTotalAmount(total);
+                                        setTotalAmount(Number(total.toFixed(2)));
                                       }}
                                       disabled={isSaving}
                                     />
@@ -1547,7 +1559,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                 </div>
                                 <div className="font-medium">
                                   {formatCurrency(
-                                    application.paymentPlan?.courseFee
+                                    application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees || 0
                                   )}
                                 </div>
                               </div>
@@ -1570,7 +1582,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                     </div>
                                     <div className="font-medium">
                                       {formatCurrency(
-                                        application.paymentPlan?.courseFee -
+                                        application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees || 0 -
                                           (form.watch("tuitionFeeAmount") || 0)
                                       )}
                                     </div>
@@ -1602,8 +1614,7 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                             (form.watch(
                                               "usingMaintenanceForTuition"
                                             )
-                                              ? application.paymentPlan
-                                                  ?.courseFee -
+                                              ? application.paymentPlan?.courseFee || courses?.find(course => course.id === application.courseID)?.course_study_mode?.find(mode => mode.study_mode === application.studyMode)?.tuition_fees || 0 -
                                                 (form.watch(
                                                   "tuitionFeeAmount"
                                                 ) || 0)
@@ -1666,7 +1677,9 @@ export const StudentFinanceDetails = ({ application, courses }) => {
                                 (payment, index) => (
                                   <TableRow key={index}>
                                     <TableCell className="whitespace-nowrap">
-                                      {formatDate(payment.date)}
+                                      {new Date(
+                                        payment.date
+                                      ).toLocaleDateString()}
                                     </TableCell>
                                     <TableCell>
                                       {formatCurrency(payment.amount)}
