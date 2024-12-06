@@ -26,6 +26,9 @@ export async function GET(req) {
         campus,
         commencement,
       },
+      orderBy: {
+        firstName: 'asc',
+      },
       select: {
         title: true,
         firstName: true,
@@ -59,12 +62,17 @@ export async function GET(req) {
       return NextResponse.json({ error }, { status: 400 });
     }
 
+    // Format filename
+    const formattedCourseTitle = courseTitle.replace(/[^a-zA-Z0-9]/g, '_');
+    const formattedCommencement = commencement.replace(/[^a-zA-Z0-9]/g, '_');
+    const fileName = `${formattedCourseTitle}_${campus}_${formattedCommencement}_details_${new Date().toISOString().split('T')[0]}.csv`;
+
     // Create response with CSV content
     const response = new NextResponse(csvContent);
     response.headers.set("Content-Type", "text/csv");
     response.headers.set(
       "Content-Disposition",
-      `attachment; filename="application_data_${new Date().toISOString().split("T")[0]}.csv"`
+      `attachment; filename="${fileName}"`
     );
 
     return response;

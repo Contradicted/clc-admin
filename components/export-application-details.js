@@ -85,7 +85,13 @@ const ExportApplicationDetails = ({ data, courses }) => {
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = `student_details_${new Date().toISOString().split("T")[0]}.csv`;
+
+      // Get filename from Content-Disposition header if available
+      const contentDisposition = response.headers.get('content-disposition');
+      const filenameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
+      const filename = filenameMatch ? filenameMatch[1] : `${courseTitle.replace(/[^a-zA-Z0-9]/g, '_')}_${campus}_${commencement.replace(/[^a-zA-Z0-9]/g, '_')}_details_${new Date().toISOString().split("T")[0]}.csv`;
+
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
