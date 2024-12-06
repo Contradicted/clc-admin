@@ -2,6 +2,7 @@ import DefaultLayout from "@/components/default-layout";
 import ExportCard from "@/components/export-card";
 import ExportFiles from "@/components/export-files";
 import ExportApplicationDetails from "@/components/export-application-details";
+import ExportFinance from "@/components/export-finance";
 import { getActiveCourses } from "@/data/course";
 import { db } from "@/lib/db";
 
