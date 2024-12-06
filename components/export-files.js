@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Download, Loader2, FileText } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import ExportFinance from "./export-finance";
 
 const ExportFiles = ({ data, courses }) => {
   const [courseTitle, setCourseTitle] = useState("");
@@ -234,8 +233,6 @@ const ExportFiles = ({ data, courses }) => {
           </div>
         </div>
       </div>
-
-      <ExportFinance data={data} courses={courses} />
     </div>
   );
 };
