@@ -64,6 +64,7 @@ const menuGroups = [
         children: [
           { label: "London Centre", route: "/applications/london" },
           { label: "Bristol Centre", route: "/applications/bristol" },
+          { label: "Sheffield Centre", route: "/applications/sheffield" },
           { label: "All", route: "/applications" },
         ],
       },

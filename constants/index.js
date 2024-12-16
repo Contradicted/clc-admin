@@ -143,6 +143,7 @@ export const applicationHeaders = [
   { label: "Study Mode", value: "studyMode", id: "field_studyMode" },
   { label: "Commencement", value: "commencement", id: "field_commencement" },
   { label: "Bristol Campus", value: "campus", id: "field_bristol_campus" },
+  { label: "Sheffield Campus", value: "campus", id: "field_sheffield_campus" },
   { label: "London Campus", value: "campus", id: "field_london_campus" },
   { label: "Title", value: "title", id: "field_personalTitle" },
   { label: "First Name", value: "firstName", id: "field_firstName" },
