@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { CalendarIcon } from "@radix-ui/react-icons";
-import { addDays, format } from "date-fns";
-
+import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -15,8 +14,6 @@ import {
 
 export function DateRangePicker({
   table,
-  dayCount,
-  dateRange,
   date,
   setDate,
   placeholder = "Pick a date",
@@ -24,13 +21,17 @@ export function DateRangePicker({
   triggerSize = "default",
   triggerClassName,
   className,
+  disabled,
+  allowFutureDates = false,
   ...props
 }) {
   const now = new Date();
+  now.setHours(23, 59, 59, 999);
 
+  // Only update table filter if table is provided
   React.useEffect(() => {
-    if (!date?.from || !date?.to) return;
-
+    if (!table || !date?.from || !date?.to) return;
+    
     table.getColumn("createdAt")?.setFilterValue([date.from, date.to]);
   }, [date?.from, date?.to, table]);
 
@@ -41,6 +42,7 @@ export function DateRangePicker({
           <Button
             variant={triggerVariant}
             size={triggerSize}
+            disabled={disabled}
             className={cn(
               "w-full justify-start truncate text-left font-normal",
               !date && "text-muted-foreground",
@@ -67,13 +69,17 @@ export function DateRangePicker({
             initialFocus
             captionLayout="dropdown-buttons"
             fromYear={1920}
-            toYear={now.getFullYear()}
+            toYear={allowFutureDates ? now.getFullYear() + 10 : now.getFullYear()}
             mode="range"
             defaultMonth={date?.from}
             selected={date}
             onSelect={setDate}
             weekStartsOn={1}
             numberOfMonths={2}
+            disabled={(date) => {
+              if (allowFutureDates) return false;
+              return date > now;
+            }}
           />
         </PopoverContent>
       </Popover>

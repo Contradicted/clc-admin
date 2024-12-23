@@ -1,55 +1,38 @@
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
-
-import { exportStudentFinanceData } from "@/lib/export";
+import { exportStudentFinanceData, exportStudentFinanceByDateRange } from "@/lib/export";
 import { NextResponse } from "next/server";
 
-export async function GET(request) {
+export async function POST(req) {
   try {
-    const searchParams = new URL(request.url).searchParams;
-    const courseTitle = searchParams.get("courseTitle");
-    const campus = searchParams.get("campus");
-    const commencement = searchParams.get("commencement");
-    const slcStatus = searchParams.get("slcStatus");
-    const month = searchParams.get("month");
-    const year = searchParams.get("year");
+    const data = await req.json();
+    const { exportMode, dateRange, ...filters } = data;
 
-    if (!courseTitle || !campus || !commencement) {
-      return NextResponse.json(
-        { error: "Missing required parameters" },
-        { status: 400 }
+    let csvContent;
+    if (exportMode === "date-range" && dateRange) {
+      csvContent = await exportStudentFinanceByDateRange(dateRange);
+    } else {
+      // Original export mode with filters
+      csvContent = await exportStudentFinanceData(
+        filters.courseTitle,
+        filters.campus,
+        filters.commencement,
+        filters.slcStatus,
+        filters.month,
+        filters.year
       );
     }
 
-    const csvContent = await exportStudentFinanceData(
-      courseTitle,
-      campus,
-      commencement,
-      slcStatus,
-      month,
-      year
-    );
-
     if (!csvContent) {
-      return NextResponse.json(
-        { error: "No applications found matching the criteria" },
-        { status: 404 }
-      );
+      return new NextResponse("No data found", { status: 404 });
     }
 
     return new NextResponse(csvContent, {
       headers: {
         "Content-Type": "text/csv",
-        "Content-Disposition": `attachment; filename=student_finance_${new Date()
-          .toISOString()
-          .split("T")[0]}.csv`,
+        "Content-Disposition": 'attachment; filename="student-finance.csv"',
       },
     });
   } catch (error) {
     console.error("[EXPORT_STUDENT_FINANCE_ERROR]", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to export data" },
-      { status: 500 }
-    );
+    return new NextResponse("Error exporting data", { status: 500 });
   }
 }
