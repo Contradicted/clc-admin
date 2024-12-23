@@ -28,7 +28,7 @@ import { z } from "zod";
 
 const formSchema = z.object({
   courseTitle: z.string().min(1, "Course title is required"),
-  studyMode: z.enum(["full_time", "part_time"], {
+  studyMode: z.enum(["full_time", "part_time", "hybrid_learning"], {
     errorMap: () => ({ message: "Please select a study mode" }),
   }),
   campus: z.string().min(1, "Campus is required"),

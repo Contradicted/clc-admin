@@ -235,6 +235,7 @@ const StudyModeForm = ({ initialData, courseID }) => {
                           <SelectContent>
                             <SelectItem value="full_time">Full Time</SelectItem>
                             <SelectItem value="part_time">Part Time</SelectItem>
+                            <SelectItem value="hybrid_learning">Hybrid Learning</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
