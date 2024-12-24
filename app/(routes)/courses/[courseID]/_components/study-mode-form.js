@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch"; // Import Switch component
 import { useToast } from "@/components/ui/use-toast";
 import {
   cn,
@@ -40,6 +41,7 @@ const formSchema = z.object({
       z.object({
         study_mode: z.string(),
         duration: z.number().max(96, "Duration must be less than 96 months"),
+        duration_unit: z.enum(['days', 'months']).default('months'),
         tuition_fees: z
           .number()
           .min(0, "Tuition fee must be a positive number")
@@ -60,9 +62,11 @@ const StudyModesTable = ({ data }) => {
       <tbody>
         {data.flatMap((sm, smIndex) => [
           ...[
-            // Spread the array of objects for each study mode
             { label: "Study Mode", value: formatStudyMode(sm.study_mode) },
-            { label: "Duration", value: `${sm.duration} months` },
+            { 
+              label: "Duration", 
+              value: `${sm.duration} ${sm.duration_unit || (sm.duration >= 30 ? 'months' : 'days')}` 
+            },
             { label: "Tuition Fees", value: `£${sm.tuition_fees}` },
           ].map(({ label, value }, rowIndex) => (
             <tr key={`${smIndex}-${label}`} className="border border-stroke">
@@ -74,7 +78,8 @@ const StudyModesTable = ({ data }) => {
                 {label === "Duration" &&
                   (() => {
                     const numericValue = parseInt(value.match(/\d+/)[0]);
-                    return numericValue >= 12 ? (
+                    const unit = value.split(' ')[1];
+                    return unit === 'months' && numericValue >= 12 ? (
                       <span className="font-bold">
                         ({convertMonthsToYears(numericValue)})
                       </span>
@@ -85,7 +90,6 @@ const StudyModesTable = ({ data }) => {
               </td>
             </tr>
           )),
-          // Add a spacer row after each study mode, except the last one
           ...(smIndex < data.length - 1
             ? [
                 <tr key={`spacer-${smIndex}`} className="h-4">
@@ -106,12 +110,16 @@ const StudyModeForm = ({ initialData, courseID }) => {
   const form = useForm({
     defaultValues: {
       studyModes:
-        initialData.length > 0
-          ? initialData
+        initialData?.length > 0
+          ? initialData.map(mode => ({
+              ...mode,
+              duration_unit: mode.duration_unit || (mode.duration >= 30 ? 'months' : 'days')
+            }))
           : [
               {
                 study_mode: "",
                 duration: "",
+                duration_unit: "months",
                 tuition_fees: "",
               },
             ],
@@ -208,7 +216,7 @@ const StudyModeForm = ({ initialData, courseID }) => {
                     size="sm"
                     className="size-8 p-0"
                     onClick={() =>
-                      append({ study_mode: "", duration: "", tuition_fees: "" })
+                      append({ study_mode: "", duration: "", duration_unit: "months", tuition_fees: "" })
                     }
                   >
                     <PlusIcon className="size-4" />
@@ -235,40 +243,50 @@ const StudyModeForm = ({ initialData, courseID }) => {
                           <SelectContent>
                             <SelectItem value="full_time">Full Time</SelectItem>
                             <SelectItem value="part_time">Part Time</SelectItem>
-                            <SelectItem value="hybrid_learning">Hybrid Learning</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <div className="mb-4.5 mt-4 flex flex-col gap-6 xl:flex-row">
-                    <div className="w-full xl:w-1/2">
-                      <FormField
-                        control={form.control}
-                        name={`studyModes.${index}.duration`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Duration of Course</FormLabel>
-                            <FormControl>
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <FormField
+                      control={form.control}
+                      name={`studyModes.${index}.duration`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Duration</FormLabel>
+                          <FormControl>
+                            <div className="flex gap-2">
                               <Input
-                                {...field}
                                 type="number"
-                                placeholder="Eg. 6"
-                                onChange={(e) => {
-                                  field.onChange(parseInt(e.target.value));
-                                }}
+                                disabled={isPending}
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(e.target.valueAsNumber)
+                                }
                               />
-                            </FormControl>
-                            <FormDescription>
-                              Enter the duration of the course in months.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="w-full xl:w-1/2">
+                              <Select
+                                value={form.watch(`studyModes.${index}.duration_unit`) || 'months'}
+                                onValueChange={(value) =>
+                                  form.setValue(`studyModes.${index}.duration_unit`, value)
+                                }
+                              >
+                                <SelectTrigger className="w-[100px]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="days">Days</SelectItem>
+                                  <SelectItem value="months">Months</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="w-full">
                       <FormField
                         control={form.control}
                         name={`studyModes.${index}.tuition_fees`}

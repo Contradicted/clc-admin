@@ -19,6 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import {
   calculateWeeksBetweenDates,
@@ -43,31 +45,47 @@ const formSchema = z.object({
             z.date(),
             z.string().min(1, { message: "Commencement is required" }),
           ]),
+          isOnDemand: z.boolean().default(false),
           start_date: z
             .date({ invalid_type_error: "Start date is required" })
-            .optional(),
-          last_join_weeks: z.string().optional(),
+            .optional()
+            .nullable(),
+          last_join_weeks: z.string().optional().nullable(),
           last_join_date: z
             .date({
               invalid_type_error: "Last join date is required",
             })
-            // .refine((date) => date > new Date(), {
-            //   message: "Last join date cannot be before or on the current date",
-            // })
-            .optional(),
+            .optional()
+            .nullable(),
           end_date: z
             .date({ invalid_type_error: "End date is required" })
-            // .refine((date) => date > new Date(), {
-            //   message: "End date cannot be before or on the current date",
-            // })
-            .optional(),
+            .optional()
+            .nullable(),
+          results_weeks: z.string().optional().nullable(),
           results_date: z
             .date({ invalid_type_error: "Results date is required" })
-            // .refine((date) => date >= new Date(), {
-            //   message: "Results date cannot be before the current date",
-            // })
-            .optional(),
+            .optional()
+            .nullable(),
         })
+        .refine(
+          (data) => {
+            if (data.isOnDemand) {
+              return true; // Skip date validations for on-demand courses
+            }
+            // Original date validation logic for non-on-demand courses
+            return (
+              data.start_date && 
+              data.last_join_date && 
+              data.end_date && 
+              data.results_date &&
+              data.last_join_weeks &&
+              data.results_weeks
+            );
+          },
+          {
+            message: "All dates and week fields are required for scheduled courses",
+          }
+        )
         .refine(
           (data) => {
             if (data.start_date && data.end_date) {
@@ -133,61 +151,42 @@ const formSchema = z.object({
 });
 
 const DatesTable = ({ courseDates }) => {
-  const sortedDates = [...courseDates].sort((a, b) =>
-    compareAsc(new Date(a.instance_name), new Date(b.instance_name))
-  );
-
   return (
-    <table className="w-full">
-      <tbody>
-        {sortedDates.flatMap((instance, index) => [
-          ...[
-            // Spread the array of objects for each study mode
-            {
-              label: "Commencement Term",
-              value: format(instance.instance_name, "MMMM yyyy"),
-            },
-            { label: "Start Date", value: formatDate(instance.start_date) },
-            {
-              label: "Last Join Date",
-              value: formatDate(instance.last_join_date),
-            },
-            { label: "End Date", value: formatDate(instance.end_date) },
-            { label: "Results Date", value: formatDate(instance.results_date) },
-            {
-              label: "Open for Enrollment",
-              value: instance.status ? "Yes" : "No",
-            },
-          ].map(({ label, value }, rowIndex) => (
-            <tr key={`${index}-${label}`} className="border border-stroke">
-              <td className="font-semibold p-3 border border-r w-1/2">
-                {label}:
-              </td>
-              <td
-                className={cn(
-                  "px-3",
-                  label === "Open for Enrollment"
-                    ? value === "Yes"
-                      ? "text-emerald-500 font-medium"
-                      : "text-red font-medium"
-                    : ""
-                )}
-              >
-                {value}
-              </td>
-            </tr>
-          )),
-          // Add a spacer row after each study mode, except the last one
-          ...(index < courseDates.length - 1
-            ? [
-                <tr key={`spacer-${index}`} className="h-4">
-                  <td colSpan="2"></td>
-                </tr>,
-              ]
-            : []),
-        ])}
-      </tbody>
-    </table>
+    <div className="mt-6 rounded-md border p-4">
+      <div className="font-medium">Course Dates</div>
+      <div className="mt-2">
+        {courseDates.map((date, index) => (
+          <div
+            key={index}
+            className="mt-2 flex items-center justify-between rounded-md border p-3"
+          >
+            <p className="text-sm">
+              {date.instance_name}
+              {date.isOnDemand ? (
+                <span className="ml-2 text-sm text-muted-foreground">
+                  (On Demand)
+                </span>
+              ) : (
+                <>
+                  <span className="ml-2 text-sm text-muted-foreground">
+                    Start Date: {formatDate(date.start_date)}
+                  </span>
+                  <span className="ml-2 text-sm text-muted-foreground">
+                    Last Join Date: {formatDate(date.last_join_date)}
+                  </span>
+                  <span className="ml-2 text-sm text-muted-foreground">
+                    End Date: {formatDate(date.end_date)}
+                  </span>
+                  <span className="ml-2 text-sm text-muted-foreground">
+                    Results Date: {formatDate(date.results_date)}
+                  </span>
+                </>
+              )}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
@@ -201,6 +200,7 @@ const DatesForm = ({ initialData, courseID }) => {
         initialData.length > 0
           ? initialData.map((instance) => ({
               ...instance,
+              isOnDemand: instance.instance_name === "On Demand",
               results_weeks: calculateWeeksBetweenDates(
                 instance.end_date,
                 instance.results_date
@@ -209,6 +209,7 @@ const DatesForm = ({ initialData, courseID }) => {
           : [
               {
                 instance_name: "",
+                isOnDemand: false,
                 start_date: "",
                 last_join_weeks: "4",
                 last_join_date: "",
@@ -259,8 +260,19 @@ const DatesForm = ({ initialData, courseID }) => {
 
   const onSubmit = (values) => {
     if (values.course_instances.length > 0) {
-      values.course_instances.map((instance) => {
-        instance.instance_name = format(instance.instance_name, "MMMM yyyy");
+      values.course_instances = values.course_instances.map((instance) => {
+        // Don't format On Demand instance names
+        if (instance.isOnDemand) {
+          return {
+            ...instance,
+            instance_name: "On Demand"
+          };
+        }
+        // Format date for regular instances
+        return {
+          ...instance,
+          instance_name: format(instance.instance_name, "MMMM yyyy")
+        };
       });
     }
 
@@ -297,10 +309,12 @@ const DatesForm = ({ initialData, courseID }) => {
     });
   };
 
+  console.log(form.formState.errors)
+
   useEffect(() => {
     if (initialData && initialData.length > 0) {
       initialData.map((data) => {
-        if (data.instance_name) {
+        if (data.instance_name && data.instance_name !== "On Demand") {
           data.instance_name = new Date(data.instance_name);
         }
       });
@@ -330,8 +344,20 @@ const DatesForm = ({ initialData, courseID }) => {
               !initialData.length > 0 && "italic"
             )}
           >
-            {initialData.some(Boolean) ? (
-              <DatesTable courseDates={initialData} />
+            {initialData.some((instance) => instance.instance_name === "On Demand") ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">On Demand</Badge>
+                  <span className="text-muted-foreground text-sm">
+                    This course allows flexible start dates
+                  </span>
+                </div>
+              </div>
+            ) : initialData.some(Boolean) ? (
+              <DatesTable courseDates={initialData.map(date => ({
+                ...date,
+                instance_name: typeof date.instance_name === 'string' ? date.instance_name : format(new Date(date.instance_name), "MMMM yyyy")
+              }))} />
             ) : (
               "No course dates have been set"
             )}
@@ -343,239 +369,316 @@ const DatesForm = ({ initialData, courseID }) => {
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-4 px-6.5 py-4"
             >
-              <div className="flex items-center gap-x-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  className="size-8 p-0"
-                  onClick={() =>
-                    append({
-                      instance_name: "",
-                      start_date: "",
-                      last_join_weeks: "4",
-                      last_join_date: "",
-                      end_date: "",
-                      results_weeks: "2",
-                      results_date: "",
-                    })
-                  }
-                >
-                  <PlusIcon className="size-4" />
-                </Button>
-              </div>
-
-              {sortedFields.map((item, index) => (
-                <div key={item.id} className={index > 0 ? "pt-4" : undefined}>
-                  <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                    <div className="w-full xl:w-1/2">
-                      <FormField
-                        control={form.control}
-                        name={`course_instances.${index}.instance_name`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <FormLabel>Commencement</FormLabel>
-                            <FormControl>
-                              <MonthYearPicker
-                                value={field.value && new Date(field.value)}
-                                onChange={field.onChange}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="w-full xl:w-1/2" />
-                  </div>
-                  <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                    <div className="w-full xl:w-1/2">
-                      <FormField
-                        control={form.control}
-                        name={`course_instances.${index}.start_date`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Course Start Date</FormLabel>
-                            <FormControl>
-                              <DateTimePicker
-                                granularity="day"
-                                value={field.value}
-                                onChange={(date) => {
-                                  field.onChange(date);
-                                  const weeks = form.getValues(
-                                    `course_instances.${index}.last_join_weeks`
-                                  );
-                                  calculateLastJoinDate(date, weeks, index);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="w-full xl:w-1/2">
-                      <FormField
-                        control={form.control}
-                        name={`course_instances.${index}.last_join_weeks`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Weeks Allowed for Last Join</FormLabel>
-                            <Select
-                              onValueChange={(e) => {
-                                field.onChange(e);
-                                const startDate = form.getValues(
-                                  `course_instances.${index}.start_date`
-                                );
-
-                                calculateLastJoinDate(startDate, e, index);
-                              }}
-                              defaultValue={field.value}
-                            >
+              <div className="mt-6 space-y-6">
+                <div className="flex flex-col gap-4">
+                  <FormField
+                    control={form.control}
+                    name={`course_instances.0.isOnDemand`}
+                    render={({ field }) => {
+                      const isOnDemand = form.watch(`course_instances.0.isOnDemand`);
+                      return (
+                        <FormItem>
+                          <div className="flex flex-col gap-3 rounded-lg border p-4 shadow-sm">
+                            <div className="flex items-center justify-between">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">On Demand Course</FormLabel>
+                                <p className="text-sm text-muted-foreground">
+                                  Allow students to start the course at any time
+                                </p>
+                              </div>
                               <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select weeks" />
-                                </SelectTrigger>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={(checked) => {
+                                    // Update all instances to match the main switch
+                                    fields.forEach((_, index) => {
+                                      form.setValue(`course_instances.${index}.isOnDemand`, checked);
+                                      if (checked) {
+                                        form.setValue(`course_instances.${index}.instance_name`, "On Demand");
+                                        form.setValue(`course_instances.${index}.start_date`, null);
+                                        form.setValue(`course_instances.${index}.last_join_weeks`, null);
+                                        form.setValue(`course_instances.${index}.last_join_date`, null);
+                                        form.setValue(`course_instances.${index}.end_date`, null);
+                                        form.setValue(`course_instances.${index}.results_weeks`, null);
+                                        form.setValue(`course_instances.${index}.results_date`, null);
+                                      } else {
+                                        // Reset to default values when switching back
+                                        form.setValue(`course_instances.${index}.instance_name`, "");
+                                        form.setValue(`course_instances.${index}.last_join_weeks`, "4");
+                                        form.setValue(`course_instances.${index}.results_weeks`, "2");
+                                      }
+                                    });
+                                    
+                                    // If switching to on-demand, remove all but the first instance
+                                    if (checked && fields.length > 1) {
+                                      for (let i = fields.length - 1; i > 0; i--) {
+                                        remove(i);
+                                      }
+                                    }
+                                  }}
+                                />
                               </FormControl>
-                              <SelectContent>
-                                {[1, 2, 3, 4, 5, 6].map((week) => (
-                                  <SelectItem
-                                    key={week}
-                                    value={week.toString()}
-                                  >
-                                    {week} week{week > 1 ? "s" : ""}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                    <div className="w-full xl:w-1/2">
-                      <FormField
-                        control={form.control}
-                        name={`course_instances.${index}.last_join_date`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Course Last Join Date</FormLabel>
-                            <FormControl>
-                              <DateTimePicker
-                                granularity="day"
-                                value={field.value}
-                                onChange={field.onChange}
-                                disabled
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="w-full xl:w-1/2">
-                      <FormField
-                        control={form.control}
-                        name={`course_instances.${index}.end_date`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Course End Date</FormLabel>
-                            <FormControl>
-                              <DateTimePicker
-                                granularity="day"
-                                value={field.value}
-                                onChange={field.onChange}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                    <div className="w-full xl:w-1/2">
-                      <FormField
-                        control={form.control}
-                        name={`course_instances.${index}.results_weeks`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Weeks for Results Date</FormLabel>
-                            <Select
-                              onValueChange={(e) => {
-                                field.onChange(e);
-                                const endDate = form.getValues(
-                                  `course_instances.${index}.end_date`
-                                );
-
-                                calculateResultsDate(endDate, e, index);
-                              }}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select weeks" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {[1, 2, 3, 4, 5, 6, 7, 8].map((week) => (
-                                  <SelectItem
-                                    key={week}
-                                    value={week.toString()}
-                                  >
-                                    {week} week{week > 1 ? "s" : ""}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="w-full xl:w-1/2">
-                      <FormField
-                        control={form.control}
-                        name={`course_instances.${index}.results_date`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Course Results Date</FormLabel>
-                            <FormControl>
-                              <DateTimePicker
-                                granularity="day"
-                                value={field.value}
-                                onChange={field.onChange}
-                                disabled
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                  {index > 0 && (
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => remove(index)}
-                      className="size-8 p-0 lg:mb-4"
-                    >
-                      <X className="size-4" />
-                    </Button>
-                  )}
+                            </div>
+                            {field.value && (
+                              <p className="text-sm text-muted-foreground border-t pt-3">
+                                On Demand courses allow students to:
+                                <ul className="list-disc list-inside mt-2 space-y-1">
+                                  <li>Start at any time</li>
+                                  <li>Study at their own pace</li>
+                                  <li>Complete the course when ready</li>
+                                </ul>
+                              </p>
+                            )}
+                          </div>
+                        </FormItem>
+                      );
+                    }}
+                  />
                 </div>
-              ))}
-              <div className="flex items-center gap-x-2">
-                <Button type="submit" disabled={isPending}>
-                  {isPending ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
+
+                {!form.watch(`course_instances.0.isOnDemand`) && fields.length < 12 && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() =>
+                      append({
+                        instance_name: "",
+                        isOnDemand: false,
+                        start_date: "",
+                        last_join_weeks: "4",
+                        last_join_date: "",
+                        end_date: "",
+                        results_weeks: "2",
+                        results_date: "",
+                      })
+                    }
+                  >
+                    <PlusIcon className="mr-2 h-4 w-4" />
+                    Add Course Date
+                  </Button>
+                )}
+
+                {sortedFields.map((item, index) => (
+                  <div key={item.id} className={index > 0 ? "pt-4" : undefined}>
+                    {!form.watch(`course_instances.0.isOnDemand`) && (
+                      <>
+                        <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                          <div className="w-full xl:w-1/2">
+                            <FormField
+                              control={form.control}
+                              name={`course_instances.${index}.instance_name`}
+                              render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                  <FormLabel>Commencement</FormLabel>
+                                  <FormControl>
+                                    <MonthYearPicker
+                                      value={field.value && new Date(field.value)}
+                                      onChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <div className="w-full xl:w-1/2" />
+                        </div>
+                        <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                          <div className="w-full xl:w-1/2">
+                            <FormField
+                              control={form.control}
+                              name={`course_instances.${index}.start_date`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Start Date</FormLabel>
+                                  <FormControl>
+                                    <DateTimePicker
+                                      granularity="day"
+                                      value={field.value}
+                                      onChange={(date) => {
+                                        field.onChange(date);
+                                        const weeks = form.getValues(
+                                          `course_instances.${index}.last_join_weeks`
+                                        );
+                                        calculateLastJoinDate(date, weeks, index);
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <div className="w-full xl:w-1/2">
+                            <FormField
+                              control={form.control}
+                              name={`course_instances.${index}.last_join_weeks`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Weeks Allowed for Last Join</FormLabel>
+                                  <Select
+                                    onValueChange={(e) => {
+                                      field.onChange(e);
+                                      const startDate = form.getValues(
+                                        `course_instances.${index}.start_date`
+                                      );
+                                      calculateLastJoinDate(startDate, e, index);
+                                    }}
+                                    defaultValue={field.value}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select weeks" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      {Array.from({ length: 13 }, (_, i) => i).map(
+                                        (week) => (
+                                          <SelectItem
+                                            key={week}
+                                            value={week.toString()}
+                                          >
+                                            {week} {week === 1 ? "week" : "weeks"}
+                                          </SelectItem>
+                                        )
+                                      )}
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                          <div className="w-full xl:w-1/2">
+                            <FormField
+                              control={form.control}
+                              name={`course_instances.${index}.last_join_date`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Last Join Date</FormLabel>
+                                  <FormControl>
+                                    <DateTimePicker
+                                      granularity="day"
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      disabled
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <div className="w-full xl:w-1/2">
+                            <FormField
+                              control={form.control}
+                              name={`course_instances.${index}.end_date`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>End Date</FormLabel>
+                                  <FormControl>
+                                    <DateTimePicker
+                                      granularity="day"
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                          <div className="w-full xl:w-1/2">
+                            <FormField
+                              control={form.control}
+                              name={`course_instances.${index}.results_weeks`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Weeks for Results Date</FormLabel>
+                                  <Select
+                                    onValueChange={(e) => {
+                                      field.onChange(e);
+                                      const endDate = form.getValues(
+                                        `course_instances.${index}.end_date`
+                                      );
+                                      calculateResultsDate(endDate, e, index);
+                                    }}
+                                    defaultValue={field.value}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select weeks" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      {Array.from({ length: 13 }, (_, i) => i).map(
+                                        (week) => (
+                                          <SelectItem
+                                            key={week}
+                                            value={week.toString()}
+                                          >
+                                            {week} {week === 1 ? "week" : "weeks"}
+                                          </SelectItem>
+                                        )
+                                      )}
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <div className="w-full xl:w-1/2">
+                            <FormField
+                              control={form.control}
+                              name={`course_instances.${index}.results_date`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Results Date</FormLabel>
+                                  <FormControl>
+                                    <DateTimePicker
+                                      granularity="day"
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      disabled
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    {index > 0 && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => remove(index)}
+                        className="size-8 p-0 lg:mb-4"
+                      >
+                        <X className="size-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                <div className="flex items-center gap-x-2">
+                  <Button type="submit" disabled={isPending}>
+                    {isPending ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      "Save"
+                    )}
+                  </Button>
+                </div>
               </div>
             </form>
           </Form>

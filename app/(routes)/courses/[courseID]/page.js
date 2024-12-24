@@ -14,6 +14,7 @@ import StudyModeForm from "./_components/study-mode-form";
 import { cn } from "@/lib/utils";
 import Actions from "./_components/actions";
 import ModulesForm from "./_components/modules-form";
+import { Badge } from "@/components/ui/badge";
 
 const CourseIDPage = async ({ params }) => {
   const course = await getCourseByID(params.courseID);
@@ -22,6 +23,12 @@ const CourseIDPage = async ({ params }) => {
     return redirect("/courses");
   }
 
+  // Check if any instance is On Demand
+  const hasOnDemandInstance = course.course_instances.some(
+    instance => instance.instance_name === "On Demand"
+  );
+
+  // For On Demand courses, we don't require date fields
   const requiredFields = [
     course.name,
     course.code,
@@ -29,6 +36,14 @@ const CourseIDPage = async ({ params }) => {
     course.credits,
     course.awarding_body,
     course.level,
+    // Only check date fields if there's no On Demand instance
+    ...(!hasOnDemandInstance ? [
+      course.startDate,
+      course.last_join_date,
+      course.endDate,
+      course.resultsDate,
+    ] : []),
+    // Always require at least one instance, study mode, and module
     course.course_instances.length > 0,
     course.course_study_mode.length > 0,
     course.modules.length > 0,
@@ -37,7 +52,6 @@ const CourseIDPage = async ({ params }) => {
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionPercentage = (completedFields / totalFields) * 100;
-
   const isComplete = requiredFields.every(Boolean);
 
   return (
@@ -51,26 +65,38 @@ const CourseIDPage = async ({ params }) => {
           Back to courses
         </Link>
         <div className="flex items-center justify-between">
-          <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            {`${course.name} (${course.code})`}
-          </h2>
+          <div className="space-y-1">
+            <h2 className="text-title-md2 font-semibold text-black dark:text-white">
+              {`${course.name} (${course.code})`}
+            </h2>
+            {hasOnDemandInstance && (
+              <Badge variant="secondary">On Demand Available</Badge>
+            )}
+          </div>
           <Actions
             disabled={!isComplete}
             isActive={course.status === "Active"}
             courseID={course.id}
           />
         </div>
-        <span
-          className={cn(
-            "text-sm text-orange-400 italic",
-            completionPercentage === 100 &&
-              "text-emerald-500 font-medium italic"
+        <div className="space-y-1">
+          <span
+            className={cn(
+              "text-sm text-orange-400 italic",
+              completionPercentage === 100 &&
+                "text-emerald-500 font-medium italic"
+            )}
+          >
+            {`${Math.round(completionPercentage)}% completed`}
+            {Math.round(completionPercentage) !== 100 &&
+              ` (${completedFields} / ${totalFields})`}
+          </span>
+          {hasOnDemandInstance && (
+            <p className="text-xs text-muted-foreground">
+              Date fields are optional for On Demand courses
+            </p>
           )}
-        >
-          {`${Math.round(completionPercentage)}% completed`}
-          {Math.round(completionPercentage) !== 100 &&
-            ` (${completedFields} / ${totalFields})`}
-        </span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-9 md:grid-cols-2">
@@ -86,6 +112,7 @@ const CourseIDPage = async ({ params }) => {
           <DatesForm
             initialData={course.course_instances}
             courseID={course.id}
+            isOnDemand={hasOnDemandInstance}
           />
           <StudyModeForm
             initialData={course.course_study_mode}

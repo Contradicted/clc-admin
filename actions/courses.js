@@ -62,6 +62,7 @@ export const courses = async (values, courseID) => {
         // Update or create commencements
         if (course_instances) {
           for (const instance of course_instances) {
+            const isOnDemand = instance.instance_name === "On Demand";
             await db.courseInstance.upsert({
               where: {
                 course_id_instance_name: {
@@ -71,21 +72,25 @@ export const courses = async (values, courseID) => {
               },
               update: {
                 instance_name: instance.instance_name,
-                start_date: instance.start_date,
-                last_join_weeks: instance.last_join_weeks,
-                last_join_date: instance.last_join_date,
-                end_date: instance.end_date,
-                results_date: instance.results_date,
+                start_date: isOnDemand ? null : instance.start_date,
+                last_join_weeks: isOnDemand ? null : instance.last_join_weeks,
+                last_join_date: isOnDemand ? null : instance.last_join_date,
+                end_date: isOnDemand ? null : instance.end_date,
+                results_date: isOnDemand ? null : instance.results_date,
                 status: true, // -> For now, all with be active, later it will be 'checkIsActive(instance.last_join_date)'
               },
               create: {
-                course_id: courseID,
+                course: {
+                  connect: {
+                    id: courseID
+                  }
+                },
                 instance_name: instance.instance_name,
-                start_date: instance.start_date,
-                last_join_weeks: instance.last_join_weeks,
-                last_join_date: instance.last_join_date,
-                end_date: instance.end_date,
-                results_date: instance.results_date,
+                start_date: isOnDemand ? null : instance.start_date,
+                last_join_weeks: isOnDemand ? null : instance.last_join_weeks,
+                last_join_date: isOnDemand ? null : instance.last_join_date,
+                end_date: isOnDemand ? null : instance.end_date,
+                results_date: isOnDemand ? null : instance.results_date,
                 status: true, // -> For now, all with be active, later it will be 'checkIsActive(instance.last_join_date)'
               },
             });
@@ -107,6 +112,9 @@ export const courses = async (values, courseID) => {
         // Update or create study modes
         if (studyModes) {
           for (const mode of studyModes) {
+            // Convert months to days if needed
+            const durationInDays = mode.duration_unit === 'months' ? mode.duration * 30 : mode.duration;
+            
             await db.courseStudyMode.upsert({
               where: {
                 course_id_study_mode: {
@@ -115,14 +123,16 @@ export const courses = async (values, courseID) => {
                 },
               },
               update: {
+                duration: durationInDays,
+                duration_unit: mode.duration_unit,
                 tuition_fees: mode.tuition_fees,
-                duration: mode.duration,
                 study_mode: mode.study_mode,
               },
               create: {
                 course_id: courseID,
                 study_mode: mode.study_mode,
-                duration: mode.duration,
+                duration: durationInDays,
+                duration_unit: mode.duration_unit,
                 tuition_fees: mode.tuition_fees,
               },
             });
