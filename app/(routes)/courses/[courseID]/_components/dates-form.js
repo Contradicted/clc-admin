@@ -151,42 +151,113 @@ const formSchema = z.object({
 });
 
 const DatesTable = ({ courseDates }) => {
+  // Filter and sort regular dates, excluding On Demand
+  const sortedDates = [...courseDates]
+    .filter(date => date.instance_name !== "On Demand")
+    .sort((a, b) => compareAsc(new Date(a.instance_name), new Date(b.instance_name)));
+
+  // Find On Demand instance if it exists
+  const onDemandInstance = courseDates.find(date => date.instance_name === "On Demand");
+
   return (
-    <div className="mt-6 rounded-md border p-4">
-      <div className="font-medium">Course Dates</div>
-      <div className="mt-2">
-        {courseDates.map((date, index) => (
-          <div
-            key={index}
-            className="mt-2 flex items-center justify-between rounded-md border p-3"
-          >
-            <p className="text-sm">
-              {date.instance_name}
-              {date.isOnDemand ? (
-                <span className="ml-2 text-sm text-muted-foreground">
-                  (On Demand)
-                </span>
-              ) : (
-                <>
-                  <span className="ml-2 text-sm text-muted-foreground">
-                    Start Date: {formatDate(date.start_date)}
-                  </span>
-                  <span className="ml-2 text-sm text-muted-foreground">
-                    Last Join Date: {formatDate(date.last_join_date)}
-                  </span>
-                  <span className="ml-2 text-sm text-muted-foreground">
-                    End Date: {formatDate(date.end_date)}
-                  </span>
-                  <span className="ml-2 text-sm text-muted-foreground">
-                    Results Date: {formatDate(date.results_date)}
-                  </span>
-                </>
-              )}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
+    <table className="w-full">
+      <tbody>
+        {/* Render On Demand instance first if it exists */}
+        {onDemandInstance && [
+          ...[
+            {
+              label: "Course Type",
+              value: "On Demand",
+            },
+            {
+              label: "Enrollment",
+              value: "Open for enrollment anytime",
+            },
+            {
+              label: "Duration",
+              value: "Flexible completion",
+            },
+            {
+              label: "Status",
+              value: onDemandInstance.status ? "Active" : "Inactive",
+            },
+          ].map(({ label, value }, rowIndex) => (
+            <tr key={`on-demand-${label}`} className="border border-stroke">
+              <td className="font-semibold p-3 border border-r w-1/2">
+                {label}:
+              </td>
+              <td
+                className={cn(
+                  "px-3",
+                  label === "Status"
+                    ? value === "Active"
+                      ? "text-emerald-500 font-medium"
+                      : "text-red font-medium"
+                    : ""
+                )}
+              >
+                {value}
+              </td>
+            </tr>
+          )),
+          // Add a spacer after On Demand if there are regular dates
+          ...(sortedDates.length > 0
+            ? [
+                <tr key="spacer-on-demand" className="h-4">
+                  <td colSpan="2"></td>
+                </tr>,
+              ]
+            : []),
+        ]}
+
+        {/* Render regular dates */}
+        {sortedDates.flatMap((instance, index) => [
+          ...[
+            {
+              label: "Commencement Term",
+              value: format(new Date(instance.instance_name), "MMMM yyyy"),
+            },
+            { label: "Start Date", value: formatDate(instance.start_date) },
+            {
+              label: "Last Join Date",
+              value: formatDate(instance.last_join_date),
+            },
+            { label: "End Date", value: formatDate(instance.end_date) },
+            { label: "Results Date", value: formatDate(instance.results_date) },
+            {
+              label: "Open for Enrollment",
+              value: instance.status ? "Yes" : "No",
+            },
+          ].map(({ label, value }, rowIndex) => (
+            <tr key={`${index}-${label}`} className="border border-stroke">
+              <td className="font-semibold p-3 border border-r w-1/2">
+                {label}:
+              </td>
+              <td
+                className={cn(
+                  "px-3",
+                  label === "Open for Enrollment"
+                    ? value === "Yes"
+                      ? "text-emerald-500 font-medium"
+                      : "text-red font-medium"
+                    : ""
+                )}
+              >
+                {value}
+              </td>
+            </tr>
+          )),
+          // Add a spacer row after each regular date, except the last one
+          ...(index < sortedDates.length - 1
+            ? [
+                <tr key={`spacer-${index}`} className="h-4">
+                  <td colSpan="2"></td>
+                </tr>,
+              ]
+            : []),
+        ])}
+      </tbody>
+    </table>
   );
 };
 
