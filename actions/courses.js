@@ -112,9 +112,7 @@ export const courses = async (values, courseID) => {
         // Update or create study modes
         if (studyModes) {
           for (const mode of studyModes) {
-            // Convert months to days if needed
-            const durationInDays = mode.duration_unit === 'months' ? mode.duration * 30 : mode.duration;
-            
+            // Store duration as-is, along with its unit
             await db.courseStudyMode.upsert({
               where: {
                 course_id_study_mode: {
@@ -123,7 +121,7 @@ export const courses = async (values, courseID) => {
                 },
               },
               update: {
-                duration: durationInDays,
+                duration: mode.duration,
                 duration_unit: mode.duration_unit,
                 tuition_fees: mode.tuition_fees,
                 study_mode: mode.study_mode,
@@ -131,7 +129,7 @@ export const courses = async (values, courseID) => {
               create: {
                 course_id: courseID,
                 study_mode: mode.study_mode,
-                duration: durationInDays,
+                duration: mode.duration,
                 duration_unit: mode.duration_unit,
                 tuition_fees: mode.tuition_fees,
               },

@@ -57,6 +57,14 @@ const formSchema = z.object({
 });
 
 const StudyModesTable = ({ data }) => {
+  const formatDuration = (duration, unit) => {
+    const value = parseInt(duration);
+    if (unit === 'months') {
+      return `${value} ${value === 1 ? 'month' : 'months'}`;
+    }
+    return `${value} ${value === 1 ? 'day' : 'days'}`;
+  };
+
   return (
     <table className="w-full">
       <tbody>
@@ -65,7 +73,7 @@ const StudyModesTable = ({ data }) => {
             { label: "Study Mode", value: formatStudyMode(sm.study_mode) },
             { 
               label: "Duration", 
-              value: `${sm.duration} ${sm.duration_unit || (sm.duration >= 30 ? 'months' : 'days')}` 
+              value: formatDuration(sm.duration, sm.duration_unit)
             },
             { label: "Tuition Fees", value: `£${sm.tuition_fees}` },
           ].map(({ label, value }, rowIndex) => (
@@ -78,7 +86,7 @@ const StudyModesTable = ({ data }) => {
                 {label === "Duration" &&
                   (() => {
                     const numericValue = parseInt(value.match(/\d+/)[0]);
-                    const unit = value.split(' ')[1];
+                    const unit = value.includes('month') ? 'months' : 'days';
                     return unit === 'months' && numericValue >= 12 ? (
                       <span className="font-bold">
                         ({convertMonthsToYears(numericValue)})
@@ -113,7 +121,7 @@ const StudyModeForm = ({ initialData, courseID }) => {
         initialData?.length > 0
           ? initialData.map(mode => ({
               ...mode,
-              duration_unit: mode.duration_unit || (mode.duration >= 30 ? 'months' : 'days')
+              duration_unit: mode.duration_unit || 'months'
             }))
           : [
               {
