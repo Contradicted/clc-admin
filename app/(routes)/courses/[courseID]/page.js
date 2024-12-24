@@ -37,14 +37,13 @@ const CourseIDPage = async ({ params }) => {
     course.awarding_body,
     course.level,
     // Only check date fields if there's no On Demand instance
-    ...(!hasOnDemandInstance ? [
-      course.startDate,
-      course.last_join_date,
-      course.endDate,
-      course.resultsDate,
+    ...(!hasOnDemandInstance && course.course_instances.length > 0 ? [
+      course.course_instances.every(instance => instance.start_date),
+      course.course_instances.every(instance => instance.last_join_date),
+      course.course_instances.every(instance => instance.end_date),
+      course.course_instances.every(instance => instance.results_date),
     ] : []),
     // Always require at least one instance, study mode, and module
-    course.course_instances.length > 0,
     course.course_study_mode.length > 0,
     course.modules.length > 0,
   ];
