@@ -122,9 +122,9 @@ const ExportApplicationDetails = ({ data, courses }) => {
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
         <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-bold">Application Details Export</h2>
+          <h2 className="text-2xl font-bold">Student Details Export</h2>
         </div>
-        <p className="text-blue-100 mt-2">Export application details and information</p>
+        <p className="text-blue-100 mt-2">Export student details and information</p>
       </div>
 
       <div className="p-6 space-y-6">
