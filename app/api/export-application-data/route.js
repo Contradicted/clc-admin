@@ -1,7 +1,7 @@
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
-import { exportApplicationData } from "@/lib/export";
+import { exportStudentData } from "@/lib/export";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
@@ -9,9 +9,9 @@ export async function GET(req) {
   try {
     // Get URL parameters
     const url = new URL(req.url);
-    const courseTitle = url.searchParams.get('courseTitle');
-    const campus = url.searchParams.get('campus');
-    const commencement = url.searchParams.get('commencement');
+    const courseTitle = url.searchParams.get("courseTitle");
+    const campus = url.searchParams.get("campus");
+    const commencement = url.searchParams.get("commencement");
 
     // console.log("Received request with parameters:", {
     //   courseTitle,
@@ -27,7 +27,7 @@ export async function GET(req) {
         commencement,
       },
       orderBy: {
-        firstName: 'asc',
+        firstName: "asc",
       },
       select: {
         title: true,
@@ -52,20 +52,22 @@ export async function GET(req) {
 
     console.log("Found applications:", applications.length);
 
-    const { csvContent, error } = await exportApplicationData(applications, {
+    const result = await exportStudentData(applications, {
       courseTitle,
       campus,
       commencement,
     });
 
-    if (error) {
-      return NextResponse.json({ error }, { status: 400 });
+    if (result.error) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
+    const csvContent = result;
+
     // Format filename
-    const formattedCourseTitle = courseTitle.replace(/[^a-zA-Z0-9]/g, '_');
-    const formattedCommencement = commencement.replace(/[^a-zA-Z0-9]/g, '_');
-    const fileName = `${formattedCourseTitle}_${campus}_${formattedCommencement}_details_${new Date().toISOString().split('T')[0]}.csv`;
+    const formattedCourseTitle = courseTitle.replace(/[^a-zA-Z0-9]/g, "_");
+    const formattedCommencement = commencement.replace(/[^a-zA-Z0-9]/g, "_");
+    const fileName = `${formattedCourseTitle}_${campus}_${formattedCommencement}_details_${new Date().toISOString().split("T")[0]}.csv`;
 
     // Create response with CSV content
     const response = new NextResponse(csvContent);
@@ -77,9 +79,9 @@ export async function GET(req) {
 
     return response;
   } catch (error) {
-    console.error("[EXPORT_APPLICATION_DATA_API_ERROR]", error);
+    console.error("[EXPORT_STUDENT_DATA_API_ERROR]", error);
     return NextResponse.json(
-      { error: "Failed to export application data" },
+      { error: "Failed to export student data" },
       { status: 500 }
     );
   }
