@@ -331,6 +331,8 @@ const ExportFinance = ({ data, courses }) => {
                     <SelectContent position="top">
                       <SelectItem value="London">London</SelectItem>
                       <SelectItem value="Bristol">Bristol</SelectItem>
+                      <SelectItem value="Sheffield">Sheffield</SelectItem>
+                      <SelectItem value="Birmingham">Birmingham</SelectItem>
                     </SelectContent>
                   </Select>
 
