@@ -320,6 +320,7 @@ const CourseDetails = ({
                             <SelectItem value="London">London</SelectItem>
                             <SelectItem value="Bristol">Bristol</SelectItem>
                             <SelectItem value="Sheffield">Sheffield</SelectItem>
+                            <SelectItem value="Birmingham">Birmingham</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>

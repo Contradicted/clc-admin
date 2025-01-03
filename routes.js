@@ -8,7 +8,7 @@ export const authRoutes = ["/auth/login", "/auth/register"];
  * An array of routes that are only accessible for admin users
  * These routes will redirect other users to the default login redirect
  */
-export const adminRoutes = ["/applications", "/applications/london", "/applications/bristol", "/applications/sheffield", "/courses", "/students"];
+export const adminRoutes = ["/applications", "/applications/london", "/applications/bristol", "/applications/sheffield", "/applications/birmingham", "/courses", "/students"];
 
 /**
  * The prefix for API authentication routes
