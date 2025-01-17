@@ -256,41 +256,48 @@ const WorkExperienceDetails = ({ application }) => {
 
   return (
     <div className="mt-6 mb-4 rounded-lg border bg-white shadow-sm">
-      <div className="p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-neutral-900">
-            Work Experience
-          </h2>
-          {isEditing ? (
-            <div className="flex items-center gap-x-2">
-              <Button
-                variant="outline"
-                onClick={handleCancel}
-                disabled={isSaving}
-              >
-                Cancel
-              </Button>
-              <Button disabled={isSaving}>
-                {isSaving ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  "Save"
-                )}
-              </Button>
-            </div>
-          ) : (
-            <Button onClick={toggleEdit} className="flex items-center gap-x-2">
-              <PencilIcon className="size-4" />
-              Edit
+      <div className="flex items-center justify-end border-b px-5 py-3">
+        {!isEditing ? (
+          <Button
+            type="button"
+            className="gap-2"
+            onClick={() => setIsEditing(true)}
+          >
+            <PencilIcon className="h-4 w-4" />
+            Edit
+          </Button>
+        ) : (
+          <div className="flex items-center gap-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSaving}
+            >
+              Cancel
             </Button>
-          )}
-        </div>
+            <Button
+              form="work-experience-form"
+              type="submit"
+              disabled={isSaving}
+            >
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+          </div>
+        )}
+      </div>
 
+      <div className="p-5">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            id="work-experience-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6"
+          >
             <div className="space-y-4">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-500">
+                <p className="text-sm font-bold text-gray-500">
                   Do you have any work experience?
                 </p>
                 {isEditing ? (
@@ -338,7 +345,7 @@ const WorkExperienceDetails = ({ application }) => {
                   >
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-neutral-700">
+                        <p className="text-sm font-bold text-neutral-700">
                           Job Title
                         </p>
                         {isEditing ? (
@@ -362,7 +369,7 @@ const WorkExperienceDetails = ({ application }) => {
                       </div>
 
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-neutral-700">
+                        <p className="text-sm font-bold text-neutral-700">
                           Name of Organisation
                         </p>
                         {isEditing ? (
@@ -386,7 +393,7 @@ const WorkExperienceDetails = ({ application }) => {
                       </div>
 
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-neutral-700">
+                        <p className="text-sm font-bold text-neutral-700">
                           Nature of Job
                         </p>
                         {isEditing ? (
@@ -427,7 +434,7 @@ const WorkExperienceDetails = ({ application }) => {
                       </div>
 
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-neutral-700">
+                        <p className="text-sm font-bold text-neutral-700">
                           Job Start Date
                         </p>
                         {isEditing ? (
@@ -490,7 +497,7 @@ const WorkExperienceDetails = ({ application }) => {
                       </div>
 
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-neutral-700">
+                        <p className="text-sm font-bold text-neutral-700">
                           Job End Date
                         </p>
                         {isEditing ? (
@@ -560,7 +567,7 @@ const WorkExperienceDetails = ({ application }) => {
 
                       {isEditing && (
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-neutral-700">
+                          <p className="text-sm font-semibold text-neutral-700">
                             Supporting Document
                           </p>
                           <FormField
@@ -651,7 +658,7 @@ const WorkExperienceDetails = ({ application }) => {
             {fileData.length > 0 && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-neutral-900">
+                  <h3 className="text-sm font-semibold text-neutral-900">
                     Uploaded Documents
                   </h3>
                 </div>

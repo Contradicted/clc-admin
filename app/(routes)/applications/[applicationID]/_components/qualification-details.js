@@ -339,7 +339,7 @@ const QualificationDetails = ({ application }) => {
               >
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-neutral-700">
+                    <p className="text-sm font-bold text-neutral-700">
                       Qualification Title
                     </p>
                     <p className="text-sm font-medium text-neutral-900">
@@ -348,7 +348,7 @@ const QualificationDetails = ({ application }) => {
                   </div>
 
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-neutral-700">
+                    <p className="text-sm font-bold text-neutral-700">
                       Examining Body
                     </p>
                     <p className="text-sm font-medium text-neutral-900">
@@ -357,7 +357,7 @@ const QualificationDetails = ({ application }) => {
                   </div>
 
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-neutral-700">
+                    <p className="text-sm font-bold text-neutral-700">
                       Date Awarded
                     </p>
                     <p className="text-sm font-medium text-neutral-900">
@@ -372,13 +372,13 @@ const QualificationDetails = ({ application }) => {
             ))}
 
             <div className="mt-8 pt-6 border-t">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Pending Qualifications
               </h3>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Do you have any pending qualifications?
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -400,7 +400,7 @@ const QualificationDetails = ({ application }) => {
                       >
                         <div className="grid grid-cols-2 gap-6">
                           <div className="space-y-1">
-                            <p className="text-sm font-medium text-neutral-700">
+                            <p className="text-sm font-bold text-neutral-700">
                               Qualification Title
                             </p>
                             <p className="text-sm font-medium text-neutral-900">
@@ -409,7 +409,7 @@ const QualificationDetails = ({ application }) => {
                           </div>
 
                           <div className="space-y-1">
-                            <p className="text-sm font-medium text-neutral-700">
+                            <p className="text-sm font-bold text-neutral-700">
                               Examining Body
                             </p>
                             <p className="text-sm font-medium text-neutral-900">
@@ -418,7 +418,7 @@ const QualificationDetails = ({ application }) => {
                           </div>
 
                           <div className="space-y-1">
-                            <p className="text-sm font-medium text-neutral-700">
+                            <p className="text-sm font-bold text-neutral-700">
                               Date of Results
                             </p>
                             <p className="text-sm font-medium text-neutral-900">
@@ -429,7 +429,7 @@ const QualificationDetails = ({ application }) => {
                           </div>
 
                           <div className="space-y-1">
-                            <p className="text-sm font-medium text-neutral-700">
+                            <p className="text-sm font-bold text-neutral-700">
                               Subjects Passed
                             </p>
                             <p className="text-sm font-medium text-neutral-900">
@@ -449,7 +449,7 @@ const QualificationDetails = ({ application }) => {
 
             {fileData.length > 0 && (
               <div className="mt-8 pt-6 border-t">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Uploaded Documents
                 </h3>
                 <FilesTable data={fileData} columns={fileColumns} />

@@ -423,7 +423,7 @@ const PersonalDetails = ({ application }) => {
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Title
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -431,7 +431,7 @@ const PersonalDetails = ({ application }) => {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     First Name
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -439,7 +439,7 @@ const PersonalDetails = ({ application }) => {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Last Name
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -447,7 +447,7 @@ const PersonalDetails = ({ application }) => {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Gender
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -455,7 +455,7 @@ const PersonalDetails = ({ application }) => {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Date of Birth
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -465,7 +465,7 @@ const PersonalDetails = ({ application }) => {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Tuition Fee
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -475,7 +475,7 @@ const PersonalDetails = ({ application }) => {
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Place of Birth
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -483,7 +483,7 @@ const PersonalDetails = ({ application }) => {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Country of Birth
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -491,7 +491,7 @@ const PersonalDetails = ({ application }) => {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Nationality
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -499,7 +499,7 @@ const PersonalDetails = ({ application }) => {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Passport / National ID Card No.
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -507,7 +507,7 @@ const PersonalDetails = ({ application }) => {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Is English Your First Language?
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -518,13 +518,13 @@ const PersonalDetails = ({ application }) => {
             </div>
 
             <div className="mt-8 pt-6 border-t">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Contact Information
               </h3>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Address Line 1
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -532,7 +532,7 @@ const PersonalDetails = ({ application }) => {
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Address Line 2
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -540,7 +540,7 @@ const PersonalDetails = ({ application }) => {
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       City
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -548,7 +548,7 @@ const PersonalDetails = ({ application }) => {
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Postcode
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -558,7 +558,7 @@ const PersonalDetails = ({ application }) => {
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Email
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -566,7 +566,7 @@ const PersonalDetails = ({ application }) => {
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Mobile Number
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -576,7 +576,7 @@ const PersonalDetails = ({ application }) => {
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Home Telephone
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -593,13 +593,13 @@ const PersonalDetails = ({ application }) => {
               (nationality !== "British" &&
                 countryOfBirth !== "United Kingdom")) && (
               <div className="mt-8 pt-6 border-t">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Immigration Details
                 </h3>
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-500">
+                      <label className="text-sm font-bold text-gray-500">
                         Entry Date to UK
                       </label>
                       <p className="mt-1 text-gray-900 break-words">
@@ -609,7 +609,7 @@ const PersonalDetails = ({ application }) => {
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-500">
+                      <label className="text-sm font-bold text-gray-500">
                         Immigration Status
                       </label>
                       <p className="mt-1 text-gray-900 break-words">
@@ -623,7 +623,7 @@ const PersonalDetails = ({ application }) => {
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-500">
+                      <label className="text-sm font-bold text-gray-500">
                         Share Code
                       </label>
                       <p className="mt-1 text-gray-900 break-words">
@@ -636,13 +636,13 @@ const PersonalDetails = ({ application }) => {
             )}
 
             <div className="mt-8 pt-6 border-t">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Emergency Contact
               </h3>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Name
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -652,7 +652,7 @@ const PersonalDetails = ({ application }) => {
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Contact Number
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -669,7 +669,7 @@ const PersonalDetails = ({ application }) => {
 
             {fileData.length > 0 && (
               <div className="mt-8 pt-6 border-t">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Documents
                 </h3>
                 <FilesTable columns={fileColumns} data={fileData} />

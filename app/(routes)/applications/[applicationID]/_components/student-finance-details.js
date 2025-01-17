@@ -788,7 +788,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
           <div className="space-y-6">
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-neutral-700">
+                <p className="text-sm font-bold text-neutral-700">
                   Payment Options
                 </p>
                 <p className="text-sm font-medium text-neutral-900">
@@ -797,7 +797,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
               </div>
 
               <div className="space-y-1">
-                <p className="text-sm font-medium text-neutral-700">
+                <p className="text-sm font-bold text-neutral-700">
                   Has account with the Student Loan Company (SLC)?
                 </p>
                 <p className="text-sm font-medium text-neutral-900">
@@ -812,7 +812,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
               {application.paymentPlan?.hasSlcAccount && (
                 <>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-neutral-700">
+                    <p className="text-sm font-bold text-neutral-700">
                       Have you previously received funds from SLC?
                     </p>
                     <p className="text-sm font-medium text-neutral-900">
@@ -827,7 +827,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
 
                   {application.paymentPlan?.previouslyReceivedFunds && (
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-neutral-700">
+                      <p className="text-sm font-bold text-neutral-700">
                         During which academic year did you receive funding?
                       </p>
                       <p className="text-sm font-medium text-neutral-900">
@@ -838,7 +838,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
                   )}
 
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-neutral-700">
+                    <p className="text-sm font-bold text-neutral-700">
                       Have you applied for SLC funding for this course?
                     </p>
                     <p className="text-sm font-medium text-neutral-900">
@@ -852,7 +852,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
 
                   {application.paymentPlan?.appliedForCourse && (
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-neutral-700">
+                      <p className="text-sm font-bold text-neutral-700">
                         CRN
                       </p>
                       <p className="text-sm font-medium text-neutral-900">
@@ -867,7 +867,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
             {application.paymentPlan?.appliedForCourse && (
               <div className="grid gap-6 sm:grid-cols-2">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-neutral-700">
+                  <p className="text-sm font-bold text-neutral-700">
                     Application Status
                   </p>
                   <p className="text-sm font-medium text-neutral-900">
@@ -878,7 +878,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
                 {application.paymentPlan?.slcStatus?.startsWith("Approved") && (
                   <>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-neutral-700">
+                      <p className="text-sm font-bold text-neutral-700">
                         SSN
                       </p>
                       <p className="text-sm font-medium text-neutral-900">
@@ -891,7 +891,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
                       application.paymentPlan?.slcStatus ===
                         "Approved - Tuition Fees") && (
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-neutral-700">
+                        <p className="text-sm font-bold text-neutral-700">
                           Tuition Fee Amount
                         </p>
                         <p className="text-sm font-medium text-neutral-900">
@@ -909,7 +909,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
                       application.paymentPlan?.slcStatus ===
                         "Approved - Maintenance Loan") && (
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-neutral-700">
+                        <p className="text-sm font-bold text-neutral-700">
                           Maintenance Loan Amount
                         </p>
                         <p className="text-sm font-medium text-neutral-900">
@@ -936,16 +936,16 @@ const StudentFinanceDetails = ({ application, courses }) => {
                       <table className="w-full">
                         <thead>
                           <tr className="border-b bg-neutral-50">
-                            <th className="px-4 py-3 text-left text-sm font-medium text-neutral-700">
+                            <th className="px-4 py-3 text-left text-sm font-bold text-neutral-700">
                               Date
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium text-neutral-700">
+                            <th className="px-4 py-3 text-left text-sm font-bold text-neutral-700">
                               Amount
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium text-neutral-700">
+                            <th className="px-4 py-3 text-left text-sm font-bold text-neutral-700">
                               University
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium text-neutral-700">
+                            <th className="px-4 py-3 text-left text-sm font-bold text-neutral-700">
                               Course
                             </th>
                           </tr>

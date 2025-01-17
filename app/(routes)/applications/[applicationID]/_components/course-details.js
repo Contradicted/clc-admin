@@ -198,7 +198,7 @@ const CourseDetails = ({
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Course
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -206,7 +206,7 @@ const CourseDetails = ({
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Study Mode
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -216,7 +216,7 @@ const CourseDetails = ({
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Campus
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -224,7 +224,7 @@ const CourseDetails = ({
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Commencement
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -237,13 +237,13 @@ const CourseDetails = ({
             </div>
 
             <div className="mt-8 pt-6 border-t">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Awarding Body Details
               </h3>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Awarding Body
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -252,7 +252,7 @@ const CourseDetails = ({
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       AB Registration No.
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -262,7 +262,7 @@ const CourseDetails = ({
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       AB Registration Date
                     </label>
                     <p className="mt-1 text-gray-900 break-words">

@@ -170,7 +170,7 @@ const AdditionalDetails = ({ application }) => {
             <div className="grid gap-16 md:grid-cols-2">
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Special needs requiring support or facilities
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -179,7 +179,7 @@ const AdditionalDetails = ({ application }) => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Reasons for choosing programme of study
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -188,7 +188,7 @@ const AdditionalDetails = ({ application }) => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     What are your future educational plans?
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -197,7 +197,7 @@ const AdditionalDetails = ({ application }) => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     What employment do you intend to seek on completion of your
                     studies?
                   </label>
@@ -207,7 +207,7 @@ const AdditionalDetails = ({ application }) => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Are you currently on any state benefits?
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -216,7 +216,7 @@ const AdditionalDetails = ({ application }) => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Do you have any criminal record(s) within or outside the UK?
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -225,7 +225,7 @@ const AdditionalDetails = ({ application }) => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Brief statement about your interests and hobbies
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -236,7 +236,7 @@ const AdditionalDetails = ({ application }) => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Ethnic Origin
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -246,7 +246,7 @@ const AdditionalDetails = ({ application }) => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Religion
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -256,7 +256,7 @@ const AdditionalDetails = ({ application }) => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     How did you hear about us?
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
@@ -266,7 +266,7 @@ const AdditionalDetails = ({ application }) => {
 
                 {application.marketing === "Recruitment Agent" && (
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-bold text-gray-500">
                       Recruitment Agent
                     </label>
                     <p className="mt-1 text-gray-900 break-words">
@@ -276,7 +276,7 @@ const AdditionalDetails = ({ application }) => {
                 )}
 
                 <div>
-                  <label className="text-sm font-medium text-gray-500">
+                  <label className="text-sm font-bold text-gray-500">
                     Agreed to Terms and Conditions
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
