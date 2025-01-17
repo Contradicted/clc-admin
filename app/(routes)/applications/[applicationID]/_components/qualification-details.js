@@ -4,6 +4,7 @@ import {
   CalendarIcon,
   Loader2,
   PaperclipIcon,
+  PencilIcon,
   PlusIcon,
   TrashIcon,
   UploadIcon,
@@ -21,6 +22,7 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
@@ -294,270 +296,188 @@ const QualificationDetails = ({ application }) => {
   }
 
   return (
-    <div className="border-b border-stroke space-y-4 mt-4">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="w-full flex justify-end">
-            {isEditing ? (
-              <div className="flex items-center gap-x-2">
-                <Button
-                  variant="outline"
-                  onClick={handleCancel}
-                  disabled={isSaving}
-                >
-                  Cancel
-                </Button>
-                <Button disabled={isSaving}>
-                  {isSaving ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <Button onClick={toggleEdit}>Edit</Button>
-            )}
+    <div className="mt-6 mb-4 rounded-lg border bg-white shadow">
+      <div className="flex items-center justify-end border-b px-5 py-3">
+        {!isEditing ? (
+          <Button
+            type="button"
+            className="gap-2"
+            onClick={() => setIsEditing(true)}
+          >
+            <PencilIcon className="h-4 w-4" />
+            Edit
+          </Button>
+        ) : (
+          <div className="flex items-center gap-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSaving}
+            >
+              Cancel
+            </Button>
+            <Button
+              form="qualification-details-form"
+              type="submit"
+              disabled={isSaving}
+            >
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
           </div>
+        )}
+      </div>
 
-          {fields.map((qualification, index) => (
-            <div key={index} className="w-full space-y-4 pb-4 bg-zinc-50 pt-3">
-              <div className="flex gap-3">
-                <div className="flex items-start w-full max-w-[50%] pl-3">
-                  <p>Qualification Title</p>
-                </div>
-                {isEditing ? (
-                  <FormField
-                    name={`qualifications.${index}.title`}
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem className="w-full mr-4">
-                        <FormControl>
-                          <Input {...field} disabled={isSaving} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ) : (
-                  <p className="flex flex-wrap font-medium text-black w-full">
-                    {qualification.title}
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <div className="flex items-start w-full max-w-[50%] pl-3">
-                  <p>Examining Body</p>
-                </div>
-                {isEditing ? (
-                  <FormField
-                    name={`qualifications.${index}.examiningBody`}
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem className="w-full mr-4">
-                        <FormControl>
-                          <Input {...field} disabled={isSaving} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ) : (
-                  <p className="flex flex-wrap font-medium text-black w-full">
-                    {qualification.examiningBody}
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <div className="flex items-start w-full max-w-[50%] pl-3">
-                  <p>Date Awarded</p>
-                </div>
-                {isEditing ? (
-                  <FormField
-                    control={form.control}
-                    name={`qualifications.${index}.dateAwarded`}
-                    render={({ field }) => (
-                      <FormItem className="w-full mr-4">
-                        <FormControl>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full justify-start text-left font-normal rounded-md text-sm px-3",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                                disabled={isSaving}
-                              >
-                                {field.value ? (
-                                  formatDateTime(new Date(field.value)).date
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                              <Calendar
-                                mode="single"
-                                selected={new Date(field.value)}
-                                captionLayout="dropdown-buttons"
-                                fromYear={1920}
-                                toYear={now.getFullYear()}
-                                onSelect={(date) =>
-                                  field.onChange(new Date(date))
-                                }
-                                disabled={(date) =>
-                                  date > new Date() ||
-                                  date < new Date("1900-01-01")
-                                }
-                                weekStartsOn={1}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ) : (
-                  <p className="flex flex-wrap font-medium text-black w-full">
-                    {formatDate(qualification.dateAwarded)}
-                  </p>
-                )}
-              </div>
-
-              {isEditing && (
-                <FormField
-                  control={form.control}
-                  name={`qualifications.${index}.file`}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        dropzoneOptions={dropzone}
-                        disabled={isSaving}
-                      >
-                        <FileInput className="pl-3">
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="flex items-center gap-x-2"
-                          >
-                            <UploadIcon className="size-4" />
-                            Upload File
-                          </Button>
-                        </FileInput>
-                        {field.value && field.value.length > 0 && (
-                          <FileUploaderContent>
-                            {field.value.map((file, i) => (
-                              <FileUploaderItem key={i} index={i}>
-                                <PaperclipIcon className="h-4 w-4 stroke-current" />
-                                <span>{file.name}</span>
-                              </FileUploaderItem>
-                            ))}
-                          </FileUploaderContent>
-                        )}
-                      </FileUploader>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-              {isEditing && index > 0 && (
-                <div className="pl-3">
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="destructive"
-                    className="flex items-center gap-x-2"
-                    disabled={isSaving}
-                    onClick={() => remove(index)}
-                  >
-                    <TrashIcon className="size-4" />
-                    Delete Qualification
-                  </Button>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {isEditing && fields.length < 3 && (
-            <div className="flex items-center">
-              <Button
-                type="button"
-                size="sm"
-                className="gap-x-2"
-                disabled={isSaving}
-                onClick={() =>
-                  append({
-                    title: "",
-                    examiningBody: "",
-                    dateAwarded: "",
-                  })
-                }
+      <div className="p-5">
+        {!isEditing ? (
+          <div>
+            {fields.map((qualification, index) => (
+              <div
+                key={index}
+                className="rounded-lg border bg-neutral-50/50 p-6 space-y-6"
               >
-                <PlusIcon className="size-4" />
-                Add Qualification
-              </Button>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-neutral-700">
+                      Qualification Title
+                    </p>
+                    <p className="text-sm font-medium text-neutral-900">
+                      {qualification.title || "Not specified"}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-neutral-700">
+                      Examining Body
+                    </p>
+                    <p className="text-sm font-medium text-neutral-900">
+                      {qualification.examiningBody || "Not specified"}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-neutral-700">
+                      Date Awarded
+                    </p>
+                    <p className="text-sm font-medium text-neutral-900">
+                      {qualification.dateAwarded
+                        ? formatDate(qualification.dateAwarded)
+                        : "Not specified"}
+                    </p>
+                  </div>
+                </div>
+                {index < fields.length - 1 && <div className="border-t my-6" />}
+              </div>
+            ))}
+
+            <div className="mt-8 pt-6 border-t">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Pending Qualifications
+              </h3>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Do you have any pending qualifications?
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.hasPendingResults ? "Yes" : "No"}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
-          <div className="flex gap-3 pb-4">
-            <div className="flex items-start w-full max-w-[50%]">
-              <p>Do you have any pending qualifications?</p>
-            </div>
-            {isEditing ? (
-              <FormField
-                name="hasPendingResults"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        value={field.value}
-                        disabled={isSaving}
+
+            {application.hasPendingResults &&
+              application.pendingQualifications.length > 0 && (
+                <>
+                  {application.pendingQualifications.map(
+                    (qualification, index) => (
+                      <div
+                        key={index}
+                        className="mt-3 rounded-lg border bg-neutral-50/50 p-6 space-y-6"
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select an option" />
-                        </SelectTrigger>
-                        <SelectContent position="top">
-                          <SelectItem value="yes">Yes</SelectItem>
-                          <SelectItem value="no">No</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ) : (
-              <p className="flex flex-wrap font-medium text-black w-full">
-                {application.hasPendingResults ? "Yes" : "No"}
-              </p>
+                        <div className="grid grid-cols-2 gap-6">
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-neutral-700">
+                              Qualification Title
+                            </p>
+                            <p className="text-sm font-medium text-neutral-900">
+                              {qualification.title || "Not specified"}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-neutral-700">
+                              Examining Body
+                            </p>
+                            <p className="text-sm font-medium text-neutral-900">
+                              {qualification.examiningBody || "Not specified"}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-neutral-700">
+                              Date of Results
+                            </p>
+                            <p className="text-sm font-medium text-neutral-900">
+                              {qualification.dateOfResults
+                                ? formatDate(qualification.dateOfResults)
+                                : "Not specified"}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-neutral-700">
+                              Subjects Passed
+                            </p>
+                            <p className="text-sm font-medium text-neutral-900">
+                              {qualification.subjectsPassed || "Not specified"}
+                            </p>
+                          </div>
+                        </div>
+                        {index <
+                          application.pendingQualifications.length - 1 && (
+                          <div className="border-t my-6" />
+                        )}
+                      </div>
+                    )
+                  )}
+                </>
+              )}
+
+            {fileData.length > 0 && (
+              <div className="mt-8 pt-6 border-t">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Uploaded Documents
+                </h3>
+                <FilesTable data={fileData} columns={fileColumns} />
+              </div>
             )}
           </div>
-
-          {form.watch("hasPendingResults") === "yes" && (
-            <>
-              {pendingQFields.map((qualification, index) => (
+        ) : (
+          <Form {...form}>
+            <form
+              id="qualification-details-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8"
+            >
+              {fields.map((qualification, index) => (
                 <div
                   key={index}
-                  className="w-full space-y-4 pb-4 bg-zinc-50 pt-3"
+                  className="rounded-lg border bg-neutral-50/50 p-6 space-y-6"
                 >
-                  <div className="flex gap-3">
-                    <div className="flex items-start w-full max-w-[50%] pl-3">
-                      <p>Qualification Title</p>
-                    </div>
-                    {isEditing && form.watch("hasPendingResults") === "yes" ? (
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-neutral-700">
+                        Qualification Title
+                      </p>
                       <FormField
-                        name={`pendingQualifications.${index}.title`}
+                        name={`qualifications.${index}.title`}
                         control={form.control}
                         render={({ field }) => (
-                          <FormItem className="w-full mr-4">
+                          <FormItem>
                             <FormControl>
                               <Input {...field} disabled={isSaving} />
                             </FormControl>
@@ -565,22 +485,17 @@ const QualificationDetails = ({ application }) => {
                           </FormItem>
                         )}
                       />
-                    ) : (
-                      <p className="flex flex-wrap font-medium text-black w-full">
-                        {qualification.title}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="flex items-start w-full max-w-[50%] pl-3">
-                      <p>Examining Body</p>
                     </div>
-                    {isEditing && form.watch("hasPendingResults") === "yes" ? (
+
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-neutral-700">
+                        Examining Body
+                      </p>
                       <FormField
-                        name={`pendingQualifications.${index}.examiningBody`}
+                        name={`qualifications.${index}.examiningBody`}
                         control={form.control}
                         render={({ field }) => (
-                          <FormItem className="w-full mr-4">
+                          <FormItem>
                             <FormControl>
                               <Input {...field} disabled={isSaving} />
                             </FormControl>
@@ -588,35 +503,31 @@ const QualificationDetails = ({ application }) => {
                           </FormItem>
                         )}
                       />
-                    ) : (
-                      <p className="flex flex-wrap font-medium text-black w-full">
-                        {qualification.examiningBody}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="flex items-start w-full max-w-[50%] pl-3">
-                      <p>Date of Results</p>
                     </div>
-                    {isEditing ? (
+
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-neutral-700">
+                        Date Awarded
+                      </p>
                       <FormField
                         control={form.control}
-                        name={`pendingQualifications.${index}.dateOfResults`}
+                        name={`qualifications.${index}.dateAwarded`}
                         render={({ field }) => (
-                          <FormItem className="w-full mr-4">
+                          <FormItem>
                             <FormControl>
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <Button
                                     variant={"outline"}
                                     className={cn(
-                                      "w-full justify-start text-left font-normal rounded-md text-sm px-3",
+                                      "w-full justify-start text-left font-normal",
                                       !field.value && "text-muted-foreground"
                                     )}
                                     disabled={isSaving}
                                   >
                                     {field.value ? (
-                                      formatDateTime(new Date(field.value)).date
+                                      formatDateTime(new Date(field.value))
+                                        .date
                                     ) : (
                                       <span>Pick a date</span>
                                     )}
@@ -634,7 +545,7 @@ const QualificationDetails = ({ application }) => {
                                       field.onChange(new Date(date))
                                     }
                                     disabled={(date) =>
-                                      date <= new Date() ||
+                                      date > new Date() ||
                                       date < new Date("1900-01-01")
                                     }
                                     weekStartsOn={1}
@@ -647,87 +558,296 @@ const QualificationDetails = ({ application }) => {
                           </FormItem>
                         )}
                       />
-                    ) : (
-                      <p className="flex flex-wrap font-medium text-black w-full">
-                        {formatDate(qualification.dateAwarded)}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="flex items-start w-full max-w-[50%] pl-3">
-                      <p>Subjects Passed</p>
                     </div>
-                    {isEditing && form.watch("hasPendingResults") === "yes" ? (
+
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-neutral-700">
+                        Supporting Document
+                      </p>
                       <FormField
-                        name={`pendingQualifications.${index}.subjectsPassed`}
                         control={form.control}
+                        name={`qualifications.${index}.file`}
                         render={({ field }) => (
-                          <FormItem className="w-full mr-4">
+                          <FormItem>
                             <FormControl>
-                              <Input {...field} disabled={isSaving} />
+                              <FileUploader
+                                value={field.value}
+                                onValueChange={field.onChange}
+                                dropzoneOptions={dropzone}
+                                disabled={isSaving}
+                              >
+                                <FileInput>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    className="flex items-center gap-x-2"
+                                  >
+                                    <UploadIcon className="size-4" />
+                                    Upload File
+                                  </Button>
+                                </FileInput>
+                                {field.value && field.value.length > 0 && (
+                                  <FileUploaderContent>
+                                    {field.value.map((file, i) => (
+                                      <FileUploaderItem key={i} index={i}>
+                                        <PaperclipIcon className="h-4 w-4 stroke-current" />
+                                        <span>{file.name}</span>
+                                      </FileUploaderItem>
+                                    ))}
+                                  </FileUploaderContent>
+                                )}
+                              </FileUploader>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                    ) : (
-                      <p className="flex flex-wrap font-medium text-black w-full">
-                        {qualification.subjectsPassed}
-                      </p>
-                    )}
+                    </div>
                   </div>
 
-                  {isEditing && index > 0 && (
-                    <div className="pl-3">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="destructive"
-                        className="flex items-center gap-x-2"
-                        disabled={isSaving}
-                        onClick={() => removePendingQ(index)}
-                      >
-                        <TrashIcon className="size-4" />
-                        Delete Pending Qualification
-                      </Button>
-                    </div>
+                  {index > 0 && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="destructive"
+                      className="flex items-center gap-x-2"
+                      disabled={isSaving}
+                      onClick={() => remove(index)}
+                    >
+                      <TrashIcon className="size-4" />
+                      Delete Qualification
+                    </Button>
                   )}
                 </div>
               ))}
-              {isEditing && pendingQFields.length < 3 && (
+
+              {fields.length < 3 && (
                 <div className="flex items-center">
                   <Button
                     type="button"
-                    variant="outline"
-                    className="gap-x-2"
                     size="sm"
+                    className="gap-x-2"
+                    disabled={isSaving}
                     onClick={() =>
-                      appendPendingQ({
+                      append({
                         title: "",
                         examiningBody: "",
-                        dateOfResults: "",
-                        subjectsPassed: "",
+                        dateAwarded: "",
                       })
                     }
-                    disabled={isSaving}
                   >
                     <PlusIcon className="size-4" />
-                    Add Pending Qualification
+                    Add Qualification
                   </Button>
                 </div>
               )}
-            </>
-          )}
 
-          {fileData.length > 0 && (
-            <FilesTable
-              columns={fileColumns}
-              data={fileData}
-              className="mt-4"
-            />
-          )}
-        </form>
-      </Form>
+              <div className="mt-8 pt-6 border-t">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Pending Qualifications
+                </h3>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <FormField
+                      name="hasPendingResults"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Do you have any pending qualifications?
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              value={field.value}
+                              disabled={isSaving}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select an option" />
+                              </SelectTrigger>
+                              <SelectContent position="top">
+                                <SelectItem value="yes">Yes</SelectItem>
+                                <SelectItem value="no">No</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {form.watch("hasPendingResults") === "yes" && (
+                <>
+                  {pendingQFields.map((qualification, index) => (
+                    <div
+                      key={index}
+                      className="rounded-lg border bg-neutral-50/50 p-6 space-y-6"
+                    >
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-neutral-700">
+                            Qualification Title
+                          </p>
+                          <FormField
+                            name={`pendingQualifications.${index}.title`}
+                            control={form.control}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input {...field} disabled={isSaving} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-neutral-700">
+                            Examining Body
+                          </p>
+                          <FormField
+                            name={`pendingQualifications.${index}.examiningBody`}
+                            control={form.control}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input {...field} disabled={isSaving} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-neutral-700">
+                            Date of Results
+                          </p>
+                          <FormField
+                            control={form.control}
+                            name={`pendingQualifications.${index}.dateOfResults`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                          "w-full justify-start text-left font-normal",
+                                          !field.value &&
+                                            "text-muted-foreground"
+                                        )}
+                                        disabled={isSaving}
+                                      >
+                                        {field.value ? (
+                                          formatDateTime(new Date(field.value))
+                                            .date
+                                        ) : (
+                                          <span>Pick a date</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                      <Calendar
+                                        mode="single"
+                                        selected={new Date(field.value)}
+                                        captionLayout="dropdown-buttons"
+                                        fromYear={1920}
+                                        toYear={now.getFullYear()}
+                                        onSelect={(date) =>
+                                          field.onChange(new Date(date))
+                                        }
+                                        disabled={(date) => date < new Date()}
+                                        weekStartsOn={1}
+                                        initialFocus
+                                      />
+                                    </PopoverContent>
+                                  </Popover>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-neutral-700">
+                            Subjects Passed
+                          </p>
+                          <FormField
+                            name={`pendingQualifications.${index}.subjectsPassed`}
+                            control={form.control}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input {...field} disabled={isSaving} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+
+                      {index > 0 && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="destructive"
+                          className="flex items-center gap-x-2"
+                          disabled={isSaving}
+                          onClick={() => removePendingQ(index)}
+                        >
+                          <TrashIcon className="size-4" />
+                          Delete Pending Qualification
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+
+                  {pendingQFields.length < 3 && (
+                    <div className="flex items-center">
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="gap-x-2"
+                        disabled={isSaving}
+                        onClick={() =>
+                          appendPendingQ({
+                            title: "",
+                            examiningBody: "",
+                            dateOfResults: "",
+                            subjectsPassed: "",
+                          })
+                        }
+                      >
+                        <PlusIcon className="size-4" />
+                        Add Pending Qualification
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {fileData.length > 0 && (
+                <div className="mt-8 pt-6 border-t">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Uploaded Documents
+                  </h3>
+                  <FilesTable data={fileData} columns={fileColumns} />
+                </div>
+              )}
+            </form>
+          </Form>
+        )}
+      </div>
     </div>
   );
 };

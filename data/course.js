@@ -52,7 +52,7 @@ export const getCourses = async () => {
 
 export const getActiveCourses = async () => {
   try {
-    return await db.course.findMany({
+    const courses = await db.course.findMany({
       where: {
         status: "Active",
       },
@@ -60,11 +60,35 @@ export const getActiveCourses = async () => {
         id: true,
         name: true,
         course_study_mode: true,
-        course_instances: true,
+        course_instances: {
+          select: {
+            instance_name: true,
+            start_date: true,
+            end_date: true,
+          },
+        },
+        awarding_body: true,
       },
       orderBy: {
         name: "asc",
       },
+    });
+
+    // Filter out courses with expired dates unless they have an On Demand instance
+    return courses.filter((course) => {
+      const hasOnDemandInstance = course.course_instances.some(
+        (instance) => instance.instance_name === "On Demand"
+      );
+
+      if (hasOnDemandInstance) {
+        return true; // Always include On Demand courses
+      }
+
+      // For non-On Demand courses, check if any instance is still active
+      return course.course_instances.some((instance) => {
+        const endDate = new Date(instance.end_date);
+        return endDate > new Date();
+      });
     });
   } catch (error) {
     console.log("[FETCHING_ACTIVE_COURSES_ERROR]", error);

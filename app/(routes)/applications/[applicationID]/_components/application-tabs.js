@@ -10,9 +10,8 @@ import PersonalDetails from "./personal-details";
 import QualificationDetails from "./qualification-details";
 import WorkExperienceDetails from "./work-experience-details";
 import AdditionalDetails from "./additional-details";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import StudentFinanceDetails from "./student-finance-details";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { StudentFinanceDetails } from "./student-finance-details";
 
 const ApplicationTabs = ({ data, courses, className }) => {
   const [isAtStart, setIsAtStart] = useState(true);
@@ -97,13 +96,13 @@ const ApplicationTabs = ({ data, courses, className }) => {
         )}
         <div
           ref={scrollRef}
-          className="w-full lg:max-w-[800px] xl:mx-auto overflow-x-auto scrollbar-hide scroll-smooth"
+          className="w-full overflow-x-auto scrollbar-hide scroll-smooth"
           onKeyDown={handleKeyDown}
           tabIndex={0}
           role="tablist"
           aria-orientation="horizontal"
         >
-          <TabsList className="inline-flex w-max space-x-2">
+          <TabsList className="inline-flex min-w-full max-w-maxitems-center justify-start space-x-2">
             {tabItems.map((item, index) => (
               <TabsTrigger
                 key={item.value}
@@ -148,6 +147,8 @@ const ApplicationTabs = ({ data, courses, className }) => {
           campus={data.campus}
           courses={courses}
           applicationID={data.id}
+          ab_registration_date={data.ab_registration_date}
+          ab_registration_no={data.ab_registration_no}
         />
       </TabsContent>
       <TabsContent value="personal-details" className="w-full">

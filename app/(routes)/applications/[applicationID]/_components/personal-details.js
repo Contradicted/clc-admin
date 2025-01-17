@@ -1,6 +1,12 @@
 "use client";
 
-import { CalendarIcon, Loader2, PaperclipIcon, UploadIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  Loader2,
+  PaperclipIcon,
+  PencilIcon,
+  UploadIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -19,6 +25,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -293,12 +300,6 @@ const PersonalDetails = ({ application }) => {
     }
   }, [nationality, form]);
 
-  // useEffect(() => {
-  //   if (immigrationStatus !== "pre_settled") {
-  //     form.setValue("share_code", "");
-  //   }
-  // }, [immigrationStatus, form]);
-
   const toggleEdit = () => setIsEditing(!isEditing);
 
   const handleCancel = () => {
@@ -383,393 +384,408 @@ const PersonalDetails = ({ application }) => {
   }
 
   return (
-    <div className="border-b border-stroke space-y-4 my-5">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="w-full flex justify-end">
-            {isEditing ? (
-              <div className="flex items-center gap-x-2">
-                <Button
-                  variant="outline"
-                  onClick={handleCancel}
-                  disabled={isSaving}
-                >
-                  Cancel
-                </Button>
-                <Button disabled={isSaving}>
-                  {isSaving ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <Button onClick={toggleEdit}>Edit</Button>
-            )}
+    <div className="mt-6 mb-4 rounded-lg border bg-white shadow">
+      <div className="flex items-center justify-end border-b px-5 py-3">
+        {!isEditing ? (
+          <Button
+            type="button"
+            className="gap-2"
+            onClick={() => setIsEditing(true)}
+          >
+            <PencilIcon className="h-4 w-4" />
+            Edit
+          </Button>
+        ) : (
+          <div className="flex items-center gap-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSaving}
+            >
+              Cancel
+            </Button>
+            <Button
+              form="personal-details-form"
+              type="submit"
+              disabled={isSaving}
+            >
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
           </div>
+        )}
+      </div>
 
-          <div className="w-full space-y-4 pb-4">
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">Title</div>
-              {isEditing ? (
-                <FormField
-                  name="title"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isSaving}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select an option" />
-                          </SelectTrigger>
-                          <SelectContent position="top">
-                            <SelectItem value="Mr">Mr</SelectItem>
-                            <SelectItem value="Mrs">Mrs</SelectItem>
-                            <SelectItem value="Ms">Ms</SelectItem>
-                            <SelectItem value="Miss">Miss</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.title}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                First Name
+      <div className="p-5">
+        {!isEditing ? (
+          <div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Title
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.title || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    First Name
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.firstName || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Last Name
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.lastName || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Gender
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.gender || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Date of Birth
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.dateOfBirth
+                      ? formatDate(application.dateOfBirth)
+                      : "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Tuition Fee
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.tuitionFees || "Not specified"}
+                  </p>
+                </div>
               </div>
-              {isEditing ? (
-                <FormField
-                  name="firstName"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input {...field} disabled={isSaving} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.firstName}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Last Name
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Place of Birth
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.placeOfBirth || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Country of Birth
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.countryOfBirth || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Nationality
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.nationality || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Passport / National ID Card No.
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.identificationNo || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Is English Your First Language?
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.isEnglishFirstLanguage ? "Yes" : "No"}
+                  </p>
+                </div>
               </div>
-              {isEditing ? (
-                <FormField
-                  name="lastName"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input {...field} disabled={isSaving} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.lastName}
-                </p>
-              )}
             </div>
 
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">Gender</div>
-              {isEditing ? (
-                <FormField
-                  name="gender"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isSaving}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                          <SelectContent position="top">
-                            <SelectItem value="Male">Male</SelectItem>
-                            <SelectItem value="Female">Female</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.gender}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Date of Birth
+            <div className="mt-8 pt-6 border-t">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Contact Information
+              </h3>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Address Line 1
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.addressLine1 || "Not specified"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Address Line 2
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.addressLine2 || "Not specified"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      City
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.city || "Not specified"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Postcode
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.postcode || "Not specified"}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Email
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.email || "Not specified"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Mobile Number
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.mobileNo
+                        ? formatPhoneNumberIntl(application.mobileNo)
+                        : "Not specified"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Home Telephone
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.homeTelephoneNo
+                        ? formatPhoneNumberIntl(application.homeTelephoneNo)
+                        : "Not specified"}
+                    </p>
+                  </div>
+                </div>
               </div>
-              {isEditing ? (
-                <FormField
-                  name="dateOfBirth"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-full justify-start text-left font-normal rounded-md text-sm px-3",
-                                !field.value && "text-muted-foreground"
-                              )}
-                              disabled={isSaving}
-                            >
-                              {field.value ? (
-                                formatDate(new Date(field.value))
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0">
-                            <Calendar
-                              mode="single"
-                              selected={new Date(field.value)}
-                              captionLayout="dropdown-buttons"
-                              fromYear={1920}
-                              toYear={now.getFullYear()}
-                              onSelect={(date) =>
-                                field.onChange(new Date(date))
-                              }
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
-                              weekStartsOn={1}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {formatDate(application.dateOfBirth)}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Place of Birth
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="placeOfBirth"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input {...field} disabled={isSaving} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.placeOfBirth}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Country of Birth
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="countryOfBirth"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isSaving}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select an option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Popular Countries</SelectLabel>
-                              {popularCountries.map((country) => (
-                                <SelectItem key={country} value={country}>
-                                  {country}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                            <SelectSeparator />
-                            <SelectGroup>
-                              <SelectLabel>All Countries</SelectLabel>
-                              {Object.entries(countries.getNames("en"))
-                                .filter(
-                                  ([code, name]) =>
-                                    !popularCountries.includes(name)
-                                )
-                                .map(([code, name]) => (
-                                  <SelectItem key={code} value={name}>
-                                    {name}
-                                  </SelectItem>
-                                ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.countryOfBirth}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Passport / National ID Card No.
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="identificationNo"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input {...field} disabled={isSaving} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.identificationNo}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Nationality
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="nationality"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isSaving}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select an option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Popular Nationalities</SelectLabel>
-                              {popularNationalities.map((nationality) => (
-                                <SelectItem
-                                  key={nationality}
-                                  value={nationality}
-                                >
-                                  {nationality}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                            <SelectSeparator />
-                            <SelectGroup>
-                              <SelectLabel>All Countries</SelectLabel>
-                              {Object.entries(nationalities.getNames("en"))
-                                .filter(
-                                  ([code, nationality]) =>
-                                    !popularNationalities.includes(nationality)
-                                )
-                                .sort((a, b) => a[1].localeCompare(b[1]))
-                                .map(([code, nationality]) => (
-                                  <SelectItem key={code} value={nationality}>
-                                    {nationality}
-                                  </SelectItem>
-                                ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.nationality}
-                </p>
-              )}
             </div>
 
             {(application.entryDateToUK ||
               (nationality !== "British" &&
                 countryOfBirth !== "United Kingdom")) && (
-              <div className="flex gap-3">
-                <div className="flex items-start w-full max-w-[50%]">
-                  Entry Date to UK
+              <div className="mt-8 pt-6 border-t">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Immigration Details
+                </h3>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">
+                        Entry Date to UK
+                      </label>
+                      <p className="mt-1 text-gray-900 break-words">
+                        {application.entryDateToUK
+                          ? formatDate(application.entryDateToUK)
+                          : "Not specified"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">
+                        Immigration Status
+                      </label>
+                      <p className="mt-1 text-gray-900 break-words">
+                        {application.immigration_status
+                          ? formatImmigrationStatus(
+                              application.immigration_status
+                            )
+                          : "Not specified"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">
+                        Share Code
+                      </label>
+                      <p className="mt-1 text-gray-900 break-words">
+                        {application.share_code || "Not specified"}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                {isEditing ? (
+              </div>
+            )}
+
+            <div className="mt-8 pt-6 border-t">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Emergency Contact
+              </h3>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Name
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.emergency_contact_name || "Not specified"}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Contact Number
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {application.emergency_contact_no
+                        ? formatPhoneNumberIntl(
+                            application.emergency_contact_no
+                          )
+                        : "Not specified"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {fileData.length > 0 && (
+              <div className="mt-8 pt-6 border-t">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Documents
+                </h3>
+                <FilesTable columns={fileColumns} data={fileData} />
+              </div>
+            )}
+          </div>
+        ) : (
+          <Form {...form}>
+            <form
+              id="personal-details-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8"
+            >
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
                   <FormField
-                    name="entryDateToUK"
+                    name="title"
                     control={form.control}
                     render={({ field }) => (
-                      <FormItem className="w-full">
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Title
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                            disabled={isSaving}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select title" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Mr">Mr</SelectItem>
+                              <SelectItem value="Mrs">Mrs</SelectItem>
+                              <SelectItem value="Ms">Ms</SelectItem>
+                              <SelectItem value="Miss">Miss</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="firstName"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          First Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input {...field} disabled={isSaving} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="lastName"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Last Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input {...field} disabled={isSaving} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="gender"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Gender
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                            disabled={isSaving}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Male">Male</SelectItem>
+                              <SelectItem value="Female">Female</SelectItem>
+                              <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="dateOfBirth"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Date of Birth
+                        </FormLabel>
                         <FormControl>
                           <Popover>
                             <PopoverTrigger asChild>
@@ -813,27 +829,120 @@ const PersonalDetails = ({ application }) => {
                       </FormItem>
                     )}
                   />
-                ) : (
-                  <p className="flex flex-wrap font-medium text-black w-full">
-                    {application.entryDateToUK
-                      ? formatDate(application.entryDateToUK)
-                      : "-"}
-                  </p>
-                )}
-              </div>
-            )}
 
-            {nationality && nationality !== "British" && (
-              <div className="flex gap-3">
-                <div className="flex items-start w-full max-w-[50%]">
-                  Immigration Status
-                </div>
-                {isEditing ? (
                   <FormField
-                    name="immigration_status"
+                    name="tuitionFees"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Tuition Fee
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                            disabled={isSaving}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select an option" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Parents">Parents</SelectItem>
+                              <SelectItem value="Family Members">
+                                Family Members
+                              </SelectItem>
+                              <SelectItem value="Employers">
+                                Employers
+                              </SelectItem>
+                              <SelectItem value="Self">Self</SelectItem>
+                              <SelectItem value="Student Loan Company England (SLC)">
+                                Student Loan Company England (SLC)
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <FormField
+                    name="placeOfBirth"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Place of Birth
+                        </FormLabel>
+                        <FormControl>
+                          <Input {...field} disabled={isSaving} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="countryOfBirth"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Country of Birth
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                            disabled={isSaving}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select an option" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Popular Countries</SelectLabel>
+                                {popularCountries.map((country) => (
+                                  <SelectItem key={country} value={country}>
+                                    {country}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                              <SelectSeparator />
+                              <SelectGroup>
+                                <SelectLabel>All Countries</SelectLabel>
+                                {Object.entries(countries.getNames("en"))
+                                  .filter(
+                                    ([code, name]) =>
+                                      !popularCountries.includes(name)
+                                  )
+                                  .map(([code, name]) => (
+                                    <SelectItem key={code} value={name}>
+                                      {name}
+                                    </SelectItem>
+                                  ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="nationality"
                     control={form.control}
                     render={({ field }) => (
                       <FormItem className="w-full">
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Nationality
+                        </FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
@@ -846,12 +955,32 @@ const PersonalDetails = ({ application }) => {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                <SelectItem value="settled">
-                                  Settled (Indefinite Leave)
-                                </SelectItem>
-                                <SelectItem value="pre_settled">
-                                  Pre Settled (Limited Leave)
-                                </SelectItem>
+                                <SelectLabel>Popular Nationalities</SelectLabel>
+                                {popularNationalities.map((nationality) => (
+                                  <SelectItem
+                                    key={nationality}
+                                    value={nationality}
+                                  >
+                                    {nationality}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                              <SelectSeparator />
+                              <SelectGroup>
+                                <SelectLabel>All Countries</SelectLabel>
+                                {Object.entries(nationalities.getNames("en"))
+                                  .filter(
+                                    ([code, nationality]) =>
+                                      !popularNationalities.includes(
+                                        nationality
+                                      )
+                                  )
+                                  .sort((a, b) => a[1].localeCompare(b[1]))
+                                  .map(([code, nationality]) => (
+                                    <SelectItem key={code} value={nationality}>
+                                      {nationality}
+                                    </SelectItem>
+                                  ))}
                               </SelectGroup>
                             </SelectContent>
                           </Select>
@@ -860,506 +989,522 @@ const PersonalDetails = ({ application }) => {
                       </FormItem>
                     )}
                   />
-                ) : (
-                  <p className="flex flex-wrap font-medium text-black w-full">
-                    {formatImmigrationStatus(application.immigration_status)}
-                  </p>
-                )}
-              </div>
-            )}
 
-            {immigrationStatus && (
-              <div className="flex gap-3">
-                <div className="flex items-start w-full max-w-[50%]">
-                  Share Code
-                </div>
-                {isEditing ? (
                   <FormField
-                    name="share_code"
+                    name="identificationNo"
                     control={form.control}
                     render={({ field }) => (
-                      <FormItem className="w-full">
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Passport / National ID Card No.
+                        </FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            disabled={isSaving}
-                            onChange={(e) => {
-                              const value = e.target.value
-                                .toUpperCase()
-                                .replace(/[^A-Z0-9]/g, "");
-                              const formattedValue = value
-                                .replace(/(.{3})/g, "$1 ")
-                                .trim();
-                              field.onChange(formattedValue);
-                            }}
-                            maxLength={11}
-                          />
+                          <Input {...field} disabled={isSaving} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                ) : (
-                  <p className="flex flex-wrap font-medium text-black w-full">
-                    {application.share_code || "-"}
-                  </p>
-                )}
-              </div>
-            )}
 
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Address Line 1
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="addressLine1"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input {...field} disabled={isSaving} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.addressLine1}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Address Line 2
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="addressLine2"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input {...field} disabled={isSaving} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.addressLine2 || "-"}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">City</div>
-              {isEditing ? (
-                <FormField
-                  name="city"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input {...field} disabled={isSaving} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.city}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Zip / Postal Code
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="postcode"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isSaving}
-                          onChange={(e) => {
-                            let value = e.target.value
-                              .toUpperCase()
-                              .replace(/\s/g, "");
-                            if (value.length > 4) {
-                              value =
-                                value.slice(0, -3) + " " + value.slice(-3);
-                            }
-                            field.onChange(value);
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.postcode}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">Email</div>
-              {isEditing ? (
-                <FormField
-                  name="email"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input type="email" {...field} disabled={isSaving} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.email}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Mobile No.
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="mobileNo"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <PhoneInput
-                          {...field}
-                          disabled={isSaving}
-                          international
-                          defaultCountry="GB"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {formatPhoneNumberIntl(application.mobileNo)}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Home Telephone No.
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="homeTelephoneNo"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <PhoneInput
-                          {...field}
-                          disabled={isSaving}
-                          international
-                          defaultCountry="GB"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {formatPhoneNumberIntl(application.homeTelephoneNo) || "-"}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Emergency Contact Name
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="emergency_contact_name"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input {...field} disabled={isSaving} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.emergency_contact_name || "-"}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Emergency Contact No.
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="emergency_contact_no"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <PhoneInput
-                          {...field}
-                          disabled={isSaving}
-                          international
-                          defaultCountry="GB"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {formatPhoneNumberIntl(application.emergency_contact_no) ||
-                    "-"}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Tuition Fee
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="tuitionFees"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isSaving}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select an option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Parents">Parents</SelectItem>
-                            <SelectItem value="Family Members">
-                              Family Members
-                            </SelectItem>
-                            <SelectItem value="Employers">Employers</SelectItem>
-                            <SelectItem value="Self">Self</SelectItem>
-                            <SelectItem value="Student Loan Company England (SLC)">
-                              Student Loan Company England (SLC)
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.tuitionFees}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Is English Your First Language
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="isEnglishFirstLanguage"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(value === "yes")
-                          }
-                          defaultValue={field.value ? "yes" : "no"}
-                          disabled={isSaving}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select an option" />
-                          </SelectTrigger>
-                          <SelectContent position="top">
-                            <SelectItem value="yes">Yes</SelectItem>
-                            <SelectItem value="no">No</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {application.isEnglishFirstLanguage ? "Yes" : "No"}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              {isEditing && (
-                <FormField
-                  control={form.control}
-                  name="files.photo"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        dropzoneOptions={dropzone}
-                        disabled={isSaving}
-                      >
-                        <FileInput className="pl-3">
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="flex items-center gap-x-2"
-                          >
-                            <UploadIcon className="size-4" />
-                            Upload Profile Photo
-                          </Button>
-                        </FileInput>
-                        {field.value && field.value.length > 0 && (
-                          <FileUploaderContent>
-                            {field.value.map((file, i) => (
-                              <FileUploaderItem key={i} index={i}>
-                                <PaperclipIcon className="h-4 w-4 stroke-current" />
-                                <span>{file.name}</span>
-                              </FileUploaderItem>
-                            ))}
-                          </FileUploaderContent>
-                        )}
-                      </FileUploader>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              {isEditing && (
-                <FormField
-                  control={form.control}
-                  name="files.identification"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        dropzoneOptions={dropzone}
-                        disabled={isSaving}
-                      >
-                        <FileInput className="pl-3">
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="flex items-center gap-x-2"
-                          >
-                            <UploadIcon className="size-4" />
-                            Upload Identification File
-                          </Button>
-                        </FileInput>
-                        {field.value && field.value.length > 0 && (
-                          <FileUploaderContent>
-                            {field.value.map((file, i) => (
-                              <FileUploaderItem key={i} index={i}>
-                                <PaperclipIcon className="h-4 w-4 stroke-current" />
-                                <span>{file.name}</span>
-                              </FileUploaderItem>
-                            ))}
-                          </FileUploaderContent>
-                        )}
-                      </FileUploader>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
-
-            {nationality !== "British" && (
-              <div className="flex gap-3">
-                {isEditing && (
                   <FormField
+                    name="isEnglishFirstLanguage"
                     control={form.control}
-                    name="files.immigration"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FileUploader
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          dropzoneOptions={dropzone}
-                          disabled={isSaving}
-                        >
-                          <FileInput className="pl-3">
-                            <Button
-                              type="button"
-                              size="sm"
-                              className="flex items-center gap-x-2"
-                            >
-                              <UploadIcon className="size-4" />
-                              Upload Immigration File
-                            </Button>
-                          </FileInput>
-                          {field.value && field.value.length > 0 && (
-                            <FileUploaderContent>
-                              {field.value.map((file, i) => (
-                                <FileUploaderItem key={i} index={i}>
-                                  <PaperclipIcon className="h-4 w-4 stroke-current" />
-                                  <span>{file.name}</span>
-                                </FileUploaderItem>
-                              ))}
-                            </FileUploaderContent>
-                          )}
-                        </FileUploader>
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Is English Your First Language?
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                            disabled={isSaving}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select an option" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value={true}>Yes</SelectItem>
+                              <SelectItem value={false}>No</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                )}
+                </div>
               </div>
-            )}
-          </div>
-          {fileData.length > 0 && (
-            <FilesTable data={fileData} columns={fileColumns} />
-          )}
-        </form>
-      </Form>
+
+              <div className="mt-8 pt-6 border-t">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Contact Information
+                </h3>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <FormField
+                      name="addressLine1"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Address Line 1
+                          </FormLabel>
+                          <FormControl>
+                            <Input {...field} disabled={isSaving} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name="addressLine2"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Address Line 2
+                          </FormLabel>
+                          <FormControl>
+                            <Input {...field} disabled={isSaving} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name="city"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            City
+                          </FormLabel>
+                          <FormControl>
+                            <Input {...field} disabled={isSaving} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name="postcode"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Postcode
+                          </FormLabel>
+                          <FormControl>
+                            <Input {...field} disabled={isSaving} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <FormField
+                      name="email"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Email
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type="email"
+                              disabled={isSaving}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name="mobileNo"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Mobile Number
+                          </FormLabel>
+                          <FormControl>
+                            <PhoneInput
+                              {...field}
+                              disabled={isSaving}
+                              international
+                              defaultCountry="GB"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name="homeTelephoneNo"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Home Telephone
+                          </FormLabel>
+                          <FormControl>
+                            <PhoneInput
+                              {...field}
+                              disabled={isSaving}
+                              international
+                              defaultCountry="GB"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {(application.entryDateToUK ||
+                (nationality !== "British" &&
+                  countryOfBirth !== "United Kingdom")) && (
+                <div className="mt-8 pt-6 border-t">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Immigration Details
+                  </h3>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-4">
+                      <FormField
+                        name="entryDateToUK"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium text-gray-500">
+                              Entry Date to UK
+                            </FormLabel>
+                            <FormControl>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                      "w-full justify-start text-left font-normal rounded-md text-sm px-3",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                    disabled={isSaving}
+                                  >
+                                    {field.value ? (
+                                      formatDate(new Date(field.value))
+                                    ) : (
+                                      <span>Pick a date</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                  <Calendar
+                                    mode="single"
+                                    selected={new Date(field.value)}
+                                    captionLayout="dropdown-buttons"
+                                    fromYear={1920}
+                                    toYear={now.getFullYear()}
+                                    onSelect={(date) =>
+                                      field.onChange(new Date(date))
+                                    }
+                                    disabled={(date) =>
+                                      date > new Date() ||
+                                      date < new Date("1900-01-01")
+                                    }
+                                    initialFocus
+                                    weekStartsOn={1}
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {nationality && nationality !== "British" && (
+                        <FormField
+                          name="immigration_status"
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium text-gray-500">
+                                Immigration Status
+                              </FormLabel>
+                              <FormControl>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                  value={field.value}
+                                  disabled={isSaving}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select an option" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      <SelectItem value="settled">
+                                        Settled (Indefinite Leave)
+                                      </SelectItem>
+                                      <SelectItem value="pre_settled">
+                                        Pre Settled (Limited Leave)
+                                      </SelectItem>
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                    </div>
+
+                    <div className="space-y-4">
+                      {immigrationStatus && (
+                        <FormField
+                          name="share_code"
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium text-gray-500">
+                                Share Code
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  type="text"
+                                  disabled={isSaving}
+                                  onChange={(e) => {
+                                    const value = e.target.value
+                                      .toUpperCase()
+                                      .replace(/[^A-Z0-9]/g, "");
+                                    const formattedValue = value
+                                      .replace(/(.{3})/g, "$1 ")
+                                      .trim();
+                                    field.onChange(formattedValue);
+                                  }}
+                                  maxLength={11}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-8 pt-6 border-t">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Emergency Contact
+                </h3>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <FormField
+                      name="emergency_contact_name"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Name
+                          </FormLabel>
+                          <FormControl>
+                            <Input {...field} disabled={isSaving} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <FormField
+                      name="emergency_contact_no"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Contact Number
+                          </FormLabel>
+                          <FormControl>
+                            <PhoneInput
+                              {...field}
+                              disabled={isSaving}
+                              international
+                              defaultCountry="GB"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  File Uploads
+                </h3>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="files.photo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Profile Photo
+                        </FormLabel>
+                        <FormControl>
+                          <FileUploader
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            dropzoneOptions={dropzone}
+                            disabled={isSaving}
+                          >
+                            <FileInput className="pl-3">
+                              <Button
+                                type="button"
+                                size="sm"
+                                className="flex items-center gap-x-2"
+                              >
+                                <UploadIcon className="size-4" />
+                                Upload Profile Photo
+                              </Button>
+                            </FileInput>
+                            {field.value && field.value.length > 0 && (
+                              <FileUploaderContent>
+                                {field.value.map((file, i) => (
+                                  <FileUploaderItem key={i} index={i}>
+                                    <PaperclipIcon className="h-4 w-4 stroke-current" />
+                                    <span>{file.name}</span>
+                                  </FileUploaderItem>
+                                ))}
+                              </FileUploaderContent>
+                            )}
+                          </FileUploader>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="files.identification"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-500">
+                          Identification Document
+                        </FormLabel>
+                        <FormControl>
+                          <FileUploader
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            dropzoneOptions={dropzone}
+                            disabled={isSaving}
+                          >
+                            <FileInput className="pl-3">
+                              <Button
+                                type="button"
+                                size="sm"
+                                className="flex items-center gap-x-2"
+                              >
+                                <UploadIcon className="size-4" />
+                                Upload Identification File
+                              </Button>
+                            </FileInput>
+                            {field.value && field.value.length > 0 && (
+                              <FileUploaderContent>
+                                {field.value.map((file, i) => (
+                                  <FileUploaderItem key={i} index={i}>
+                                    <PaperclipIcon className="h-4 w-4 stroke-current" />
+                                    <span>{file.name}</span>
+                                  </FileUploaderItem>
+                                ))}
+                              </FileUploaderContent>
+                            )}
+                          </FileUploader>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {nationality !== "British" && (
+                    <FormField
+                      control={form.control}
+                      name="files.immigration"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium text-gray-500">
+                            Immigration Document
+                          </FormLabel>
+                          <FormControl>
+                            <FileUploader
+                              value={field.value}
+                              onValueChange={field.onChange}
+                              dropzoneOptions={dropzone}
+                              disabled={isSaving}
+                            >
+                              <FileInput className="pl-3">
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  className="flex items-center gap-x-2"
+                                >
+                                  <UploadIcon className="size-4" />
+                                  Upload Immigration File
+                                </Button>
+                              </FileInput>
+                              {field.value && field.value.length > 0 && (
+                                <FileUploaderContent>
+                                  {field.value.map((file, i) => (
+                                    <FileUploaderItem key={i} index={i}>
+                                      <PaperclipIcon className="h-4 w-4 stroke-current" />
+                                      <span>{file.name}</span>
+                                    </FileUploaderItem>
+                                  ))}
+                                </FileUploaderContent>
+                              )}
+                            </FileUploader>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                </div>
+              </div>
+
+              {fileData.length > 0 && (
+                <div className="mt-8 pt-6 border-t">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Uploaded Documents
+                  </h3>
+                  <FilesTable data={fileData} columns={fileColumns} />
+                </div>
+              )}
+            </form>
+          </Form>
+        )}
+      </div>
     </div>
   );
 };

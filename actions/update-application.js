@@ -633,16 +633,34 @@ export const updateCourseDetails = async (values, applicationID) => {
       existingApplication.courseID === existingCourse.id &&
       existingApplication.studyMode === values.studyMode &&
       existingApplication.campus === values.campus &&
-      existingApplication.commencement === values.commencement
+      existingApplication.commencement === values.commencement &&
+      existingApplication.ab_registration_no === values.ab_registration_no &&
+      existingApplication.ab_registration_date === values.ab_registration_date
     ) {
       return;
     }
 
+    const {
+      studyMode,
+      campus,
+      commencement,
+      ab_registration_no,
+      ab_registration_date,
+    } = values;
+
     await db.application.update({
       where: { id: existingApplication.id },
       data: {
-        courseID: existingCourse.id,
-        ...values,
+        course: {
+          connect: {
+            id: existingCourse.id,
+          },
+        },
+        studyMode,
+        campus,
+        commencement,
+        ab_registration_no: ab_registration_no || null,
+        ab_registration_date: ab_registration_date || null,
       },
     });
 

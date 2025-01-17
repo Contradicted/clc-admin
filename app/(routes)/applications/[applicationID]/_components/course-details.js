@@ -8,6 +8,7 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
 import {
   Select,
@@ -16,23 +17,50 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { formatStudyMode } from "@/lib/utils";
+import { cn, formatDate, formatStudyMode } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { compareAsc } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { compareAsc, format } from "date-fns";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { PencilIcon } from "lucide-react";
+
+const formatCommencement = (instanceName) => {
+  if (instanceName === "On Demand") {
+    return instanceName;
+  }
+  try {
+    return format(new Date(instanceName), "MMMM yyyy");
+  } catch {
+    return instanceName;
+  }
+};
 
 const formSchema = z.object({
   courseTitle: z.string().min(1, "Course title is required"),
-  studyMode: z.enum(["full_time", "part_time", "hybrid_learning"], {
+  studyMode: z.enum(["full_time", "part_time"], {
     errorMap: () => ({ message: "Please select a study mode" }),
   }),
   campus: z.string().min(1, "Campus is required"),
   commencement: z.string().min(1, "Commencement is required"),
+  ab_registration_no: z
+    .string()
+    .max(20, {
+      message: "AB registration number cannot exceed 20 characters",
+    })
+    .optional(),
+  ab_registration_date: z.date().optional(),
+  awarding_body: z.string().optional(),
 });
 
 const CourseDetails = ({
@@ -42,10 +70,13 @@ const CourseDetails = ({
   campus,
   courses,
   applicationID,
+  ab_registration_no,
+  ab_registration_date,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, startTransition] = useTransition();
 
+  const now = new Date();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -55,6 +86,10 @@ const CourseDetails = ({
       studyMode: studyMode || "",
       commencement: commencement || "",
       campus: campus || "",
+      ab_registration_no: ab_registration_no || "",
+      ab_registration_date: ab_registration_date || "",
+      awarding_body:
+        courses.find((c) => c.name === courseTitle)?.awarding_body || "",
     },
     resolver: zodResolver(formSchema),
   });
@@ -124,53 +159,154 @@ const CourseDetails = ({
   }, [watchCourseTitle, courses, form]);
 
   return (
-    <div className="border-b border-stroke space-y-4 mt-4">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="w-full flex justify-end">
-            {isEditing ? (
-              <div className="flex items-center gap-x-2">
-                <Button
-                  variant="outline"
-                  onClick={handleCancel}
-                  disabled={isSaving}
-                >
-                  Cancel
-                </Button>
-                <Button disabled={isSaving}>
-                  {isSaving ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <Button onClick={toggleEdit}>Edit</Button>
-            )}
+    <div className="mt-6 mb-4 rounded-lg border bg-white shadow">
+      <div className="flex items-center justify-end border-b px-5 py-3">
+        {!isEditing ? (
+          <Button
+            type="button"
+            className="gap-2"
+            onClick={() => setIsEditing(true)}
+          >
+            <PencilIcon className="h-4 w-4" />
+            Edit
+          </Button>
+        ) : (
+          <div className="flex items-center gap-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSaving}
+            >
+              Cancel
+            </Button>
+            <Button
+              form="course-details-form"
+              type="submit"
+              disabled={isSaving}
+            >
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
           </div>
-          <div className="w-full space-y-4 pb-4 mt-4">
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                <p>Course Title</p>
+        )}
+      </div>
+
+      <div className="p-5">
+        {!isEditing ? (
+          <div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Course
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {courseTitle || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Study Mode
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {formatStudyMode(studyMode) || "Not specified"}
+                  </p>
+                </div>
               </div>
-              {isEditing ? (
-                <FormField
-                  name="courseTitle"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Campus
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {campus || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Commencement
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {commencement
+                      ? formatCommencement(commencement)
+                      : "Not specified"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Awarding Body Details
+              </h3>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Awarding Body
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {courses.find((c) => c.name === courseTitle)
+                        ?.awarding_body || "Not specified"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      AB Registration No.
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {ab_registration_no || "Not specified"}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      AB Registration Date
+                    </label>
+                    <p className="mt-1 text-gray-900 break-words">
+                      {ab_registration_date
+                        ? format(new Date(ab_registration_date), "dd MMM yyyy")
+                        : "Not specified"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Form {...form}>
+            <form
+              id="course-details-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8"
+            >
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="courseTitle"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Course</FormLabel>
                         <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
                           value={field.value}
-                          disabled={isSaving}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            const selectedCourse = courses.find(
+                              (c) => c.name === value
+                            );
+                            form.setValue(
+                              "awarding_body",
+                              selectedCourse?.awarding_body || ""
+                            );
+                          }}
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a course" />
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select course" />
                           </SelectTrigger>
-                          <SelectContent position="top">
+                          <SelectContent>
                             {courses.map((course) => (
                               <SelectItem key={course.id} value={course.name}>
                                 {course.name}
@@ -178,165 +314,180 @@ const CourseDetails = ({
                             ))}
                           </SelectContent>
                         </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {courseTitle}
-                </p>
-              )}
-            </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Study Mode
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="studyMode"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
+                  <FormField
+                    control={form.control}
+                    name="studyMode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Study Mode</FormLabel>
                         <Select
-                          onValueChange={field.onChange}
                           value={field.value}
-                          disabled={isSaving}
+                          onValueChange={field.onChange}
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a study mode" />
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select study mode" />
                           </SelectTrigger>
                           <SelectContent>
-                            {courses
-                              .find(
-                                (course) =>
-                                  course.name === form.watch("courseTitle")
-                              )
-                              ?.course_study_mode.map((mode) => (
-                                <SelectItem
-                                  key={mode.id}
-                                  value={mode.study_mode}
-                                >
-                                  {formatStudyMode(mode.study_mode)}
-                                </SelectItem>
-                              )) || (
-                              <SelectItem value="" disabled>
-                                No study modes available
-                              </SelectItem>
-                            )}
+                            <SelectItem value="full_time">Full Time</SelectItem>
+                            <SelectItem value="part_time">Part Time</SelectItem>
                           </SelectContent>
                         </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {formatStudyMode(studyMode)}
-                </p>
-              )}
-            </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">
-                Commencement
-              </div>
-              {isEditing ? (
-                <FormField
-                  name="commencement"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="campus"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Campus</FormLabel>
                         <Select
-                          onValueChange={field.onChange}
                           value={field.value}
-                          disabled={isSaving}
+                          onValueChange={field.onChange}
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a commencement term" />
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select campus" />
                           </SelectTrigger>
                           <SelectContent>
+                            <SelectItem value="London">London</SelectItem>
+                            <SelectItem value="Birmingham">
+                              Birmingham
+                            </SelectItem>
+                            <SelectItem value="Manchester">
+                              Manchester
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="commencement"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Commencement</FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select commencement" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="On Demand">On Demand</SelectItem>
                             {courses
-                              .find(
-                                (course) =>
-                                  course.name === form.watch("courseTitle")
-                              )
-                              ?.course_instances.sort((a, b) =>
-                                compareAsc(
-                                  new Date(a.instance_name),
-                                  new Date(b.instance_name)
-                                )
-                              )
-                              .map((instance) => (
+                              .find((c) => c.name === watchCourseTitle)
+                              ?.course_instances.map((instance) => (
                                 <SelectItem
                                   key={instance.id}
                                   value={instance.instance_name}
                                 >
-                                  {instance.instance_name}
+                                  {formatCommencement(instance.instance_name)}
                                 </SelectItem>
-                              )) || (
-                              <SelectItem value="" disabled>
-                                No commencement terms available
-                              </SelectItem>
-                            )}
+                              ))}
                           </SelectContent>
                         </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {commencement}
-                </p>
-              )}
-            </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
-            <div className="flex gap-3">
-              <div className="flex items-start w-full max-w-[50%]">Campus</div>
-              {isEditing ? (
-                <FormField
-                  name="campus"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isSaving}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a campus" />
-                          </SelectTrigger>
-                          <SelectContent position="top">
-                            <SelectItem value="London">London</SelectItem>
-                            <SelectItem value="Bristol">Bristol</SelectItem>
-                            <SelectItem value="Sheffield">Sheffield</SelectItem>
-                            <SelectItem value="Birmingham">Birmingham</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : (
-                <p className="flex flex-wrap font-medium text-black w-full">
-                  {campus}
-                </p>
-              )}
-            </div>
-          </div>
-        </form>
-      </Form>
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Awarding Body Details
+                </h3>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="ab_registration_no"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>AB Registration Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="Enter registration number"
+                              className="w-full"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="ab_registration_date"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>AB Registration Date</FormLabel>
+                          <FormControl>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full justify-start text-left font-normal rounded-md text-sm px-3",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                  disabled={isSaving}
+                                >
+                                  {field.value ? (
+                                    formatDate(new Date(field.value))
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                  mode="single"
+                                  selected={new Date(field.value)}
+                                  captionLayout="dropdown-buttons"
+                                  fromYear={1920}
+                                  toYear={now.getFullYear()}
+                                  onSelect={(date) =>
+                                    field.onChange(new Date(date))
+                                  }
+                                  disabled={(date) =>
+                                    date > new Date() ||
+                                    date < new Date("1900-01-01")
+                                  }
+                                  weekStartsOn={1}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </Form>
+        )}
+      </div>
     </div>
   );
 };
