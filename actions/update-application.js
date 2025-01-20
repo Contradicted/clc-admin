@@ -641,6 +641,7 @@ export const updateCourseDetails = async (values, applicationID) => {
     }
 
     const {
+      courseTitle,
       studyMode,
       campus,
       commencement,
@@ -656,6 +657,7 @@ export const updateCourseDetails = async (values, applicationID) => {
             id: existingCourse.id,
           },
         },
+        courseTitle,
         studyMode,
         campus,
         commencement,
