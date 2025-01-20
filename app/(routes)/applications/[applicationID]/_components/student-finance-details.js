@@ -1491,7 +1491,8 @@ const StudentFinanceDetails = ({ application, courses }) => {
                                 >
                                   <Calendar
                                     mode="single"
-                                    selected={field.value}
+                                    selected={new Date(field.value)}
+                                    captionLayout="dropdown-buttons"
                                     onSelect={field.onChange}
                                     disabled={(date) =>
                                       date > addYears(new Date(), 3) ||
