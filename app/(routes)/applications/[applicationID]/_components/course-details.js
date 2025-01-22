@@ -59,7 +59,14 @@ const formSchema = z.object({
       message: "AB registration number cannot exceed 20 characters",
     })
     .optional(),
-  ab_registration_date: z.date().optional(),
+    ab_registration_date: z
+    .union([
+      z.date(),
+      z.string()
+        .transform((val) => (val === "" ? undefined : val))
+        .pipe(z.date().optional()),
+    ])
+    .optional(),
   awarding_body: z.string().optional(),
 });
 
