@@ -72,7 +72,7 @@ const ExportFiles = ({ data, courses }) => {
       
       const endpoints = {
         download: '/api/download',
-        student: '/api/export-student-data',
+        student: '/api/export-application-data',
       };
 
       const method = type === 'download' ? 'POST' : 'GET';

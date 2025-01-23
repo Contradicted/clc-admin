@@ -92,7 +92,7 @@ const ExportApplicationDetails = ({ data, courses }) => {
         commencement,
         enrollmentStatus,
       });
-      const response = await fetch(`/api/export-student-data?${params}`, {
+      const response = await fetch(`/api/export-application-data?${params}`, {
         method: "GET",
       });
 
