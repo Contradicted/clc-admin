@@ -13,7 +13,8 @@ export default async function ExportPage() {
       qualifications: true,
       pendingQualifications: true,
       workExperience: true,
-      paymentPlan: true
+      paymentPlan: true,
+      enrolledStudent: true
     },
     orderBy: {
       firstName: "asc",
