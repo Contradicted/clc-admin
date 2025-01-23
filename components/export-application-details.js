@@ -16,6 +16,7 @@ const ExportApplicationDetails = ({ data, courses }) => {
   const [courseTitle, setCourseTitle] = useState("");
   const [campus, setCampus] = useState("");
   const [commencement, setCommencement] = useState("");
+  const [enrollmentStatus, setEnrollmentStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -39,16 +40,30 @@ const ExportApplicationDetails = ({ data, courses }) => {
       if (courseTitle && app.courseTitle !== courseTitle) return false;
       if (campus && app.campus !== campus) return false;
       if (commencement && app.commencement !== commencement) return false;
+
+      // Filter by enrollment status
+      if (enrollmentStatus !== "all") {
+        const isEnrolled = app.status === "Enrolled" && app.enrolledStudent;
+        if (enrollmentStatus === "enrolled" && !isEnrolled) return false;
+        if (enrollmentStatus === "not_enrolled" && isEnrolled) return false;
+      }
+
       return true;
     });
-  }, [data, courseTitle, campus, commencement]);
+  }, [data, courseTitle, campus, commencement, enrollmentStatus]);
 
   // Check if form is valid and get count
   const { isValid, count } = useMemo(() => {
-    const valid = courseTitle && campus && commencement;
+    const valid = courseTitle && campus && commencement && enrollmentStatus;
     if (!valid) return { isValid: false, count: 0 };
     return { isValid: valid, count: filteredApplications.length };
-  }, [courseTitle, campus, commencement, filteredApplications.length]);
+  }, [
+    courseTitle,
+    campus,
+    commencement,
+    enrollmentStatus,
+    filteredApplications.length,
+  ]);
 
   const handleExport = async () => {
     if (!isValid) {
@@ -71,8 +86,13 @@ const ExportApplicationDetails = ({ data, courses }) => {
 
     try {
       setLoading(true);
-      const params = new URLSearchParams({ courseTitle, campus, commencement });
-      const response = await fetch(`/api/export-application-data?${params}`, {
+      const params = new URLSearchParams({
+        courseTitle,
+        campus,
+        commencement,
+        enrollmentStatus,
+      });
+      const response = await fetch(`/api/export-student-data?${params}`, {
         method: "GET",
       });
 
@@ -87,9 +107,12 @@ const ExportApplicationDetails = ({ data, courses }) => {
       link.href = downloadUrl;
 
       // Get filename from Content-Disposition header if available
-      const contentDisposition = response.headers.get('content-disposition');
-      const filenameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
-      const filename = filenameMatch ? filenameMatch[1] : `${courseTitle.replace(/[^a-zA-Z0-9]/g, '_')}_${campus}_${commencement.replace(/[^a-zA-Z0-9]/g, '_')}_details_${new Date().toISOString().split("T")[0]}.csv`;
+      const contentDisposition = response.headers.get("content-disposition");
+      const filenameMatch =
+        contentDisposition && contentDisposition.match(/filename="(.+)"/);
+      const filename = filenameMatch
+        ? filenameMatch[1]
+        : `${courseTitle.replace(/[^a-zA-Z0-9]/g, "_")}_${campus}_${commencement.replace(/[^a-zA-Z0-9]/g, "_")}_student_details_${new Date().toISOString().split("T")[0]}.csv`;
 
       link.download = filename;
       document.body.appendChild(link);
@@ -100,17 +123,17 @@ const ExportApplicationDetails = ({ data, courses }) => {
       toast({
         variant: "success",
         title: "Export successful",
-        description: "Application details have been exported to CSV",
+        description: "Student details have been exported to CSV",
       });
 
       setCourseTitle("");
       setCampus("");
       setCommencement("");
     } catch (error) {
-      console.error("[EXPORT_APPLICATION_DETAILS_ERROR]", error);
+      console.error("[EXPORT_STUDENT_DETAILS_ERROR]", error);
       toast({
         title: "Export failed",
-        description: error.message || "Failed to export application details",
+        description: error.message || "Failed to export student details",
         variant: "destructive",
       });
     } finally {
@@ -124,11 +147,13 @@ const ExportApplicationDetails = ({ data, courses }) => {
         <div className="flex items-center gap-2">
           <h2 className="text-2xl font-bold">Student Details Export</h2>
         </div>
-        <p className="text-blue-100 mt-2">Export student details and information</p>
+        <p className="text-blue-100 mt-2">
+          Export student details and information
+        </p>
       </div>
 
       <div className="p-6 space-y-6">
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-4">
           <Select value={courseTitle} onValueChange={setCourseTitle}>
             <SelectTrigger>
               <SelectValue placeholder="Select Course" />
@@ -149,8 +174,6 @@ const ExportApplicationDetails = ({ data, courses }) => {
             <SelectContent position="top">
               <SelectItem value="London">London</SelectItem>
               <SelectItem value="Bristol">Bristol</SelectItem>
-              <SelectItem value="Sheffield">Sheffield</SelectItem>
-              <SelectItem value="Birmingham">Birmingham</SelectItem>
             </SelectContent>
           </Select>
 
@@ -170,25 +193,46 @@ const ExportApplicationDetails = ({ data, courses }) => {
               ))}
             </SelectContent>
           </Select>
+
+          <Select
+            value={enrollmentStatus}
+            onValueChange={setEnrollmentStatus}
+            disabled={!courseTitle}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Enrollment Status" />
+            </SelectTrigger>
+            <SelectContent position="top">
+              <SelectItem value="all">All Students</SelectItem>
+              <SelectItem value="enrolled">Enrolled Only</SelectItem>
+              <SelectItem value="not_enrolled">Not Enrolled</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex justify-between items-center space-y-4">
           <div className="flex items-center gap-2">
-          <FileText className="h-4 w-4 text-blue-500" />
+            <FileText className="h-4 w-4 text-blue-500" />
             <p className="text-sm text-muted-foreground">
               {isValid ? (
-                <p className="text-sm text-gray-600">
-                  {count} application{count !== 1 ? "s" : ""} match your criteria
-                </p>
+                count > 0 ? (
+                  <p className="text-sm text-gray-600">
+                    {count} student{count === 1 ? "" : "s"} match your criteria
+                  </p>
+                ) : (
+                  <p className="text-sm text-red-600">
+                    No students match your criteria
+                  </p>
+                )
               ) : (
-                "Please select course, campus and commencement"
+                "Please select all fields to export student details"
               )}
             </p>
           </div>
 
           <Button
             onClick={handleExport}
-            disabled={!isValid || loading}
+            disabled={!isValid || loading || count === 0}
             className="w-fit max-w-sm bg-blue-500 hover:bg-blue-600"
           >
             {loading ? (

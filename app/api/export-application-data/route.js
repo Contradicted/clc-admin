@@ -12,11 +12,13 @@ export async function GET(req) {
     const courseTitle = url.searchParams.get("courseTitle");
     const campus = url.searchParams.get("campus");
     const commencement = url.searchParams.get("commencement");
+    const enrollmentStatus = url.searchParams.get("enrollmentStatus");
 
     // console.log("Received request with parameters:", {
     //   courseTitle,
     //   campus,
     //   commencement,
+    //   enrollmentStatus,
     // });
 
     // Get all applications matching the criteria
@@ -25,6 +27,20 @@ export async function GET(req) {
         courseTitle,
         campus,
         commencement,
+        ...(enrollmentStatus === "enrolled" && {
+          status: "Enrolled",
+          enrolledStudent: {
+            isNot: null,
+          },
+        }),
+        ...(enrollmentStatus === "not_enrolled" && {
+          OR: [
+            { status: { not: "Enrolled" } },
+            {
+              AND: [{ status: "Enrolled" }, { enrolledStudent: null }],
+            },
+          ],
+        }),
       },
       orderBy: {
         firstName: "asc",
@@ -47,15 +63,30 @@ export async function GET(req) {
         emergency_contact_name: true,
         emergency_contact_no: true,
         recruitment_agent: true,
+        status: true,
+        enrolledStudent: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
     console.log("Found applications:", applications.length);
 
+    // Return early if no applications found
+    if (applications.length === 0) {
+      return NextResponse.json(
+        { error: "No applications found matching the criteria" },
+        { status: 404 }
+      );
+    }
+
     const result = await exportStudentData(applications, {
       courseTitle,
       campus,
       commencement,
+      enrollmentStatus,
     });
 
     if (result.error) {
@@ -67,7 +98,7 @@ export async function GET(req) {
     // Format filename
     const formattedCourseTitle = courseTitle.replace(/[^a-zA-Z0-9]/g, "_");
     const formattedCommencement = commencement.replace(/[^a-zA-Z0-9]/g, "_");
-    const fileName = `${formattedCourseTitle}_${campus}_${formattedCommencement}_details_${new Date().toISOString().split("T")[0]}.csv`;
+    const fileName = `${formattedCourseTitle}_${campus}_${formattedCommencement}_${enrollmentStatus}_details_${new Date().toISOString().split("T")[0]}.csv`;
 
     // Create response with CSV content
     const response = new NextResponse(csvContent);
