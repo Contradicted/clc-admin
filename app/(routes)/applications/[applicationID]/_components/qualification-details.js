@@ -621,7 +621,7 @@ const QualificationDetails = ({ application }) => {
                 </div>
               ))}
 
-              {fields.length < 3 && (
+              {fields.length < 4 && (
                 <div className="flex items-center">
                   <Button
                     type="button"
@@ -812,7 +812,7 @@ const QualificationDetails = ({ application }) => {
                     </div>
                   ))}
 
-                  {pendingQFields.length < 3 && (
+                  {pendingQFields.length < 4 && (
                     <div className="flex items-center">
                       <Button
                         type="button"
