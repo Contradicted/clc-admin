@@ -335,7 +335,7 @@ const QualificationDetails = ({ application }) => {
             {fields.map((qualification, index) => (
               <div
                 key={index}
-                className="rounded-lg border bg-neutral-50/50 p-6 space-y-6"
+                className="rounded-lg border bg-neutral-50/50 p-6 space-y-6 mb-4"
               >
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-1">
@@ -396,7 +396,7 @@ const QualificationDetails = ({ application }) => {
                     (qualification, index) => (
                       <div
                         key={index}
-                        className="mt-3 rounded-lg border bg-neutral-50/50 p-6 space-y-6"
+                        className="mt-8 rounded-lg border bg-neutral-50/50 p-6 pb-2 mb-4"
                       >
                         <div className="grid grid-cols-2 gap-6">
                           <div className="space-y-1">
@@ -466,7 +466,7 @@ const QualificationDetails = ({ application }) => {
               {fields.map((qualification, index) => (
                 <div
                   key={index}
-                  className="rounded-lg border bg-neutral-50/50 p-6 space-y-6"
+                  className="rounded-lg border bg-neutral-50/50 p-6 space-y-6 mb-4"
                 >
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-1">
@@ -685,7 +685,7 @@ const QualificationDetails = ({ application }) => {
                   {pendingQFields.map((qualification, index) => (
                     <div
                       key={index}
-                      className="rounded-lg border bg-neutral-50/50 p-6 space-y-6"
+                      className="rounded-lg border bg-neutral-50/50 p-6 space-y-6 mb-4"
                     >
                       <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-1">
