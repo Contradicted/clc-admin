@@ -564,8 +564,9 @@ const WorkExperienceDetails = ({ application }) => {
                           </p>
                         )}
                       </div>
+                    </div>
 
-                      {isEditing && (
+                    {isEditing && (
                         <div className="space-y-1">
                           <p className="text-sm font-semibold text-neutral-700">
                             Supporting Document
@@ -610,7 +611,6 @@ const WorkExperienceDetails = ({ application }) => {
                           />
                         </div>
                       )}
-                    </div>
 
                     {isEditing && (
                       <div className="space-y-4">

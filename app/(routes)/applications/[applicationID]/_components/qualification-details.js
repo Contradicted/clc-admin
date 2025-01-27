@@ -559,8 +559,9 @@ const QualificationDetails = ({ application }) => {
                         )}
                       />
                     </div>
+                  </div>
 
-                    <div className="space-y-1">
+                  <div className="space-y-1">
                       <p className="text-sm font-medium text-neutral-700">
                         Supporting Document
                       </p>
@@ -603,7 +604,6 @@ const QualificationDetails = ({ application }) => {
                         )}
                       />
                     </div>
-                  </div>
 
                   {index > 0 && (
                     <Button
