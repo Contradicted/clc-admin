@@ -1363,13 +1363,13 @@ const StudentFinanceDetails = ({ application, courses }) => {
                           {
                             date: new Date(),
                             amount: paymentAmount,
-                            university: "Plymouth Marjon University",
+                            university: courses?.find((course) => course.id === application.courseID)?.awarding_body || "",
                             course: application.courseTitle,
                           },
                           {
                             date: new Date(),
                             amount: feeDifference - paymentAmount,
-                            university: "Plymouth Marjon University",
+                            university: courses?.find((course) => course.id === application.courseID)?.awarding_body || "",
                             course: application.courseTitle,
                           },
                         ];
@@ -1441,7 +1441,7 @@ const StudentFinanceDetails = ({ application, courses }) => {
                           append({
                             date: new Date(),
                             amount: "",
-                            university: "Plymouth Marjon University",
+                            university: courses?.find((course) => course.id === application.courseID)?.awarding_body || "",
                             course: application.courseTitle,
                           })
                         }
