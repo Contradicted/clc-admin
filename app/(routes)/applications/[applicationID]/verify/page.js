@@ -3,12 +3,13 @@ import Link from "next/link";
 import DefaultLayout from "@/components/default-layout";
 import VerifyApplicationButtons from "./_components/verify-application-buttons";
 
-import { getStudentByApplicationID } from "@/data/student";
+import { getEnrolledStudentByApplicationID, getStudentByApplicationID } from "@/data/student";
 import { getApplicationByID } from "@/data/application";
 import { getDisplayStatus } from "@/lib/utils";
 
 export default async function VerifyApplication({ params }) {
   const student = await getStudentByApplicationID(params.applicationID);
+  const enrolledStudent = await getEnrolledStudentByApplicationID(params.applicationID);
   const application = await getApplicationByID(params.applicationID);
 
   return (
@@ -35,6 +36,7 @@ export default async function VerifyApplication({ params }) {
                 <VerifyApplicationButtons
                   applicationID={params.applicationID}
                   applicationStatus={application.status}
+                  enrolledStudent={enrolledStudent}
                 />
               </div>
             </div>

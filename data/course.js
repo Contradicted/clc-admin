@@ -95,3 +95,19 @@ export const getActiveCourses = async () => {
     return null;
   }
 };
+
+export const getInstituteByCourseTitle = async (courseTitle) => {
+  try {
+    return await db.course.findFirst({
+      where: {
+        name: courseTitle,
+      },
+      select: {
+        awarding_body: true
+      }
+    })
+  } catch (error) {
+    console.log("[FETCHING_INSTITUTE_BY_COURSE_TITLE_ERROR]", error);
+    return null;
+  }
+}
