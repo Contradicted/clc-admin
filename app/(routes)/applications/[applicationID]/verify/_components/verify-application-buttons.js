@@ -1,3 +1,5 @@
+"use client";
+
 import StatusModal from "./status-modal";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
