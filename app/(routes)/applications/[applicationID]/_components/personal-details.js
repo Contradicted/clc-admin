@@ -241,11 +241,11 @@ const PersonalDetails = ({ application }) => {
           : [],
         immigration: application.immigration_url
           ? [
-              {
-                name: application.immigration_name,
-                url: application.immigration_url,
-              },
-            ]
+            {
+              name: application.immigration_name,
+              url: application.immigration_url,
+            },
+          ]
           : [],
       },
     },
@@ -592,48 +592,52 @@ const PersonalDetails = ({ application }) => {
             {(application.entryDateToUK ||
               (nationality !== "British" &&
                 countryOfBirth !== "United Kingdom")) && (
-              <div className="mt-8 pt-6 border-t">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Immigration Details
-                </h3>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-bold text-gray-500">
-                        Entry Date to UK
-                      </label>
-                      <p className="mt-1 text-gray-900 break-words">
-                        {application.entryDateToUK
-                          ? formatDate(application.entryDateToUK)
-                          : "Not specified"}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-bold text-gray-500">
-                        Immigration Status
-                      </label>
-                      <p className="mt-1 text-gray-900 break-words">
-                        {application.immigration_status
-                          ? formatImmigrationStatus(
-                              application.immigration_status
-                            )
-                          : "Not specified"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-bold text-gray-500">
-                        Share Code
-                      </label>
-                      <p className="mt-1 text-gray-900 break-words">
-                        {application.share_code || "Not specified"}
-                      </p>
+                <div className="mt-8 pt-6 border-t">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Immigration Details
+                  </h3>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-sm font-bold text-gray-500">
+                          Entry Date to UK
+                        </label>
+                        <p className="mt-1 text-gray-900 break-words">
+                          {application.entryDateToUK
+                            ? formatDate(application.entryDateToUK)
+                            : "Not specified"}
+                        </p>
+                      </div>
+                      {nationality !== "British" && countryOfBirth !== "United Kingdom" && (
+                        <>
+                          <div>
+                            <label className="text-sm font-bold text-gray-500">
+                              Immigration Status
+                            </label>
+                            <p className="mt-1 text-gray-900 break-words">
+                              {application.immigration_status
+                                ? formatImmigrationStatus(
+                                  application.immigration_status
+                                )
+                                : "Not specified"}
+                            </p>
+                          </div>
+                          <div className="space-y-4">
+                            <div>
+                              <label className="text-sm font-bold text-gray-500">
+                                Share Code
+                              </label>
+                              <p className="mt-1 text-gray-900 break-words">
+                                {application.share_code || "Not specified"}
+                              </p>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <div className="mt-8 pt-6 border-t">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -658,8 +662,8 @@ const PersonalDetails = ({ application }) => {
                     <p className="mt-1 text-gray-900 break-words">
                       {application.emergency_contact_no
                         ? formatPhoneNumberIntl(
-                            application.emergency_contact_no
-                          )
+                          application.emergency_contact_no
+                        )
                         : "Not specified"}
                     </p>
                   </div>
@@ -1177,138 +1181,138 @@ const PersonalDetails = ({ application }) => {
               {(application.entryDateToUK ||
                 (nationality !== "British" &&
                   countryOfBirth !== "United Kingdom")) && (
-                <div className="mt-8 pt-6 border-t">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
-                    Immigration Details
-                  </h3>
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <div className="space-y-4">
-                      <FormField
-                        name="entryDateToUK"
-                        control={form.control}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium text-gray-500">
-                              Entry Date to UK
-                            </FormLabel>
-                            <FormControl>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant={"outline"}
-                                    className={cn(
-                                      "w-full justify-start text-left font-normal rounded-md text-sm px-3",
-                                      !field.value && "text-muted-foreground"
-                                    )}
+                  <div className="mt-8 pt-6 border-t">
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      Immigration Details
+                    </h3>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div className="space-y-4">
+                        <FormField
+                          name="entryDateToUK"
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium text-gray-500">
+                                Entry Date to UK
+                              </FormLabel>
+                              <FormControl>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <Button
+                                      variant={"outline"}
+                                      className={cn(
+                                        "w-full justify-start text-left font-normal rounded-md text-sm px-3",
+                                        !field.value && "text-muted-foreground"
+                                      )}
+                                      disabled={isSaving}
+                                    >
+                                      {field.value ? (
+                                        formatDate(new Date(field.value))
+                                      ) : (
+                                        <span>Pick a date</span>
+                                      )}
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0">
+                                    <Calendar
+                                      mode="single"
+                                      selected={new Date(field.value)}
+                                      captionLayout="dropdown-buttons"
+                                      fromYear={1920}
+                                      toYear={now.getFullYear()}
+                                      onSelect={(date) =>
+                                        field.onChange(new Date(date))
+                                      }
+                                      disabled={(date) =>
+                                        date > new Date() ||
+                                        date < new Date("1900-01-01")
+                                      }
+                                      initialFocus
+                                      weekStartsOn={1}
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        {nationality && nationality !== "British" && (
+                          <FormField
+                            name="immigration_status"
+                            control={form.control}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-sm font-medium text-gray-500">
+                                  Immigration Status
+                                </FormLabel>
+                                <FormControl>
+                                  <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    value={field.value}
                                     disabled={isSaving}
                                   >
-                                    {field.value ? (
-                                      formatDate(new Date(field.value))
-                                    ) : (
-                                      <span>Pick a date</span>
-                                    )}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0">
-                                  <Calendar
-                                    mode="single"
-                                    selected={new Date(field.value)}
-                                    captionLayout="dropdown-buttons"
-                                    fromYear={1920}
-                                    toYear={now.getFullYear()}
-                                    onSelect={(date) =>
-                                      field.onChange(new Date(date))
-                                    }
-                                    disabled={(date) =>
-                                      date > new Date() ||
-                                      date < new Date("1900-01-01")
-                                    }
-                                    initialFocus
-                                    weekStartsOn={1}
-                                  />
-                                </PopoverContent>
-                              </Popover>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select an option" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectItem value="settled">
+                                          Settled (Indefinite Leave)
+                                        </SelectItem>
+                                        <SelectItem value="pre_settled">
+                                          Pre Settled (Limited Leave)
+                                        </SelectItem>
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         )}
-                      />
+                      </div>
 
-                      {nationality && nationality !== "British" && (
-                        <FormField
-                          name="immigration_status"
-                          control={form.control}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium text-gray-500">
-                                Immigration Status
-                              </FormLabel>
-                              <FormControl>
-                                <Select
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value}
-                                  value={field.value}
-                                  disabled={isSaving}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select an option" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectGroup>
-                                      <SelectItem value="settled">
-                                        Settled (Indefinite Leave)
-                                      </SelectItem>
-                                      <SelectItem value="pre_settled">
-                                        Pre Settled (Limited Leave)
-                                      </SelectItem>
-                                    </SelectGroup>
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                    </div>
-
-                    <div className="space-y-4">
-                      {immigrationStatus && (
-                        <FormField
-                          name="share_code"
-                          control={form.control}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium text-gray-500">
-                                Share Code
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  type="text"
-                                  disabled={isSaving}
-                                  onChange={(e) => {
-                                    const value = e.target.value
-                                      .toUpperCase()
-                                      .replace(/[^A-Z0-9]/g, "");
-                                    const formattedValue = value
-                                      .replace(/(.{3})/g, "$1 ")
-                                      .trim();
-                                    field.onChange(formattedValue);
-                                  }}
-                                  maxLength={11}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
+                      <div className="space-y-4">
+                        {immigrationStatus && (
+                          <FormField
+                            name="share_code"
+                            control={form.control}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-sm font-medium text-gray-500">
+                                  Share Code
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    type="text"
+                                    disabled={isSaving}
+                                    onChange={(e) => {
+                                      const value = e.target.value
+                                        .toUpperCase()
+                                        .replace(/[^A-Z0-9]/g, "");
+                                      const formattedValue = value
+                                        .replace(/(.{3})/g, "$1 ")
+                                        .trim();
+                                      field.onChange(formattedValue);
+                                    }}
+                                    maxLength={11}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
               <div className="mt-8 pt-6 border-t">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
