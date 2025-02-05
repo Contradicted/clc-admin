@@ -31,6 +31,7 @@ export const interview = async (values, applicationID) => {
   if (
     ![
       "Approved_for_Interview",
+      "Invited_for_Interview",
       "Interview_successful",
       "Rejected",
       "Finished",
