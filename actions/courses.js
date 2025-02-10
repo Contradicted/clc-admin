@@ -77,7 +77,7 @@ export const courses = async (values, courseID) => {
                 last_join_date: isOnDemand ? null : instance.last_join_date,
                 end_date: isOnDemand ? null : instance.end_date,
                 results_date: isOnDemand ? null : instance.results_date,
-                status: true, // -> For now, all with be active, later it will be 'checkIsActive(instance.last_join_date)'
+                status: instance.status, // -> For now, all with be active, later it will be 'checkIsActive(instance.last_join_date)'
               },
               create: {
                 course: {
@@ -91,7 +91,7 @@ export const courses = async (values, courseID) => {
                 last_join_date: isOnDemand ? null : instance.last_join_date,
                 end_date: isOnDemand ? null : instance.end_date,
                 results_date: isOnDemand ? null : instance.results_date,
-                status: true, // -> For now, all with be active, later it will be 'checkIsActive(instance.last_join_date)'
+                status: instance.status, // -> For now, all with be active, later it will be 'checkIsActive(instance.last_join_date)'
               },
             });
           }

@@ -46,6 +46,7 @@ const formSchema = z.object({
             z.string().min(1, { message: "Commencement is required" }),
           ]),
           isOnDemand: z.boolean().default(false),
+          status: z.boolean(),
           start_date: z
             .date({ invalid_type_error: "Start date is required" })
             .optional()
@@ -276,11 +277,13 @@ const DatesForm = ({ initialData, courseID }) => {
                 instance.end_date,
                 instance.results_date
               ),
+              status: instance.status || false
             }))
           : [
               {
                 instance_name: "",
                 isOnDemand: false,
+                status: false,
                 start_date: "",
                 last_join_weeks: "4",
                 last_join_date: "",
@@ -516,6 +519,7 @@ const DatesForm = ({ initialData, courseID }) => {
                       append({
                         instance_name: "",
                         isOnDemand: false,
+                        status: false,
                         start_date: "",
                         last_join_weeks: "4",
                         last_join_date: "",
@@ -722,6 +726,34 @@ const DatesForm = ({ initialData, courseID }) => {
                                     />
                                   </FormControl>
                                   <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                          <div className="w-full">
+                            <FormField
+                              control={form.control}
+                              name={`course_instances.${index}.status`}
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">
+                                      Open for Enrollment
+                                    </FormLabel>
+                                    <div className="text-sm text-muted-foreground">
+                                      Allow students to enroll in this course
+                                      instance
+                                    </div>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
                                 </FormItem>
                               )}
                             />
