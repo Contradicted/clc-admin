@@ -1,6 +1,6 @@
 import Link from "next/link";
 import SidebarItem from "@/components/sidebar-item";
-import { Book, UserRound, ChartNoAxesCombined } from "lucide-react";
+import { Book, UserRound, ChartNoAxesCombined, MessageSquare } from "lucide-react";
 import { InterviewIcon } from "@/components/icons/interview-icon";
 import { useState } from "react";
 import Image from "next/image";
@@ -92,6 +92,12 @@ const menuGroups = [
         label: "Interviews",
         route: "/interviews",
         visible: ["Admin", "Staff"],
+      },
+      {
+        icon: <MessageSquare className="size-[18px] stroke-current" />,
+        label: "Messages",
+        route: "/messages",
+        visible: ["Admin"],
       },
     ],
   },
