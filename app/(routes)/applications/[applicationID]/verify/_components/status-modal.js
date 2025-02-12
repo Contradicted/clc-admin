@@ -33,6 +33,7 @@ const StatusModal = ({
   desc,
   status,
   className,
+  isDisabled,
 }) => {
   const [open, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -103,7 +104,7 @@ const StatusModal = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className={className}>{name}</Button>
+        <Button className={className} disabled={isDisabled}>{name}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

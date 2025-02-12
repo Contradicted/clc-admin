@@ -9,14 +9,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { formatDateTime } from "@/lib/utils";
 
 const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledStudent }) => {
+  const [enrolledStudentState, setEnrolledStudentState] = useState(enrolledStudent);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isGenerated, setIsGenerated] = useState(enrolledStudent);
   const { toast } = useToast();
 
   const handleGenerateID = async () => {
     try {
       setIsGenerating(true);
 
+      // Generate ID Card
       const response = await fetch("/api/wallet/generate", {
         method: "POST",
         headers: {
@@ -31,17 +32,35 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
         throw new Error(data.message || "Failed to generate ID card");
       }
 
-      // console.log("Google Wallet Save Link:", data.saveUrl);
+      // Create system note
+      const noteResponse = await fetch("/api/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: "Student ID card has been generated successfully.",
+          type: "System",
+          applicationID: applicationID,
+        }),
+      });
 
-      setIsGenerated(prev => ({
+      if (!noteResponse.ok) {
+        console.error("Failed to create note for ID generation");
+      }
+
+      console.log("Google Wallet Save Link:", data.saveUrl);
+
+      // Update local state to reflect ID creation
+      setEnrolledStudentState(prev => ({
         ...prev,
         idCreated: new Date().toISOString()
-      }))
+      }));
 
       toast({
         variant: "success",
         title: "ID Card Generated",
-        description: "Student ID card has been generated successfully.",
+        description: "Student ID card has been generated successfully. Check console for save link.",
       });
     } catch (error) {
       console.error("[GENERATE_ID_ERROR]", error);
@@ -59,7 +78,7 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
   const idButton = (
     <Button
       onClick={handleGenerateID}
-      disabled={isGenerating || isGenerated?.idCreated}
+      disabled={isGenerating || enrolledStudentState?.idCreated}
       className="bg-primary hover:bg-primary/90"
     >
       {isGenerating ? (
@@ -124,12 +143,13 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
         <StatusModal
           applicationID={applicationID}
           status="Withdrawn"
-          name="Withdrawn"
-          title="Withdrawn"
+          name="Withdraw"
+          title="Withdraw"
           desc="Please write your reason(s) for withdrawing application"
           className="bg-[#818181] hover:bg-[#818181]/90"
         />
       </div>
+      {/* ID Card Button */}
       {applicationStatus === "Enrolled" && (
         <div className="flex items-center gap-x-3">
         <TooltipProvider>
@@ -137,13 +157,17 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
             <TooltipTrigger asChild className="disabled:pointer-events-auto">
               {idButton}
             </TooltipTrigger>
-            {isGenerated?.idCreated && (
-              <TooltipContent>
+            <TooltipContent>
+              {enrolledStudentState?.idCreated ? (
                 <p>ID generated:{" "}
-                  <span className="italic">{formatDateTime(isGenerated?.idCreated).dateTime}</span>
+                  <span className="italic">{formatDateTime(enrolledStudentState.idCreated).dateTime}</span>
                 </p>
+              ) : applicationStatus === "Enrollment_Letter_Sent" ? (
+                <p>Generate a new student ID card</p>
+              ) : (
+                <p>ID card can only be generated after enrollment letter is sent</p>
+              )}
             </TooltipContent>
-            )}
           </Tooltip>
         </TooltipProvider>
       </div>

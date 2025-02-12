@@ -32,7 +32,7 @@ export default async function VerifyApplication({ params }) {
         <div className="flex flex-col md:flex-row md:flex-grow gap-x-4">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark flex-1">
             <div className="grid grid-cols-6 border-b border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-              <div className="col-span-3 flex items-center">
+              <div className="col-span-full flex items-center">
                 <VerifyApplicationButtons
                   applicationID={params.applicationID}
                   applicationStatus={application.status}
