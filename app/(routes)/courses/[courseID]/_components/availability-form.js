@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState, useTransition } from "react";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, Loader2 } from "lucide-react";
 import { courses } from "@/actions/courses";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";

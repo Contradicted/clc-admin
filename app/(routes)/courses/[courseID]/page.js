@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import Actions from "./_components/actions";
 import ModulesForm from "./_components/modules-form";
 import { Badge } from "@/components/ui/badge";
+import AvailabilityForm from "./_components/availability-form";
 
 const CourseIDPage = async ({ params }) => {
   const course = await getCourseByID(params.courseID);
