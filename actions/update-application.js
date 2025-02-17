@@ -40,6 +40,8 @@ export const updateQualifications = async (formData, applicationID) => {
         title: formData.get(`qualifications[${i}][title]`),
         examiningBody: formData.get(`qualifications[${i}][examiningBody]`),
         dateAwarded: formData.get(`qualifications[${i}][dateAwarded]`),
+        learnerRef: formData.get(`qualifications[${i}][learnerRef]`),
+        certificateRef: formData.get(`qualifications[${i}][certificateRef]`),
       };
 
       const file = formData.get(`qualifications[${i}][file]`);
@@ -118,6 +120,8 @@ export const updateQualifications = async (formData, applicationID) => {
             title: qual.title,
             examiningBody: qual.examiningBody,
             dateAwarded: new Date(qual.dateAwarded),
+            learnerRef: qual.learnerRef,
+            certificateRef: qual.certificateRef,
             url: uploadedFile
               ? uploadedFile.data.url
               : uploadedFile === null
@@ -142,6 +146,8 @@ export const updateQualifications = async (formData, applicationID) => {
             title: qual.title,
             examiningBody: qual.examiningBody,
             dateAwarded: new Date(qual.dateAwarded),
+            learnerRef: qual.learnerRef,
+            certificateRef: qual.certificateRef,
             applicationID,
             url: uploadedFile ? uploadedFile.data.url : null,
             fileName: uploadedFile ? uploadedFile.data.name : null,

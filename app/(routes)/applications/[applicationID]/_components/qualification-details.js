@@ -59,6 +59,20 @@ const formSchema = z.object({
       title: z.string().min(1, { message: "Title is required" }),
       examiningBody: z.string().min(1, { message: "Exam body is required" }),
       dateAwarded: z.date(),
+      learnerRef: z
+        .string()
+        .regex(/^[A-Za-z]{2}\d{5}$/, {
+          message: "Must be 2 letters followed by 5 digits",
+        })
+        .optional()
+        .or(z.literal("")),
+      certificateRef: z
+        .string()
+        .regex(/^\d{1,10}$/, {
+          message: "Cannot exceed 10 digits",
+        })
+        .optional()
+        .or(z.literal("")),
       file: z.array(z.any()).optional(),
     })
   ),
@@ -123,6 +137,8 @@ const QualificationDetails = ({ application }) => {
         application.qualifications.length > 0
           ? application.qualifications.map((qual) => ({
               ...qual,
+              learnerRef: qual.learnerRef || "",
+              certificateRef: qual.certificateRef || "",
               file: qual.url
                 ? [{ name: qual.fileName, url: qual.url, alreadyExists: true }]
                 : [],
@@ -223,6 +239,11 @@ const QualificationDetails = ({ application }) => {
       formData.append(
         `qualifications[${index}][dateAwarded]`,
         qual.dateAwarded
+      );
+      formData.append(`qualifications[${index}][learnerRef]`, qual.learnerRef);
+      formData.append(
+        `qualifications[${index}][certificateRef]`,
+        qual.certificateRef
       );
 
       // Handle file upload
@@ -364,6 +385,24 @@ const QualificationDetails = ({ application }) => {
                       {qualification.dateAwarded
                         ? formatDate(qualification.dateAwarded)
                         : "Not specified"}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-neutral-700">
+                      Learner Reference
+                    </p>
+                    <p className="text-sm font-medium text-neutral-900">
+                      {qualification.learnerRef || "Not specified"}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-neutral-700">
+                      Certificate Reference
+                    </p>
+                    <p className="text-sm font-medium text-neutral-900">
+                      {qualification.certificateRef || "Not specified"}
                     </p>
                   </div>
                 </div>
@@ -559,6 +598,57 @@ const QualificationDetails = ({ application }) => {
                         )}
                       />
                     </div>
+
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-neutral-700">
+                        Learner Reference
+                      </p>
+                      <FormField
+                        control={form.control}
+                        name={`qualifications.${index}.learnerRef`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                placeholder="AB12345"
+                                className="uppercase"
+                                {...field}
+                                onChange={(e) => {
+                                  const upperValue =
+                                    e.target.value.toUpperCase();
+                                  field.onChange(upperValue);
+                                }}
+                                value={field.value?.toUpperCase()}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-neutral-700">
+                        Certificate Reference
+                      </p>
+                      <FormField
+                        control={form.control}
+                        name={`qualifications.${index}.certificateRef`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="1234567890"
+                                className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-1">
@@ -633,6 +723,8 @@ const QualificationDetails = ({ application }) => {
                         title: "",
                         examiningBody: "",
                         dateAwarded: "",
+                        learnerRef: "",
+                        certificateRef: "",
                       })
                     }
                   >
