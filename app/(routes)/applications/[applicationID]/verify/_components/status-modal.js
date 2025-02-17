@@ -106,7 +106,11 @@ const StatusModal = ({
       <DialogTrigger asChild>
         <Button className={className} disabled={isDisabled}>{name}</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <div className="border-2 border-primary w-[25%] rounded-sm" />
