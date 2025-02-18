@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import DateTimePickerForm from "@/components/DateTimePickerForm";
 
 const InterviewModal = ({ studentData, applicationData }) => {
   const [open, setIsOpen] = useState(false);
@@ -163,21 +164,29 @@ const InterviewModal = ({ studentData, applicationData }) => {
                   </div>
                   <div className="flex gap-3">
                     <div className="flex items-start w-full max-w-[35%]">
-                      <p>Interview Date & Time</p>
+                      <p>Date & Time</p>
                     </div>
                     <div className="w-full relative z-0">
                       <FormField
                         control={form.control}
                         name="date"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="space-y-0">
                             <FormControl>
-                              <DateTimePicker
-                                hourCycle={12}
-                                yearRange={3}
-                                value={field.value}
-                                onChange={field.onChange}
-                              />
+                            <div className="[&_[data-radix-popper-content-wrapper]]:!top-auto [&_[data-radix-popper-content-wrapper]]:!bottom-[100%]">
+                                <DateTimePickerForm
+                                  selected={field.value}
+                                  onSelect={(date, time) => {
+                                    if (date && time) {
+                                      const [hours, minutes] = time.split(':').map(Number);
+                                      const newDate = new Date(date);
+                                      newDate.setHours(hours);
+                                      newDate.setMinutes(minutes);
+                                      field.onChange(newDate);
+                                    }
+                                  }}
+                                />
+                              </div>
                             </FormControl>
                           </FormItem>
                         )}
