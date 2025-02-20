@@ -134,7 +134,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     >
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
         <Link href="/" className="flex w-full justify-center">
-          <Image src="/clc.png" alt="logo" width={150} height={150} />
+          <Image src="/clc-transparent.png" alt="logo" width={150} height={150} />
         </Link>
 
         <button
