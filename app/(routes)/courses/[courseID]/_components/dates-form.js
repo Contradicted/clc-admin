@@ -277,13 +277,15 @@ const DatesForm = ({ initialData, courseID }) => {
                 instance.end_date,
                 instance.results_date
               ),
-              status: instance.status || false
+              status: instance.status || false,
+              availability: instance.availability || 0,
             }))
           : [
               {
                 instance_name: "",
                 isOnDemand: false,
                 status: false,
+                availability: 0,
                 start_date: "",
                 last_join_weeks: "4",
                 last_join_date: "",
@@ -520,6 +522,7 @@ const DatesForm = ({ initialData, courseID }) => {
                         instance_name: "",
                         isOnDemand: false,
                         status: false,
+                        availability: 0,
                         start_date: "",
                         last_join_weeks: "4",
                         last_join_date: "",
@@ -557,7 +560,28 @@ const DatesForm = ({ initialData, courseID }) => {
                               )}
                             />
                           </div>
-                          <div className="w-full xl:w-1/2" />
+                          <div className="w-full xl:w-1/2">
+                            <FormField
+                              control={form.control}
+                              name={`course_instances.${index}.availability`}
+                              render={({ field }) => (
+                                <FormItem className="flex-1">
+                                  <FormLabel>Availability</FormLabel>
+                                  <FormControl>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      max="999"
+                                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                      {...field}
+                                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
                         </div>
                         <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                           <div className="w-full xl:w-1/2">

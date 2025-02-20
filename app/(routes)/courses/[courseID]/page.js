@@ -37,7 +37,6 @@ const CourseIDPage = async ({ params }) => {
     course.credits,
     course.awarding_body,
     course.level,
-    course.availability,
     // Only check date fields if there's no On Demand instance
     ...(!hasOnDemandInstance && course.course_instances.length > 0 ? [
       course.course_instances.every(instance => instance.start_date),
@@ -108,7 +107,6 @@ const CourseIDPage = async ({ params }) => {
           <CreditsForm initialData={course} courseID={course.id} />
           <AwardingBodyForm initialData={course} courseID={course.id} />
           <LevelForm initialData={course} courseID={course.id} />
-          <AvailabilityForm initialData={course} courseID={course.id} />
         </div>
         <div className="space-y-6">
           <DatesForm
