@@ -8,6 +8,11 @@ import { Suspense } from "react";
 
 export default async function ApplicationsPage() {
   const applications = await db.application.findMany({
+    where: {
+      campus: {
+        in: ["London", "Bristol", "Sheffield", "Birmingham"],
+      },
+    },
     orderBy: {
       createdAt: "desc",
     },
