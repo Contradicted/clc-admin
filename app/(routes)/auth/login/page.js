@@ -55,7 +55,7 @@ const LoginPage = () => {
     <div className="min-h-screen flex flex-col lg:flex-row bg-white">
       {/* Logo Section */}
       <div className="lg:w-1/2 flex items-center justify-center p-8 lg:p-12 bg-gray-50 border-b lg:border-b-0 lg:border-r border-gray-200">
-        <div className="relative w-full max-w-[400px] aspect-square">
+        <div className="relative w-full max-w-[450px] aspect-square">
           <Image
             src="/clc.png"
             fill
