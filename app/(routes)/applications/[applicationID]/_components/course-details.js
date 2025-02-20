@@ -48,10 +48,8 @@ const formatCommencement = (instanceName) => {
 
 const formSchema = z.object({
   courseTitle: z.string().min(1, "Course title is required"),
-  studyMode: z.enum(["full_time", "part_time"], {
-    errorMap: () => ({ message: "Please select a study mode" }),
-  }),
-  campus: z.string().min(1, "Campus is required"),
+  studyMode: z.string().min(1, "Study mode is required"),
+  campus: z.string().optional(),
   commencement: z.string().min(1, "Commencement is required"),
   ab_registration_no: z
     .string()
@@ -68,7 +66,19 @@ const formSchema = z.object({
     ])
     .optional(),
   awarding_body: z.string().optional(),
-});
+}).refine(
+  (data) => {
+    // Require campus field only if study mode is not hybrid_learning
+    if (data.studyMode !== "hybrid_learning") {
+      return !!data.campus;
+    }
+    return true;
+  },
+  {
+    message: "Campus is required",
+    path: ["campus"],
+  }
+);
 
 const CourseDetails = ({
   courseTitle,
@@ -222,7 +232,8 @@ const CourseDetails = ({
                 </div>
               </div>
               <div className="space-y-4">
-                <div>
+                {campus && (
+                  <div>
                   <label className="text-sm font-bold text-gray-500">
                     Campus
                   </label>
@@ -230,6 +241,7 @@ const CourseDetails = ({
                     {campus || "Not specified"}
                   </p>
                 </div>
+                )}
                 <div>
                   <label className="text-sm font-bold text-gray-500">
                     Commencement
@@ -326,36 +338,60 @@ const CourseDetails = ({
                     )}
                   />
 
-                  <FormField
+<FormField
                     control={form.control}
                     name="studyMode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Study Mode</FormLabel>
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select study mode" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="full_time">Full Time</SelectItem>
-                            <SelectItem value="part_time">Part Time</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const selectedCourse = courses.find(
+                        (c) => c.name === form.getValues("courseTitle")
+                      );
+                      const availableModes =
+                        selectedCourse?.course_study_mode?.map(
+                          (mode) => mode.study_mode
+                        ) || [];
+
+                      return (
+                        <FormItem>
+                          <FormLabel>Study Mode</FormLabel>
+                          <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              // Clear campus value when switching to hybrid learning
+                              if (value === "hybrid_learning") {
+                                form.setValue("campus", "");
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select study mode" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableModes.map((mode) => (
+                                <SelectItem key={mode} value={mode}>
+                                  {formatStudyMode(mode)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                 </div>
 
                 <div className="space-y-4">
-                  <FormField
+                <FormField
                     control={form.control}
                     name="campus"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem
+                        className={cn(
+                          form.watch("studyMode") === "hybrid_learning" &&
+                            "hidden"
+                        )}
+                      >
                         <FormLabel>Campus</FormLabel>
                         <Select
                           value={field.value}
@@ -365,15 +401,12 @@ const CourseDetails = ({
                             <SelectValue placeholder="Select campus" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="London">London</SelectItem>
                             <SelectItem value="Bristol">Bristol</SelectItem>
-                            <SelectItem value="Sheffield">Sheffield</SelectItem>
                             <SelectItem value="Birmingham">
                               Birmingham
                             </SelectItem>
-                            <SelectItem value="Manchester">
-                              Manchester
-                            </SelectItem>
+                            <SelectItem value="London">London</SelectItem>
+                            <SelectItem value="Sheffield">Sheffield</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
