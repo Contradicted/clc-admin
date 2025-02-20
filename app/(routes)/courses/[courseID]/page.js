@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import Actions from "./_components/actions";
 import ModulesForm from "./_components/modules-form";
 import { Badge } from "@/components/ui/badge";
-import AvailabilityForm from "./_components/availability-form";
+import AvailabilityStatus from "./_components/availability-status";
 
 const CourseIDPage = async ({ params }) => {
   const course = await getCourseByID(params.courseID);
@@ -97,6 +97,7 @@ const CourseIDPage = async ({ params }) => {
             </p>
           )}
         </div>
+        <AvailabilityStatus course_instances={course.course_instances} />
       </div>
 
       <div className="grid grid-cols-1 gap-9 md:grid-cols-2">

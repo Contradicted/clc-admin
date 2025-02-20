@@ -47,6 +47,7 @@ const formSchema = z.object({
           ]),
           isOnDemand: z.boolean().default(false),
           status: z.boolean(),
+          availability: z.coerce.number().min(0).max(999).default(0),
           start_date: z
             .date({ invalid_type_error: "Start date is required" })
             .optional()
@@ -182,6 +183,10 @@ const DatesTable = ({ courseDates }) => {
               label: "Status",
               value: onDemandInstance.status ? "Active" : "Inactive",
             },
+            {
+              label: "Availability",
+              value: `${onDemandInstance.availability || 0} spaces`,
+            },
           ].map(({ label, value }, rowIndex) => (
             <tr key={`on-demand-${label}`} className="border border-stroke">
               <td className="font-semibold p-3 border border-r w-1/2">
@@ -228,6 +233,10 @@ const DatesTable = ({ courseDates }) => {
             {
               label: "Open for Enrollment",
               value: instance.status ? "Yes" : "No",
+            },
+            {
+              label: "Availability",
+              value: `${instance.availability || 0} spaces`,
             },
           ].map(({ label, value }, rowIndex) => (
             <tr key={`${index}-${label}`} className="border border-stroke">
