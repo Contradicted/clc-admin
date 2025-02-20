@@ -9,9 +9,26 @@ import { Suspense } from "react";
 export default async function ApplicationsPage() {
   const applications = await db.application.findMany({
     where: {
-      campus: {
-        in: ["London", "Bristol", "Sheffield", "Birmingham"],
-      },
+      OR: [
+        {
+          campus: {
+            in: ["London", "Bristol", "Sheffield", "Birmingham"],
+          },
+        },
+        {
+          AND: [
+            {
+              studyMode: "hybrid_learning",
+            },
+            {
+              OR: [
+                { campus: null },
+                { campus: "" }
+              ]
+            }
+          ],
+        },
+      ],
     },
     orderBy: {
       createdAt: "desc",
