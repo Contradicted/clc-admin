@@ -34,41 +34,20 @@ export async function GET(req) {
           },
         }),
         ...(enrollmentStatus === "not_enrolled" && {
-          OR: [
-            { status: { not: "Enrolled" } },
-            {
-              AND: [{ status: "Enrolled" }, { enrolledStudent: null }],
-            },
-          ],
+          NOT: {
+            AND: [{ status: "Enrolled" }, { enrolledStudent: { isNot: null } }],
+          },
         }),
       },
       orderBy: {
         firstName: "asc",
       },
-      select: {
-        title: true,
-        firstName: true,
-        lastName: true,
-        gender: true,
-        addressLine1: true,
-        addressLine2: true,
-        city: true,
-        postcode: true,
-        email: true,
-        mobileNo: true,
-        dateOfBirth: true,
-        courseTitle: true,
-        campus: true,
-        commencement: true,
-        emergency_contact_name: true,
-        emergency_contact_no: true,
-        recruitment_agent: true,
-        status: true,
-        enrolledStudent: {
-          select: {
-            id: true,
-          },
-        },
+      include: {
+        course: true,
+        enrolledStudent: true,
+        workExperience: true,
+        paymentPlan: true,
+        user: true,
       },
     });
 
