@@ -116,6 +116,20 @@ export const studentColumns = [
     },
   },
   {
+    accessorKey: "dateOfBirth",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="DOB" />
+    ),
+    cell: (info) => {
+      const value = info.getValue();
+
+      return value ? formatDateTime(value).date : "N/A"
+    },
+    filterFn: (row, id, value) => {
+      return row.getValue(id).toLowerCase().includes(value.toLowerCase());
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Registered" />

@@ -341,6 +341,84 @@ export const departments = [
   "Education and Training",
 ];
 
+export const RECRUITMENT_AGENTS = [
+  {
+    code: 201,
+    name: "Imteaz",
+    organization: "High Tech Training",
+    patterns: ["201", "imteaz", "201imteaz", "High tech training", "High tech"],
+  },
+  {
+    code: 202,
+    name: "Mario",
+    organization: "Set to Succeed",
+    patterns: [
+      "mario",
+      "cervernak",
+      "202mario",
+      "202",
+      "MARIO CERVERNAK",
+      "MARIO",
+      "202b",
+      "Mar",
+      "Mário cervenak",
+      "Mario cervenak",
+      "mario cervenakj",
+      "mario cervnak",
+    ],
+  },
+  {
+    name: "Progress Consultancy",
+    organization: "",
+    patterns: ["progress", "consultancy", "progress consultancy"],
+  },
+  {
+    code: 205,
+    name: "Ready Steady Study LTD",
+    organization: "",
+    patterns: [
+      "205",
+      "205 ready Steady Study Ltd",
+      "READYSTEADYSTUDY LTD",
+      "205READYSTEADYSTUDY",
+    ],
+  },
+  {
+    name: "Baris Kececi",
+    organization: "",
+    patterns: ["baris", "kececi", "baris kececi"],
+  },
+  {
+    code: 211,
+    name: "Inkcraft Academia LTD",
+    organization: "Inkcraft",
+    patterns: [
+      "inkcraft",
+      "academia",
+      "inkcraft academia",
+      "211inkcraft academia",
+    ],
+  },
+  {
+    code: 223,
+    name: "Diana",
+    organization: "",
+    patterns: ["diana", "223", "Daiana Piper"],
+  },
+  {
+    code: 225,
+    name: "Allen",
+    organization: "",
+    patterns: ["allen", "225", "225 allen"],
+  },
+  {
+    code: 230,
+    name: "Elvis",
+    organization: "",
+    patterns: ["elvis", "230", "230 elvis"],
+  },
+];
+
 export const ethnicities = [
   { label: "African", value: "black_african" },
   { label: "Any other Asian background", value: "asian_other" },
