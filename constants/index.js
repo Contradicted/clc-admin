@@ -143,8 +143,6 @@ export const applicationHeaders = [
   { label: "Study Mode", value: "studyMode", id: "field_studyMode" },
   { label: "Commencement", value: "commencement", id: "field_commencement" },
   { label: "Bristol Campus", value: "campus", id: "field_bristol_campus" },
-  { label: "Sheffield Campus", value: "campus", id: "field_sheffield_campus" },
-  { label: "Birmingham Campus", value: "campus", id: "field_birmingham_campus" },
   { label: "London Campus", value: "campus", id: "field_london_campus" },
   { label: "Title", value: "title", id: "field_personalTitle" },
   { label: "First Name", value: "firstName", id: "field_firstName" },
@@ -206,7 +204,21 @@ export const applicationHeaders = [
     value: "examiningBody",
     id: "field_examiningBody",
   },
-  { label: "Date Awarded", value: "dateAwarded", id: "field_dateAwarded" },
+  {
+    label: "Date Awarded",
+    value: "dateAwarded",
+    id: "field_dateAwarded",
+  },
+  {
+    label: "Learner Reference",
+    value: "learnerRef",
+    id: "field_learnerRef",
+  },
+  {
+    label: "Certificate Reference",
+    value: "certificateRef",
+    id: "field_certificateRef",
+  },
   {
     label: "Do you have any pending qualifications?",
     value: "hasPendingResults",
