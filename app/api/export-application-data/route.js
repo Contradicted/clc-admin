@@ -14,13 +14,6 @@ export async function GET(req) {
     const commencement = url.searchParams.get("commencement");
     const enrollmentStatus = url.searchParams.get("enrollmentStatus");
 
-    // console.log("Received request with parameters:", {
-    //   courseTitle,
-    //   campus,
-    //   commencement,
-    //   enrollmentStatus,
-    // });
-
     // Get all applications matching the criteria
     const applications = await db.application.findMany({
       where: {
@@ -48,6 +41,7 @@ export async function GET(req) {
         workExperience: true,
         paymentPlan: true,
         user: true,
+        interview: true
       },
     });
 
