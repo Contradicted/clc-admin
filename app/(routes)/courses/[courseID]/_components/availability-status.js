@@ -16,9 +16,16 @@ const AvailabilityStatus = ({ course_instances }) => {
         const isFull = enrolled >= availability;
         
         // Format instance name
-        const instanceName = instance.isOnDemand 
-          ? "On Demand"
-          : format(new Date(instance.instance_name), "MMM yyyy");
+        let instanceName = "Unknown";
+        if (instance.isOnDemand) {
+          instanceName = "On Demand";
+        } else {
+          // Check if instance_name is a valid date
+          const date = new Date(instance.instance_name);
+          instanceName = !isNaN(date.getTime()) 
+            ? format(date, "MMM yyyy") 
+            : instance.instance_name || "Unknown";
+        }
 
         return (
           <Badge
