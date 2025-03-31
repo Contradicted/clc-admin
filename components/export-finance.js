@@ -500,8 +500,10 @@ const ExportFinance = ({ data, courses }) => {
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent position="top">
+                    <SelectItem value="Bristol">Bristol</SelectItem>
+                      <SelectItem value="Birmingham">Birmingham</SelectItem>
                       <SelectItem value="London">London</SelectItem>
-                      <SelectItem value="Bristol">Bristol</SelectItem>
+                      <SelectItem value="Sheffield">Sheffield</SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -626,10 +628,10 @@ const ExportFinance = ({ data, courses }) => {
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent position="top">
-                      <SelectItem value="London">London</SelectItem>
                       <SelectItem value="Bristol">Bristol</SelectItem>
-                      <SelectItem value="Sheffield">Sheffield</SelectItem>
                       <SelectItem value="Birmingham">Birmingham</SelectItem>
+                      <SelectItem value="London">London</SelectItem>
+                      <SelectItem value="Sheffield">Sheffield</SelectItem>
                     </SelectContent>
                   </Select>
 
