@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.com.colc.generic",
+  "teamIdentifier": "Y7BL9QNX5H",
+  "organizationName": "City of London College",
+  "description": "Digital Student ID Card",
+  "logoText": "CoLC - Student ID",
+  "foregroundColor": "rgb(255, 255, 255)",
+  "backgroundColor": "rgb(0, 51, 102)",
+  "labelColor": "rgb(255, 255, 255)",
+  "generic": {
+    "primaryFields": [],
+    "secondaryFields": [],
+    "auxiliaryFields": [],
+    "backFields": [
+      {
+        "key": "terms",
+        "label": "Terms & Conditions",
+        "value": "This digital ID card is the property of City of London College."
+      }
+    ]
+  }
+}

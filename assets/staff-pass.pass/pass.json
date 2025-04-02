@@ -1,0 +1,34 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.com.colc.generic",
+  "teamIdentifier": "Y7BL9QNX5H",
+  "organizationName": "City of London College",
+  "description": "Digital Staff ID Card",
+  "logoText": "CoLC - Staff ID",
+  "foregroundColor": "rgb(255, 255, 255)",
+  "backgroundColor": "rgb(0, 51, 102)",
+  "labelColor": "rgb(255, 255, 255)",
+  "changeMessage": "Your pass has been updated",
+  "generic": {
+    "backFields": [
+      {
+        "key": "campus",
+        "label": "Campus",
+        "value": "Campus Location",
+        "textAlignment": "PKTextAlignmentLeft"
+      },
+      {
+        "key": "issueDate",
+        "label": "Issue Date",
+        "value": "Issue Date",
+        "textAlignment": "PKTextAlignmentLeft"
+      },
+      {
+        "key": "terms",
+        "label": "Terms & Conditions",
+        "value": "This ID card is the property of City of London College and must be returned upon request. If found, please return to City of London College.",
+        "textAlignment": "PKTextAlignmentLeft"
+      }
+    ]
+  }
+}
