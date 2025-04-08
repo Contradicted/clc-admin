@@ -17,11 +17,12 @@ export default auth((req) => {
   const isAdmin = req.auth?.user?.role === "Admin";
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+  const isApiRoute = nextUrl.pathname.startsWith("/api");
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isDisabledRoute = disabledRoutes.includes(nextUrl.pathname);
   const isAdminRoute = adminRoutes.includes(nextUrl.pathname);
 
-  if (isApiAuthRoute) {
+  if (isApiAuthRoute || isApiRoute) {
     return null;
   }
 
