@@ -48,7 +48,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 import { popularCountries, popularNationalities } from "@/constants";
 
-import { cn, formatDate, formatImmigrationStatus, isAdult } from "@/lib/utils";
+import { calculateAge, cn, formatDate, formatImmigrationStatus, isAdult } from "@/lib/utils";
 import { PhoneInput } from "@/components/ui/phone-input";
 import {
   FileInput,
@@ -504,6 +504,16 @@ const PersonalDetails = ({ application }) => {
                   </label>
                   <p className="mt-1 text-gray-900 break-words">
                     {application.identificationNo || "Not specified"}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Age
+                  </label>
+                  <p className="mt-1 text-gray-900 break-words">
+                    {application.dateOfBirth
+                      ? `${calculateAge(application.dateOfBirth)}`
+                      : "Not specified"}
                   </p>
                 </div>
                 <div>
