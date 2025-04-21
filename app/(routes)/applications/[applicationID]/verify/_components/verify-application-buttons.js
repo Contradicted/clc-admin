@@ -60,7 +60,7 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
       toast({
         variant: "success",
         title: "ID Card Generated",
-        description: "Student ID card has been generated successfully. Check console for save link.",
+        description: "Student ID card has been generated successfully",
       });
     } catch (error) {
       console.error("[GENERATE_ID_ERROR]", error);
