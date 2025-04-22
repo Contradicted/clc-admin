@@ -544,7 +544,13 @@ export const updatePersonalDetails = async (formData, applicationID) => {
       const file = formData.get(`${formName}File`);
       const existingFile = formData.get(`${formName}ExistingFile`);
 
-      if (file instanceof File) {
+      if (file) {
+
+        // Ensure file exists and has content
+          if (!file || file.size === 0) {
+            throw new Error("No file or empty file provided");
+          }
+          
         // Delete existing file if it exists
         if (existingApplication[urlField]) {
           const fileKey = existingApplication[urlField].split("f/")[1];
