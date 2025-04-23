@@ -723,7 +723,7 @@ export const updatePaymentPlan = async (values, applicationID) => {
 
     let fileData = {};
 
-    if (file && file instanceof File) {
+    if (file) {
       // Check if a file is already present in the DB
       const existingTuitionDoc = await db.application.findUnique({
         where: {
