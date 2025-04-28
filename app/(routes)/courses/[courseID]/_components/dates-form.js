@@ -296,7 +296,7 @@ const DatesForm = ({ initialData, courseID }) => {
                 status: false,
                 availability: 0,
                 start_date: "",
-                last_join_weeks: "4",
+                last_join_weeks: "3",
                 last_join_date: "",
                 end_date: "",
                 results_weeks: "2",
@@ -325,11 +325,11 @@ const DatesForm = ({ initialData, courseID }) => {
   };
 
   const calculateLastJoinDate = (startDate, weeks, index) => {
-    if (startDate && weeks) {
-      const weeksNumber = parseInt(weeks, 10);
-      const lastJoinDate = addWeeks(new Date(startDate), weeksNumber);
-      form.setValue(`course_instances.${index}.last_join_date`, lastJoinDate);
-    }
+    if (!startDate || !weeks) return;
+    const weeksNum = parseInt(weeks, 10);
+    // Subtract weeks instead of adding
+    const newDate = addWeeks(new Date(startDate), -weeksNum);
+    form.setValue(`course_instances.${index}.last_join_date`, newDate);
   };
 
   const calculateResultsDate = (endDate, weeks, index) => {
@@ -489,7 +489,7 @@ const DatesForm = ({ initialData, courseID }) => {
                                       } else {
                                         // Reset to default values when switching back
                                         form.setValue(`course_instances.${index}.instance_name`, "");
-                                        form.setValue(`course_instances.${index}.last_join_weeks`, "4");
+                                        form.setValue(`course_instances.${index}.last_join_weeks`, "3");
                                         form.setValue(`course_instances.${index}.results_weeks`, "2");
                                       }
                                     });
@@ -533,7 +533,7 @@ const DatesForm = ({ initialData, courseID }) => {
                         status: false,
                         availability: 0,
                         start_date: "",
-                        last_join_weeks: "4",
+                        last_join_weeks: "3",
                         last_join_date: "",
                         end_date: "",
                         results_weeks: "2",
@@ -641,7 +641,7 @@ const DatesForm = ({ initialData, courseID }) => {
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      {Array.from({ length: 13 }, (_, i) => i).map(
+                                      {Array.from({ length: 9 }, (_, i) => i + 1).filter((i) => i >= 3).map(
                                         (week) => (
                                           <SelectItem
                                             key={week}
