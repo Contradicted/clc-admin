@@ -14,11 +14,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const StaffDocuments = ({ documents = [], onDelete }) => {
+const StaffDocuments = ({ documents = [], onDelete, isDisabled = false }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
-  const [previewDoc, setPreviewDoc] = useState(null);
   const router = useRouter();
+
+  // Check if any actions should be disabled (either uploading or deleting)
+  const areActionsDisabled = isDisabled || isDeleting;
 
   const handleDelete = async (documentId) => {
     try {
@@ -64,8 +66,19 @@ const StaffDocuments = ({ documents = [], onDelete }) => {
   // Function to check if file is previewable
   const isPreviewable = (fileName) => {
     const extension = fileName.split('.').pop().toLowerCase();
-    // Currently only supporting image previews
-    return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension);
+    // Files that can be previewed in browser
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'].includes(extension);
+  };
+
+  // Function to get file type
+  const getFileType = (fileName) => {
+    const extension = fileName.split('.').pop().toLowerCase();
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+      return 'image';
+    } else if (extension === 'pdf') {
+      return 'pdf';
+    }
+    return 'other';
   };
 
   // Function to get file icon based on file extension
@@ -158,27 +171,46 @@ const StaffDocuments = ({ documents = [], onDelete }) => {
                   </div>
                   <div className="flex gap-2">
                     {isPreviewable(doc.fileName) && (
-                      <button
-                        onClick={() => setPreviewDoc(doc)}
-                        className="p-2 text-gray-500 hover:text-blue-500 rounded-full hover:bg-gray-100 transition-colors"
+                      <a
+                        href={doc.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`p-2 text-gray-500 rounded-full ${
+                          areActionsDisabled 
+                            ? "opacity-50 cursor-not-allowed" 
+                            : "hover:text-blue-500 hover:bg-gray-100 transition-colors"
+                        }`}
+                        onClick={(e) => areActionsDisabled && e.preventDefault()}
                       >
                         <Eye className="h-4 w-4" />
-                      </button>
+                      </a>
                     )}
                     <a
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        handleDownload(doc);
+                        if (!areActionsDisabled) {
+                          handleDownload(doc);
+                        }
                       }}
-                      className="p-2 text-gray-500 hover:text-primary rounded-full hover:bg-gray-100"
+                      className={`p-2 text-gray-500 rounded-full ${
+                        areActionsDisabled 
+                          ? "opacity-50 cursor-not-allowed" 
+                          : "hover:text-primary hover:bg-gray-100"
+                      }`}
                     >
                       <Download className="h-4 w-4" />
                     </a>
                     <button
-                      onClick={() => handleDelete(doc.id)}
-                      disabled={isDeleting && deletingId === doc.id}
-                      className="p-2 text-gray-500 hover:text-red rounded-full hover:bg-gray-100 transition-colors"
+                      onClick={() => !areActionsDisabled && handleDelete(doc.id)}
+                      disabled={areActionsDisabled}
+                      className={`p-2 text-gray-500 rounded-full ${
+                        isDeleting && deletingId === doc.id
+                          ? "opacity-100" // Keep the active delete button visible
+                          : areActionsDisabled
+                            ? "opacity-50 cursor-not-allowed" 
+                            : "hover:text-red hover:bg-gray-100 transition-colors"
+                      }`}
                     >
                       {isDeleting && deletingId === doc.id ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -192,35 +224,6 @@ const StaffDocuments = ({ documents = [], onDelete }) => {
             </div>
           ))}
         </div>
-      )}
-
-      {/* Document Preview Modal */}
-      {previewDoc && (
-        <Dialog open={!!previewDoc} onOpenChange={() => setPreviewDoc(null)}>
-          <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-auto">
-            <DialogHeader>
-              <DialogTitle>Preview: {previewDoc.fileName}</DialogTitle>
-              <div className="border-2 border-primary w-[25%] rounded-sm" />
-            </DialogHeader>
-            
-            <div className="mt-4 flex justify-center">
-              {isPreviewable(previewDoc.fileName) ? (
-                <div className="relative max-h-[500px] overflow-auto">
-                  <img 
-                    src={previewDoc.fileUrl} 
-                    alt={previewDoc.fileName}
-                    className="max-w-full h-auto object-contain"
-                  />
-                </div>
-              ) : (
-                <div className="p-8 text-center">
-                  <FileText className="h-16 w-16 text-red-500 mx-auto mb-4" />
-                  <p>Preview not available for this file type</p>
-                </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
       )}
     </>
   );
