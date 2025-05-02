@@ -142,26 +142,39 @@ const DocumentUploadModal = ({ applicationId }) => {
   const [error, setError] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(null);
-  const [previewFile, setPreviewFile] = useState(null);
   const [filePreviews, setFilePreviews] = useState({});
+  const [previewFile, setPreviewFile] = useState(null);
   const dropZoneRef = useRef(null);
   const router = useRouter();
 
+  // Fetch documents on component mount
+  useEffect(() => {
+    // Immediate fetch on mount
+    fetchDocuments();
+    
+    // Set up a refresh interval to keep the count updated
+    const intervalId = setInterval(fetchDocuments, 30000); // Refresh every 30 seconds
+    
+    return () => {
+      clearInterval(intervalId); // Clean up on unmount
+    };
+  }, [applicationId]);
+
   const fetchDocuments = async () => {
     try {
-      setIsLoading(true);
       setError(null);
-      const result = await getStaffDocuments(applicationId);
-      if (result.error) {
-        console.error("Error from API:", result.error);
-        // Don't show database-related errors to the user
+      const response = await getStaffDocuments(applicationId);
+      
+      if (response.error) {
+        console.error("Error fetching documents:", response.error);
+        setError(response.error);
         setDocuments([]);
-      } else if (result.documents) {
-        setDocuments(result.documents);
+      } else {
+        setDocuments(response.documents || []);
       }
     } catch (error) {
       console.error("Error fetching documents:", error);
-      // Don't show database-related errors to the user
+      setError("Failed to fetch documents");
       setDocuments([]);
     } finally {
       setIsLoading(false);
@@ -313,12 +326,14 @@ const DocumentUploadModal = ({ applicationId }) => {
 
         if (result.error) {
           console.error("Upload error:", result.error);
+          toast.error(`Error uploading ${file.name}: ${result.error}`);
           errorCount++;
         } else {
           successCount++;
         }
       } catch (error) {
         console.error("Upload error:", error);
+        toast.error(`Error uploading ${file.name}: ${error.message || "Unknown error"}`);
         errorCount++;
       }
     }
@@ -379,9 +394,14 @@ const DocumentUploadModal = ({ applicationId }) => {
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-          <Button size="default2">
+          <Button size="default2" className="relative">
             <Upload className="mr-2 h-4 w-4" />
-            Documents
+            Staff Upload
+            {documents.length > 0 && (
+              <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white border-2 border-white shadow-sm">
+                {documents.length}
+              </span>
+            )}
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[600px]">
@@ -463,8 +483,13 @@ const DocumentUploadModal = ({ applicationId }) => {
                                         type="button"
                                         variant="ghost"
                                         size="icon"
-                                        className="h-8 w-8 text-gray-500 hover:text-red-500"
-                                        onClick={() => handleRemoveFile(index)}
+                                        className={`h-8 w-8 ${
+                                          isUploading
+                                            ? "opacity-50 cursor-not-allowed text-gray-400"
+                                            : "text-gray-500 hover:text-red-500"
+                                        }`}
+                                        onClick={() => !isUploading && handleRemoveFile(index)}
+                                        disabled={isUploading}
                                       >
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
@@ -554,6 +579,7 @@ const DocumentUploadModal = ({ applicationId }) => {
                     <StaffDocuments
                       documents={documents}
                       onDelete={handleDelete}
+                      isDisabled={isUploading}
                     />
                   )}
                 </div>
