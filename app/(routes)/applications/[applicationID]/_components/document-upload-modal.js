@@ -398,7 +398,7 @@ const DocumentUploadModal = ({ applicationId }) => {
             <Upload className="mr-2 h-4 w-4" />
             Staff Upload
             {documents.length > 0 && (
-              <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white border-2 border-white shadow-sm">
+              <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-meta-3 text-xs font-extrabold text-white border-2 border-white shadow-md">
                 {documents.length}
               </span>
             )}
