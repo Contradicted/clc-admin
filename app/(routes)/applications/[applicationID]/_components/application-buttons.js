@@ -19,6 +19,7 @@ const ApplicationButtons = ({ student, application }) => {
       </Link>
 
       <InterviewModal studentData={student} applicationData={application} />
+      
       {/* <StatusButton application={application} /> */}
     </div>
   );
