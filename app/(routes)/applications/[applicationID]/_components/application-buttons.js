@@ -1,6 +1,7 @@
 import Link from "next/link";
 import StatusButton from "./status-button";
 import InterviewModal from "./interview-modal";
+import DocumentUploadModal from "./document-upload-modal";
 
 const ApplicationButtons = ({ student, application }) => {
   return (
@@ -19,7 +20,7 @@ const ApplicationButtons = ({ student, application }) => {
       </Link>
 
       <InterviewModal studentData={student} applicationData={application} />
-      
+      <DocumentUploadModal applicationId={application.id} />
       {/* <StatusButton application={application} /> */}
     </div>
   );
