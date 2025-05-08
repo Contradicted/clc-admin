@@ -11,6 +11,7 @@ import { formatDateTime } from "@/lib/utils";
 const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledStudent }) => {
   const [enrolledStudentState, setEnrolledStudentState] = useState(enrolledStudent);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isEnrolling, setIsEnrolling] = useState(false);
   const { toast } = useToast();
 
   const handleGenerateID = async () => {
@@ -75,6 +76,49 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
     }
   };
 
+  const handleEnrollStudent = async () => {
+    try {
+      setIsEnrolling(true);
+
+      // Call API to enroll student
+      const response = await fetch("/api/students/enroll", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ applicationId: applicationID }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to enroll student");
+      }
+
+      // Update local state to reflect enrollment
+      setEnrolledStudentState(data.enrolledStudent);
+
+      toast({
+        variant: "success",
+        title: "Student Enrolled",
+        description:
+          "Student has been enrolled successfully and Office 365 account has been created.",
+      });
+
+      // Refresh the page to show updated status
+      window.location.reload();
+    } catch (error) {
+      console.error("[ENROLL_STUDENT_ERROR]", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to enroll student",
+      });
+    } finally {
+      setIsEnrolling(false);
+    }
+  };
+
   const idButton = (
     <Button
       onClick={handleGenerateID}
@@ -85,6 +129,17 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
         <LoaderCircle className="animate-spin mr-2" />
       ) : null}
       {isGenerating ? "Generating..." : "Generate ID Card"}
+    </Button>
+  );
+
+  const enrollButton = (
+    <Button
+      onClick={handleEnrollStudent}
+      disabled={isEnrolling || enrolledStudentState}
+      className="bg-green-600 hover:bg-green-700"
+    >
+      {isEnrolling ? <LoaderCircle className="animate-spin mr-2" /> : null}
+      {isEnrolling ? "Enrolling..." : "Enroll Now"}
     </Button>
   );
 
@@ -152,25 +207,39 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
       {/* ID Card Button */}
       {applicationStatus === "Enrolled" && (
         <div className="flex items-center gap-x-3">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild className="disabled:pointer-events-auto">
-              {idButton}
-            </TooltipTrigger>
-            <TooltipContent>
-              {enrolledStudentState?.idCreated ? (
-                <p>ID generated:{" "}
-                  <span className="italic">{formatDateTime(enrolledStudentState.idCreated).dateTime}</span>
-                </p>
-              ) : applicationStatus === "Enrollment_Letter_Sent" ? (
-                <p>Generate a new student ID card</p>
-              ) : (
-                <p>ID card can only be generated after enrollment letter is sent</p>
-              )}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild className="disabled:pointer-events-auto">
+                {enrollButton}
+              </TooltipTrigger>
+              <TooltipContent>
+                {enrolledStudentState ? (
+                  <p>Student is already enrolled</p>
+                ) : (
+                  <p>Enroll student and create Office 365 account</p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild className="disabled:pointer-events-auto">
+                {idButton}
+              </TooltipTrigger>
+              <TooltipContent>
+                {enrolledStudentState?.idCreated ? (
+                  <p>ID generated:{" "}
+                    <span className="italic">{formatDateTime(enrolledStudentState.idCreated).dateTime}</span>
+                  </p>
+                ) : applicationStatus === "Enrollment_Letter_Sent" ? (
+                  <p>Generate a new student ID card</p>
+                ) : (
+                  <p>ID card can only be generated after enrollment letter is sent</p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       )}
     </div>
   );
