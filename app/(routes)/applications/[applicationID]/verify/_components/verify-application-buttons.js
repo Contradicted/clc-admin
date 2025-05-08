@@ -204,10 +204,8 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
           className="bg-[#818181] hover:bg-[#818181]/90"
         />
       </div>
-      {/* ID Card Button */}
-      {applicationStatus === "Enrolled" && (
-        <div className="flex items-center gap-x-3">
-          <TooltipProvider>
+      <div className="flex items-center gap-x-3">
+      <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild className="disabled:pointer-events-auto">
                 {enrollButton}
@@ -221,7 +219,10 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <TooltipProvider>
+
+          {/* ID Card Button */}
+          {applicationStatus === "Enrolled" && (
+            <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild className="disabled:pointer-events-auto">
                 {idButton}
@@ -239,8 +240,8 @@ const VerifyApplicationButtons = ({ applicationID, applicationStatus, enrolledSt
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        </div>
-      )}
+          )}
+      </div>
     </div>
   );
 };
