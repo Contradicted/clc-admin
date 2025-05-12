@@ -48,17 +48,58 @@ async function sendOffice365Credentials(credentials, application) {
           <p>Your City of London College student email account has been created and is ready to use.
           Please find your account details below:</p>
 
-          <div style="padding: 20px; margin: 20px 0; background-color: #f9f9f9; border-radius: 5px;">
-            <p style="margin: 10px 0;"><strong>Email Address:</strong> ${office365Email}</p>
-            <p style="margin: 10px 0;"><strong>Temporary Password:</strong> ${office365Password}</p>
+          <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #ff6f00; background-color: #fff8e1;">
+            <h3 style="margin: 0 0 15px 0; color: #ff6f00; font-size: 16px;">Your Account Credentials</h3>
+            <div style="background-color: #ffffff; padding: 10px 15px; margin-bottom: 10px; border-radius: 4px;">
+              <p style="margin: 0;"><strong>Email Address:</strong> ${office365Email}</p>
+            </div>
+            <div style="background-color: #ffffff; padding: 10px 15px; border-radius: 4px;">
+              <p style="margin: 0;"><strong>Temporary Password:</strong> ${office365Password}</p>
+            </div>
           </div>
 
-          <p>
-            <strong>Important:</strong><br>
-            1. You must change your password when you first log in<br>
-            2. This email account will be used for all official college communications<br>
-            3. You can access your email at <a href="https://outlook.office.com">outlook.office.com</a>
-          </p>
+          <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #e74c3c; background-color: #fef9f8;">
+            <h3 style="margin: 0 0 10px 0; color: #e74c3c; font-size: 16px;">Important Information</h3>
+            <ol style="margin: 10px 0; padding-left: 25px; line-height: 1.5;">
+              <li>You <strong>must</strong> change your password when you first log in</li>
+              <li>This email account will be used for all official college communications</li>
+              <li>You can access your email at <a href="https://outlook.office.com" style="color: #0078d4; text-decoration: underline;">outlook.office.com</a></li>
+            </ol>
+          </div>
+
+          <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #0078d4; background-color: #f8f9fa;">
+            <h3 style="margin: 0 0 10px 0; color: #0078d4; font-size: 16px;">Managing Your Assignments</h3>
+            
+            <h4 style="margin: 15px 0 5px 0; color: #0078d4; font-size: 14px;">Accessing Assignments:</h4>
+            <ol style="margin: 5px 0 15px 0; padding-left: 25px; line-height: 1.5;">
+              <li>Log in to Microsoft Teams by clicking <a href="https://teams.microsoft.com" style="color: #0078d4; text-decoration: underline;">here</a> or by visiting <a href="https://teams.microsoft.com" style="color: #0078d4; text-decoration: underline;">teams.microsoft.com</a></li>
+              <li>Click on the "Teams" tab</li>
+              <li>Click on the class name</li>
+              <li>Click on the "Assignments" tab</li>
+            </ol>
+            
+            <h4 style="margin: 15px 0 5px 0; color: #0078d4; font-size: 14px;">Submitting Assignments:</h4>
+            <ol style="margin: 5px 0; padding-left: 25px; line-height: 1.5;">
+              <li>Follow steps 1-4 above to access your assignments</li>
+              <li>Click on the assignment name</li>
+              <li>Click on the "Turnitin Assignment" button</li>
+              <li>Upload your work and submit before the deadline</li>
+            </ol>
+            
+            <p style="margin: 15px 0 0 0; line-height: 1.5; font-style: italic;">Please ensure that you read all instructions carefully and submit your assignments on time. Late submissions may result in grade penalties.</p>
+          </div>
+
+          <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #0078d4; background-color: #f8f9fa;">
+            <h3 style="margin: 0 0 10px 0; color: #0078d4; font-size: 16px;">Accessing Class Materials</h3>
+            <ol style="margin: 10px 0; padding-left: 25px; line-height: 1.5;">
+              <li>Log in to Microsoft Teams by clicking <a href="https://teams.microsoft.com" style="color: #0078d4; text-decoration: underline;">here</a> or by visiting <a href="https://teams.microsoft.com" style="color: #0078d4; text-decoration: underline;">teams.microsoft.com</a></li>
+              <li>Click on the "Teams" tab</li>
+              <li>Click on the class name</li>
+              <li>Click on the General channel</li>
+              <li>Click on the "Files" tab at the top</li>
+            </ol>
+            <p style="margin: 10px 0; line-height: 1.5;">From there, you will see a "Class Materials" folder which contains all your course resources.</p>
+          </div>
 
           <div style="margin: 10px 0;">
             <p>For guidance on how to setup your account, please watch this video <a href="https://www.youtube.com/watch?v=sup6jQ6C85o">here</a>.</p>
