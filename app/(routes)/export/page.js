@@ -7,6 +7,7 @@ import ExportInterviews from "@/components/export-interviews";
 import { getActiveCourses } from "@/data/course";
 import { db } from "@/lib/db";
 import ExportAwardingBody from "@/components/export-awarding-body";
+import ExportAttendance from "@/components/export-attendance";
 
 export default async function ExportPage() {
   const applications = await db.application.findMany({
@@ -52,6 +53,7 @@ export default async function ExportPage() {
         <ExportInterviews interviews={interviews} courses={courses} />
         <ExportApplicationDetails data={applications} courses={courses} />
         <ExportAwardingBody data={applications} courses={courses} />
+        <ExportAttendance courses={courses} />
       </div>
     </DefaultLayout>
   );
