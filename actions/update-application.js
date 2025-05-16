@@ -94,7 +94,7 @@ export const updateQualifications = async (formData, applicationID) => {
         // Only upload file if it is not already uploaded
         let uploadedFile;
 
-        if (qual.file instanceof File) {
+        if (qual.file) {
           // Delete existing file if it exists
           if (qual.url) {
             const fileKey = qual.url.split("f/")[1];
@@ -137,7 +137,7 @@ export const updateQualifications = async (formData, applicationID) => {
       } else {
         let uploadedFile;
 
-        if (qual.file instanceof File) {
+        if (qual.file) {
           uploadedFile = await utapi.uploadFiles(qual.file);
         }
 
@@ -318,7 +318,7 @@ export const updateWorkExperience = async (formData, applicationID) => {
                 return { error: "Work experience doesn't exist!" };
               }
 
-              if (workExperience.file instanceof File) {
+              if (workExperience.file) {
                 // Delete existing file if it exists
                 if (existingWorkExperience.url) {
                   const fileKey = existingWorkExperience.url.split("f/")[1];
@@ -360,7 +360,7 @@ export const updateWorkExperience = async (formData, applicationID) => {
                 },
               });
             } else {
-              if (workExperience.file instanceof File) {
+              if (workExperience.file) {
                 uploadedFile = await utapi.uploadFiles(workExperience.file);
               }
 
