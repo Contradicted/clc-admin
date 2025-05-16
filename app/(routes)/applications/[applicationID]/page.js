@@ -10,7 +10,7 @@ import { Minus, SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AddNoteButton from "./_components/add-note-button";
 import { cn, formatDate, formatDateTime, formatTimeAgo } from "@/lib/utils";
-import { getStudentByApplicationID } from "@/data/student";
+import { getEnrolledStudentByUserID, getStudentByApplicationID } from "@/data/student";
 import { getActiveCourses } from "@/data/course";
 
 const ApplicationIDPage = async ({ params }) => {
@@ -22,6 +22,7 @@ const ApplicationIDPage = async ({ params }) => {
   }
 
   const student = await getStudentByApplicationID(application.id);
+  const enrolledStudent = await getEnrolledStudentByUserID(student.id)
 
   return (
     <DefaultLayout>
@@ -32,6 +33,7 @@ const ApplicationIDPage = async ({ params }) => {
           data={application}
           applicationID={application.id}
           studentID={student.id}
+          enrolledStudent={enrolledStudent}
           emailTimestamp={application.emailSentAt}
           status={application.status}
         />

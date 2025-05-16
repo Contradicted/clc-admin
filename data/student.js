@@ -68,6 +68,24 @@ export const getUserById = async (id) => {
   }
 };
 
+export const getEnrolledStudentByUserID = async (userID) => {
+  try {
+    const enrolledStudent = await db.enrolledStudent.findUnique({
+      where: {
+        userID,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return enrolledStudent;
+  } catch (error) {
+    console.error("[FETCHING_ENROLLED_STUDENT_BY_USER_ID_ERROR]", error);
+    return null;
+  }
+};
+
 export const getEnrolledStudentByApplicationID = async (applicationID) => {
   try {
     const enrolledStudent = await db.enrolledStudent.findUnique({

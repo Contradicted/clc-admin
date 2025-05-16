@@ -43,9 +43,19 @@ export default async function VerifyApplication({ params }) {
             <div className="px-4 py-4.5 md:px-6 2xl:px-7.5">
               <div className="border-b border-stroke space-y-4 mt-4">
                 <div className="w-full space-y-4 pb-4">
-                  <div className="flex gap-3">
+                  {enrolledStudent && (
+                    <div className="flex gap-3">
                     <div className="flex items-start w-full max-w-[50%]">
                       <p>Student ID</p>
+                    </div>
+                    <p className="flex flex-wrap font-medium text-black w-full">
+                      {enrolledStudent.id}
+                    </p>
+                  </div>
+                  )}
+                  <div className="flex gap-3">
+                    <div className="flex items-start w-full max-w-[50%]">
+                      <p>{enrolledStudent ? "User" : "Student"} ID</p>
                     </div>
                     <p className="flex flex-wrap font-medium text-black w-full">
                       {student.id}

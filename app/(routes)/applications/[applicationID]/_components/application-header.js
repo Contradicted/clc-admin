@@ -5,6 +5,7 @@ import Actions from "./application-actions";
 const ApplicationHeader = ({
   data,
   applicationID,
+  enrolledStudent,
   studentID,
   emailTimestamp,
   status,
@@ -25,10 +26,25 @@ const ApplicationHeader = ({
         <span className="text-slate-600 text-xs">Application ID</span>
         <span className="text-black text-sm font-medium">{applicationID}</span>
       </div>
-      <div className="flex flex-col">
-        <span className="text-slate-600 text-xs">Student ID</span>
+      {enrolledStudent ? (
+        <div className="flex gap-x-10">
+          <div className="flex flex-col">
+            <span className="text-slate-600 text-xs">User ID</span>
+            <span className="text-black text-sm font-medium">{studentID}</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-slate-600 text-xs">Student ID</span>
+            <span className="text-black text-sm font-medium">
+              {enrolledStudent.id}
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col">
+        <span className="text-slate-600 text-xs">User ID</span>
         <span className="text-black text-sm font-medium">{studentID}</span>
       </div>
+      )}
       <div className="flex flex-col">
         <span className="text-slate-600 text-xs">Email sent</span>
         <span className="text-black text-sm font-medium">
