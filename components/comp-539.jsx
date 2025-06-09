@@ -515,7 +515,6 @@ export function TimelineComponent({
   const sortedItems = [...processedItems].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
   );
-
   // Calculate total pages
   const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
 
@@ -648,19 +647,19 @@ export function TimelineComponent({
                         ) : (
                           /* Simple change display for non-structured data */
                           <p>
-                            Changed from "
+                            Changed from &quot;
                             {formatValue(
                               item.prevValue,
                               item.field,
                               truncateText
                             )}
-                            " to "
+                            &quot; to &quot;
                             {formatValue(
                               item.newValue,
                               item.field,
                               truncateText
                             )}
-                            "
+                            &quot;
                           </p>
                         )}
                       </div>
