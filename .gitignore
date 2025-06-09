@@ -41,3 +41,6 @@ next-env.d.ts
 *.pem
 *.p12
 *.cer
+
+# logs
+/logs
