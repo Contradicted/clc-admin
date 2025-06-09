@@ -14,12 +14,11 @@ import { useRouter } from "next/navigation";
 
 const Actions = ({ data }) => {
   const { user } = useCurrentUser();
+  const router = useRouter();
 
   if (!user || user.role !== "Admin") {
     return null;
   }
-
-  const router = useRouter();
 
   return (
     <DropdownMenu>
