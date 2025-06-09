@@ -5,6 +5,8 @@ import { graphClient } from "@/lib/office365";
 import { generateStudentID } from "@/lib/id";
 import nodemailer from "nodemailer";
 import { currentUser } from "@/lib/auth";
+import { logActivity } from "@/actions/activity-log";
+import { getDisplayStatus } from "@/lib/utils";
 
 const db = new PrismaClient();
 
@@ -285,6 +287,13 @@ export async function POST(req) {
     await db.application.update({
       where: { id: application.id },
       data: { status: "Enrolled" },
+    });
+
+    // Log the change to audit tracking
+    await logActivity(user.id, application.id, "UPDATE_APPLICATION_STATUS", {
+      field: "status",
+      prevValue: getDisplayStatus(application.status),
+      newValue: getDisplayStatus("Enrolled"),
     });
 
     // Send Office 365 credentials email

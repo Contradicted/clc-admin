@@ -13,6 +13,7 @@ import {
 import { createStudentAccount } from "@/lib/office365";
 import { generateUpdateApplicationToken } from "@/lib/tokens";
 import { getDisplayStatus } from "@/lib/utils";
+import { logActivity } from "./activity-log";
 
 export const updateStatus = async (emailMsg, applicationID, status) => {
   const user = await currentUser();
@@ -41,6 +42,13 @@ export const updateStatus = async (emailMsg, applicationID, status) => {
     data: {
       status,
     },
+  });
+
+  // Log the status change in the audit log
+  await logActivity(user.id, applicationID, "UPDATE_APPLICATION_STATUS", {
+    field: "status",
+    prevValue: getDisplayStatus(application.status),
+    newValue: getDisplayStatus(status),
   });
 
   if (status === "Sent_conditional_letter") {
@@ -113,7 +121,11 @@ export const updateStatus = async (emailMsg, applicationID, status) => {
         // Update enrolled student with Office 365 email
         await db.enrolledStudent.update({
           where: { id: enrolledStudent.id },
-          data: { office365Email, office365Active: true, office365ActiveAt: new Date() },
+          data: {
+            office365Email,
+            office365Active: true,
+            office365ActiveAt: new Date(),
+          },
         });
       } catch (office365Error) {
         console.error("Office 365 account creation error:", office365Error);

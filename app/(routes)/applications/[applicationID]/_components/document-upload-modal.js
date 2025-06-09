@@ -144,6 +144,7 @@ const DocumentUploadModal = ({ applicationId }) => {
   const [currentFileIndex, setCurrentFileIndex] = useState(null);
   const [filePreviews, setFilePreviews] = useState({});
   const [previewFile, setPreviewFile] = useState(null);
+  const [keepModalOpen, setKeepModalOpen] = useState(false);
   const dropZoneRef = useRef(null);
   const router = useRouter();
 
@@ -151,10 +152,10 @@ const DocumentUploadModal = ({ applicationId }) => {
   useEffect(() => {
     // Immediate fetch on mount
     fetchDocuments();
-    
+
     // Set up a refresh interval to keep the count updated
     const intervalId = setInterval(fetchDocuments, 30000); // Refresh every 30 seconds
-    
+
     return () => {
       clearInterval(intervalId); // Clean up on unmount
     };
@@ -164,7 +165,7 @@ const DocumentUploadModal = ({ applicationId }) => {
     try {
       setError(null);
       const response = await getStaffDocuments(applicationId);
-      
+
       if (response.error) {
         console.error("Error fetching documents:", response.error);
         setError(response.error);
@@ -293,7 +294,7 @@ const DocumentUploadModal = ({ applicationId }) => {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("applicationId", applicationId);
-      
+
       const result = await uploadStaffDocument(formData);
 
       return result;
@@ -333,7 +334,9 @@ const DocumentUploadModal = ({ applicationId }) => {
         }
       } catch (error) {
         console.error("Upload error:", error);
-        toast.error(`Error uploading ${file.name}: ${error.message || "Unknown error"}`);
+        toast.error(
+          `Error uploading ${file.name}: ${error.message || "Unknown error"}`
+        );
         errorCount++;
       }
     }
@@ -351,6 +354,11 @@ const DocumentUploadModal = ({ applicationId }) => {
       }
       setFiles([]);
       setFilePreviews({});
+
+      setKeepModalOpen(true);
+      
+      router.refresh();
+
       fetchDocuments();
     } else if (errorCount > 0) {
       toast.error(
@@ -360,6 +368,11 @@ const DocumentUploadModal = ({ applicationId }) => {
   };
 
   const handleOpenChange = (newOpen) => {
+    if (!newOpen && keepModalOpen) {
+      setKeepModalOpen(false);
+      setOpen(true);
+      return;
+    }
     setOpen(newOpen);
     if (!newOpen) {
       setFiles([]);
@@ -378,6 +391,8 @@ const DocumentUploadModal = ({ applicationId }) => {
         toast.error(result.error);
       } else {
         toast.success("Document deleted successfully");
+        setKeepModalOpen(true);
+        router.refresh();
         fetchDocuments();
       }
     } catch (error) {
@@ -417,10 +432,16 @@ const DocumentUploadModal = ({ applicationId }) => {
                 <div
                   ref={dropZoneRef}
                   className={`border-2 border-dashed rounded-md p-6 ${
-                    isDragging ? "border-primary bg-primary/5" : 
-                    files.length > 0 ? "border-primary" : "border-stroke dark:border-strokedark"
+                    isDragging
+                      ? "border-primary bg-primary/5"
+                      : files.length > 0
+                        ? "border-primary"
+                        : "border-stroke dark:border-strokedark"
                   } flex flex-col items-center justify-center ${isUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} transition-colors`}
-                  onClick={() => !isUploading && document.getElementById("file-input").click()}
+                  onClick={() =>
+                    !isUploading &&
+                    document.getElementById("file-input").click()
+                  }
                   onDragEnter={!isUploading ? handleDragEnter : undefined}
                   onDragOver={!isUploading ? handleDragOver : undefined}
                   onDragLeave={!isUploading ? handleDragLeave : undefined}
@@ -435,12 +456,16 @@ const DocumentUploadModal = ({ applicationId }) => {
                           <FileText className="h-10 w-10 text-primary mb-2" />
                         )}
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {isUploading ? 'Uploading files...' : `${files.length} ${files.length === 1 ? 'file' : 'files'} selected`}
+                          {isUploading
+                            ? "Uploading files..."
+                            : `${files.length} ${files.length === 1 ? "file" : "files"} selected`}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {isUploading 
-                            ? `Processing ${currentFileIndex !== null ? currentFileIndex + 1 : '0'} of ${files.length}` 
-                            : files.length < MAX_FILES ? 'Click or drag to add more files' : 'Maximum files reached'}
+                          {isUploading
+                            ? `Processing ${currentFileIndex !== null ? currentFileIndex + 1 : "0"} of ${files.length}`
+                            : files.length < MAX_FILES
+                              ? "Click or drag to add more files"
+                              : "Maximum files reached"}
                         </p>
                       </div>
 
@@ -488,7 +513,10 @@ const DocumentUploadModal = ({ applicationId }) => {
                                             ? "opacity-50 cursor-not-allowed text-gray-400"
                                             : "text-gray-500 hover:text-red-500"
                                         }`}
-                                        onClick={() => !isUploading && handleRemoveFile(index)}
+                                        onClick={() =>
+                                          !isUploading &&
+                                          handleRemoveFile(index)
+                                        }
                                         disabled={isUploading}
                                       >
                                         <Trash2 className="h-4 w-4" />
@@ -547,8 +575,8 @@ const DocumentUploadModal = ({ applicationId }) => {
                   ) : (
                     <>
                       <Upload className="h-4 w-4 mr-2" />
-                      Upload {files.length > 0 ? files.length : ""}{" "}
-                      Document{files.length !== 1 ? "s" : ""}
+                      Upload {files.length > 0 ? files.length : ""} Document
+                      {files.length !== 1 ? "s" : ""}
                     </>
                   )}
                 </Button>

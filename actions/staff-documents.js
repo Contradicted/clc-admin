@@ -3,6 +3,8 @@
 import { UTApi } from "uploadthing/server";
 import { db } from "@/lib/db";
 import { currentUser } from "@/lib/auth";
+import { logActivity } from "./activity-log";
+import { revalidatePath } from "next/cache";
 
 /**
  * Upload a document for a student application by admin staff
@@ -25,7 +27,7 @@ export const uploadStaffDocument = async (formData) => {
 
     // Check if application exists
     const application = await db.application.findUnique({
-      where: { id: applicationId }
+      where: { id: applicationId },
     });
 
     if (!application) {
@@ -47,6 +49,13 @@ export const uploadStaffDocument = async (formData) => {
         applicationID: applicationId,
         userID: user.id,
       },
+    });
+
+    // Log the file upload with ADD_FILE action type
+    await logActivity(user.id, applicationId, "ADD_FILE", {
+      field: "Staff Document",
+      prevValue: null,
+      newValue: uploadedFile.data.name,
     });
 
     return { success: true, document };
@@ -87,9 +96,10 @@ export const getStaffDocuments = async (applicationId) => {
       });
     } catch (dbError) {
       console.error("Database error:", dbError);
-      return { 
+      return {
         documents: [],
-        error: "Document model may not be migrated yet. Please run 'npx prisma migrate dev'." 
+        error:
+          "Document model may not be migrated yet. Please run 'npx prisma migrate dev'.",
       };
     }
 
@@ -120,8 +130,9 @@ export const deleteStaffDocument = async (documentId) => {
       });
     } catch (dbError) {
       console.error("Database error:", dbError);
-      return { 
-        error: "Document model may not be migrated yet. Please run 'npx prisma migrate dev'." 
+      return {
+        error:
+          "Document model may not be migrated yet. Please run 'npx prisma migrate dev'.",
       };
     }
 
@@ -140,10 +151,18 @@ export const deleteStaffDocument = async (documentId) => {
       await db.document.delete({
         where: { id: documentId },
       });
+
+      // Log the file deletion with DELETE_FILE action type
+      await logActivity(user.id, document.applicationID, "DELETE_FILE", {
+        field: "Staff Document",
+        prevValue: document.fileName || document.fileUrl,
+        newValue: null,
+      });
     } catch (dbError) {
       console.error("Database delete error:", dbError);
-      return { 
-        error: "Failed to delete document record. The model may not be migrated yet." 
+      return {
+        error:
+          "Failed to delete document record. The model may not be migrated yet.",
       };
     }
 
