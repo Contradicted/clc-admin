@@ -117,6 +117,7 @@ const Actions = ({ data }) => {
               }
               setIsLetterModalOpen(true);
             }}
+            disabled
           >
             Issue Letter
           </DropdownMenuItem>
