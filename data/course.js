@@ -43,6 +43,10 @@ export const getCourses = async () => {
       orderBy: {
         name: "asc",
       },
+      include: {
+        course_instances: true,
+        course_study_mode: true,
+      },
     });
   } catch (error) {
     console.log("[FETCHING_COURSES_ERROR]", error);

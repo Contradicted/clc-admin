@@ -14,13 +14,13 @@ import {
   getEnrolledStudentByUserID,
   getStudentByApplicationID,
 } from "@/data/student";
-import { getActiveCourses } from "@/data/course";
+import { getActiveCourses, getCourses } from "@/data/course";
 import AuditTimeline from "./_components/audit-timeline";
 import { getActivityLogsByApplicationID } from "@/data/activity-logs";
 
 const ApplicationIDPage = async ({ params }) => {
   const application = await getApplicationByID(params.applicationID);
-  const courses = await getActiveCourses();
+  const courses = await getCourses();
   const activityLogs = await getActivityLogsByApplicationID(
     params.applicationID
   );

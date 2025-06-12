@@ -113,6 +113,7 @@ export const updateStatus = async (emailMsg, applicationID, status) => {
           personalEmail: student.email,
           course: application.course.name,
           campus: enrolledStudent.campus,
+          studyMode: application.studyMode,
           commencementDate: application.commencement,
         });
         office365Email = office365Account.email;

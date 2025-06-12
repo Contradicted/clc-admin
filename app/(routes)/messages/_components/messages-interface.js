@@ -388,7 +388,7 @@ export default function MessagesInterface({
         </div>
 
         {totalPages > 1 && (
-          <div className="flex justify-center space-x-2">
+          <div className="flex flex-wrap justify-center items-center gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -397,20 +397,36 @@ export default function MessagesInterface({
             >
               Previous
             </Button>
-            <div className="flex items-center space-x-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </Button>
-                )
-              )}
+            
+            <div className="flex items-center gap-1 overflow-x-auto max-w-[50vw] pb-1 px-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(page => {
+                  // Show first page, last page, current page and pages around current
+                  const nearCurrent = Math.abs(page - currentPage) <= 1;
+                  return page === 1 || page === totalPages || nearCurrent;
+                })
+                .map((page, index, array) => {
+                  // Add ellipsis between non-consecutive pages
+                  const showEllipsis = index > 0 && page - array[index - 1] > 1;
+                  return (
+                    <div key={page} className="flex items-center">
+                      {showEllipsis && (
+                        <span className="px-1 text-muted-foreground">...</span>
+                      )}
+                      <Button
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(page)}
+                        className="h-8 w-8 p-0"
+                      >
+                        {page}
+                      </Button>
+                    </div>
+                  );
+                })
+              }
             </div>
+            
             <Button
               variant="outline"
               size="sm"

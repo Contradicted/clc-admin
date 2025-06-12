@@ -185,7 +185,7 @@ export async function POST(req) {
     }
 
     // Generate the student ID
-    const studentId = await generateStudentID(application.campus);
+    const studentId = await generateStudentID(application.campus, application.studyMode);
     
     // Check if Office 365 account already exists
     let office365Account;
@@ -230,6 +230,7 @@ export async function POST(req) {
           personalEmail: application.email,
           course: application.course.name,
           campus: application.campus,
+          studyMode: application.studyMode,
           commencementDate: application.commencement,
         });
         
@@ -246,6 +247,7 @@ export async function POST(req) {
         personalEmail: application.email,
         course: application.course.name,
         campus: application.campus,
+        studyMode: application.studyMode,
         commencementDate: application.commencement,
       });
       
