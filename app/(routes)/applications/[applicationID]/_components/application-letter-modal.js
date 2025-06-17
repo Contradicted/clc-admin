@@ -523,8 +523,8 @@ const ApplicationLetterModal = ({ open, onOpenChange, application }) => {
               {previewData?.success && (
                 <div className="flex items-center gap-2">
                   <TooltipProvider>
-                    <Tooltip asChild>
-                      <TooltipTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <Button
                           variant="outline"
                           size="sm"
@@ -542,8 +542,8 @@ const ApplicationLetterModal = ({ open, onOpenChange, application }) => {
                     <span className="text-xs text-muted-foreground min-w-[3rem] text-center">
                       {Math.round(zoomLevel * 100)}%
                     </span>
-                    <Tooltip asChild>
-                      <TooltipTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <Button
                           variant="outline"
                           size="sm"
@@ -558,8 +558,8 @@ const ApplicationLetterModal = ({ open, onOpenChange, application }) => {
                       </TooltipTrigger>
                       <TooltipContent>Zoom in</TooltipContent>
                     </Tooltip>
-                    <Tooltip asChild>
-                      <TooltipTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <Button
                           variant="outline"
                           size="sm"
@@ -572,14 +572,13 @@ const ApplicationLetterModal = ({ open, onOpenChange, application }) => {
                       <TooltipContent>Reset zoom to 100%</TooltipContent>
                     </Tooltip>
                     <div className="w-px h-6 bg-border mx-1" />
-                    <Tooltip asChild>
-                      <TooltipTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={handleDownloadPDF}
                           className="h-8 w-8 p-0"
-                          title="Download PDF"
                         >
                           <Download className="h-4 w-4" />
                         </Button>

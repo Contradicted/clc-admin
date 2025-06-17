@@ -5,16 +5,34 @@ import { graphClient } from "@/lib/office365";
 import { logActivity } from "@/actions/activity-log";
 
 export async function POST(req) {
+  // Wrap everything in try-catch to ensure we always return JSON
   try {
+    console.log("POST /api/letters/send - Request received");
+
     // Check if user is authenticated
     const user = await currentUser();
     if (!user || !["Admin", "Staff"].includes(user.role)) {
+      console.log("Unauthorized user attempt:", user?.id || "no user");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    console.log("User authenticated:", user.id, user.role);
+
     // Get request body
+    let body;
+    try {
+      body = await req.json();
+      console.log("Request body parsed successfully");
+    } catch (parseError) {
+      console.error("Error parsing request body:", parseError);
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
+
     const { applicationId, templateId, templateName, subject, pdfAttachment } =
-      await req.json();
+      body;
 
     // Validate required fields
     if (
@@ -24,6 +42,13 @@ export async function POST(req) {
       !subject ||
       !pdfAttachment
     ) {
+      console.log("Missing required fields:", {
+        applicationId: !!applicationId,
+        templateId: !!templateId,
+        templateName: !!templateName,
+        subject: !!subject,
+        pdfAttachment: !!pdfAttachment,
+      });
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -114,25 +139,45 @@ export async function POST(req) {
       </div>
     `;
 
+    // Validate environment variables
+    if (!process.env.EMAIL_FROM) {
+      console.error("EMAIL_FROM environment variable not set");
+      return NextResponse.json(
+        { error: "Email configuration error" },
+        { status: 500 }
+      );
+    }
+
+    console.log(
+      "Sending email to:",
+      recipients.map((r) => r.emailAddress.address)
+    );
+
     // Send email via Microsoft Graph API
-    await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post({
-      message: {
-        subject: subject,
-        body: {
-          contentType: "HTML",
-          content: emailBody,
-        },
-        toRecipients: recipients,
-        attachments: [
-          {
-            "@odata.type": "#microsoft.graph.fileAttachment",
-            name: pdfAttachment.filename,
-            contentType: "application/pdf",
-            contentBytes: pdfAttachment.content,
+    try {
+      await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post({
+        message: {
+          subject: subject,
+          body: {
+            contentType: "HTML",
+            content: emailBody,
           },
-        ],
-      },
-    });
+          toRecipients: recipients,
+          attachments: [
+            {
+              "@odata.type": "#microsoft.graph.fileAttachment",
+              name: pdfAttachment.filename,
+              contentType: "application/pdf",
+              contentBytes: pdfAttachment.content,
+            },
+          ],
+        },
+      });
+      console.log("Email sent successfully via Graph API");
+    } catch (graphError) {
+      console.error("Graph API error:", graphError);
+      throw graphError; // Re-throw to be caught by outer try-catch
+    }
 
     // Create note in database
     const emailAddresses = recipients.map((r) => r.emailAddress.address);
@@ -164,6 +209,7 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error("Error sending letter:", error);
+    console.error("Error stack:", error.stack);
 
     // Extract a more useful error message from the Graph API response
     let errorMessage = "Failed to send letter";
@@ -174,10 +220,23 @@ export async function POST(req) {
       } catch (e) {
         errorMessage = error.body;
       }
-    } else {
-      errorMessage = error.message || errorMessage;
+    } else if (error.message) {
+      errorMessage = error.message;
+    } else if (error.toString) {
+      errorMessage = error.toString();
     }
 
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    console.log("Returning error response:", errorMessage);
+
+    // Ensure we always return a proper JSON response
+    try {
+      return NextResponse.json({ error: errorMessage }, { status: 500 });
+    } catch (responseError) {
+      console.error("Error creating response:", responseError);
+      return new Response(JSON.stringify({ error: "Internal server error" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
 }
