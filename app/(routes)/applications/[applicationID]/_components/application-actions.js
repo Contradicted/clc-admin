@@ -12,8 +12,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { downloadFiles } from "@/lib/download";
 import { exportApplicationToCSV } from "@/lib/export";
 import { useRouter } from "next/navigation";
-import ApplicationLetterModal from "./application-letter-modal.js";
-import { Mail } from "lucide-react";
+import ApplicationLetterModal from "./application-letter-modal";
 import { logExportActivity } from "@/actions/log-export";
 import { logDownloadActivity } from "@/actions/log-download";
 
@@ -117,7 +116,6 @@ const Actions = ({ data }) => {
               }
               setIsLetterModalOpen(true);
             }}
-            disabled
           >
             Issue Letter
           </DropdownMenuItem>
@@ -128,7 +126,6 @@ const Actions = ({ data }) => {
         open={isLetterModalOpen}
         onOpenChange={setIsLetterModalOpen}
         application={data}
-        student={data?.student}
       />
     </>
   );

@@ -26,6 +26,11 @@ export const getApplicationByID = async (applicationID) => {
           course_instances: true,
         },
       },
+      enrolledStudent: {
+        select: {
+          id: true,
+        },
+      },
       paymentPlan: true,
     },
   });

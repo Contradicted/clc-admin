@@ -31,29 +31,46 @@ export const logActivity = async (
   // Helper function to process values before stringifying
   const processValue = (value) => {
     if (value === null || value === undefined) return null;
-    
+
     // If it's a string, return as is
-    if (typeof value === 'string') return value;
-    
-    // If it's a Date object, format it with date and time
+    if (typeof value === "string") return value;
+
+    // If it's a Date object, format it based on the field
     if (value instanceof Date) {
+      // For date of birth and similar date-only fields, show only the date
+      if (
+        field &&
+        (field.toLowerCase().includes("birth") ||
+          field.toLowerCase().includes("dob"))
+      ) {
+        return formatDateTime(value).date;
+      }
+      // For other date fields, show date and time
       return formatDateTime(value).dateTime;
     }
-    
+
     // If it's an object with a date property that's a Date object, format that property
-    if (typeof value === 'object' && value !== null) {
+    if (typeof value === "object" && value !== null) {
       const processed = { ...value };
-      
+
       // Process any Date objects in the object
       for (const key in processed) {
         if (processed[key] instanceof Date) {
-          processed[key] = formatDateTime(processed[key]).dateTime;
+          // For date of birth and similar date-only fields, show only the date
+          if (
+            key.toLowerCase().includes("birth") ||
+            key.toLowerCase().includes("dob")
+          ) {
+            processed[key] = formatDateTime(processed[key]).date;
+          } else {
+            processed[key] = formatDateTime(processed[key]).dateTime;
+          }
         }
       }
-      
+
       return JSON.stringify(processed);
     }
-    
+
     // Otherwise stringify as before
     return JSON.stringify(value);
   };
