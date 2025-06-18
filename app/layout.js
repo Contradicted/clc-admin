@@ -18,8 +18,8 @@ export default async function RootLayout({ children }) {
   const sessionKey = new Date().valueOf();
 
   return (
-    <html lang="en">
-      <NextAuthProvider session={session} sessionKey={sessionKey}>
+    <NextAuthProvider session={session} sessionKey={sessionKey}>
+      <html lang="en">
         <body suppressHydrationWarning={true}>
           <QueryProvider>
             <NextTopLoader />
@@ -27,7 +27,7 @@ export default async function RootLayout({ children }) {
             <Toaster />
           </QueryProvider>
         </body>
-      </NextAuthProvider>
-    </html>
+      </html>
+    </NextAuthProvider>
   );
 }

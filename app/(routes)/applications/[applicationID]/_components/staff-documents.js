@@ -5,14 +5,7 @@ import { FileText, FileSpreadsheet, FileImage, FileCode, Download, Trash2, Alert
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
 import { formatDateTime, formatTimeAgo } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 const StaffDocuments = ({ documents = [], onDelete, isDisabled = false }) => {
   const [isDeleting, setIsDeleting] = useState(false);

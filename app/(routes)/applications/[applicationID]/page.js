@@ -6,10 +6,9 @@ import ApplicationHeader from "./_components/application-header";
 import ApplicationButtons from "./_components/application-buttons";
 import ApplicationTabs from "./_components/application-tabs";
 import { redirect } from "next/navigation";
-import { Minus, SquarePen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { SquarePen } from "lucide-react";
 import AddNoteButton from "./_components/add-note-button";
-import { cn, formatDate, formatDateTime, formatTimeAgo } from "@/lib/utils";
+import { formatDateTime, formatTimeAgo } from "@/lib/utils";
 import {
   getEnrolledStudentByUserID,
   getStudentByApplicationID,

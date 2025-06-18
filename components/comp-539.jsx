@@ -23,12 +23,12 @@ import {
   TimelineContent,
   TimelineItem,
 } from "@/components/ui/timeline";
+import { formatTimeAgo } from "@/lib/utils";
 
 function getActionIcon(action) {
   // Handle non-generic cases first
   const specificIcons = {
     EMAIL_SENT: MailIcon,
-    SENT_LETTER: MailIcon,
     INTERVIEW_SCHEDULED: CalendarIcon,
   };
 
@@ -80,7 +80,6 @@ function getActionText(action) {
     ADD_PENDING_WORK_EXPERIENCE: "Added pending work experience",
     INTERVIEW_SCHEDULED: "Scheduled interview",
     EMAIL_SENT: "Sent email",
-    SENT_LETTER: "Sent Letter",
   };
 
   // If we have a mapping, return it; otherwise format the action string
@@ -123,7 +122,7 @@ function formatFieldName(fieldName) {
   try {
     // Handle null/undefined cases
     if (!fieldName) return "";
-
+    
     // Convert to string if it's not already
     const fieldNameStr = String(fieldName);
 
@@ -194,26 +193,24 @@ function formatFieldName(fieldName) {
     // Check if it's a nested field (contains a dot)
     if (fieldNameStr.includes(".")) {
       const parts = fieldNameStr.split(".");
-
+      
       // Handle empty parts array
       if (!parts || parts.length === 0) {
         return formatSingleWord(fieldNameStr);
       }
-
+      
       // Get the last part for formatting
       const lastPart = parts[parts.length - 1];
-
+      
       // Handle specific field types
-
+      
       // For qualification fields, just return the formatted last part
-      if (
-        parts[0] === "qualification" ||
-        parts[0] === "pendingQualification" ||
-        parts[0] === "workExperience"
-      ) {
+      if (parts[0] === "qualification" || 
+          parts[0] === "pendingQualification" || 
+          parts[0] === "workExperience") {
         return formatSingleWord(lastPart);
       }
-
+      
       // For interview questions
       if (parts[0] === "interview") {
         if (parts[1] === "question") {
@@ -221,7 +218,7 @@ function formatFieldName(fieldName) {
           if (parts.length > 2 && parts[2]) {
             // Format the question name
             const formattedName = formatSingleWord(parts[2]);
-
+            
             // Truncate long question names (limit to 40 characters)
             return formattedName.length > 40
               ? `${formattedName.substring(0, 40)}...`
@@ -243,17 +240,17 @@ function formatFieldName(fieldName) {
         }
         return "Interview";
       }
-
+      
       // For other nested fields, format as "Field (Context)"
       const context = parts
         .slice(0, -1)
-        .map((part) => formatSingleWord(part))
+        .map(part => formatSingleWord(part))
         .join(" ");
-
+      
       const formattedField = formatSingleWord(lastPart);
       return `${formattedField}${context ? ` (${context})` : ""}`;
     }
-
+    
     // For non-nested fields, just format the word
     return formatSingleWord(fieldNameStr);
   } catch (error) {
@@ -307,18 +304,7 @@ function formatValue(value, fieldName, shouldTruncate = true, maxLength = 100) {
   // Format based on field name or value pattern
   if (fieldName) {
     const lowerFieldName = fieldName.toLowerCase();
-
-    // Special formatting for recipients in SENT_LETTER
-    if (lowerFieldName === "recipients" && typeof value === "string") {
-      // If recipients are separated by newlines, format them properly
-      if (value.includes("\n")) {
-        return value
-          .split("\n")
-          .map((email, index) => email.trim())
-          .join("\n");
-      }
-    }
-
+    
     // Special handling for expectedPayments field
     if (lowerFieldName === "expectedpayments") {
       try {
@@ -331,23 +317,16 @@ function formatValue(value, fieldName, shouldTruncate = true, maxLength = 100) {
             // If parsing fails, use the original value
           }
         }
-
+        
         // Format the payments with user-friendly numbering
         if (Array.isArray(payments)) {
-          return payments
-            .map((payment, index) => {
-              if (
-                payment &&
-                payment.university &&
-                payment.course &&
-                payment.amount
-              ) {
-                return `${index + 1}. ${payment.university} - ${payment.course} (${formatCurrency(payment.amount)})`;
-              } else {
-                return `${index + 1}. ${typeof payment === "object" ? JSON.stringify(payment) : String(payment)}`;
-              }
-            })
-            .join("\n");
+          return payments.map((payment, index) => {
+            if (payment && payment.university && payment.course && payment.amount) {
+              return `${index + 1}. ${payment.university} - ${payment.course} (${formatCurrency(payment.amount)})`;
+            } else {
+              return `${index + 1}. ${typeof payment === 'object' ? JSON.stringify(payment) : String(payment)}`;
+            }
+          }).join('\n');
         }
       } catch (error) {
         console.error("Error formatting expectedPayments:", error);
@@ -422,70 +401,55 @@ function formatValue(value, fieldName, shouldTruncate = true, maxLength = 100) {
   if (shouldTruncate && typeof value === "string" && value.length > maxLength) {
     return value.substring(0, maxLength) + "...";
   }
-
+  
   // Handle objects - convert them to string to avoid "Objects are not valid as React child" error
   if (typeof value === "object" && value !== null) {
     try {
       // Check if it's expectedPayments - either from field name or by detecting the structure
-      const isExpectedPayments =
+      const isExpectedPayments = 
         (fieldName && fieldName.toLowerCase() === "expectedpayments") ||
-        (Array.isArray(value) &&
-          value.length > 0 &&
-          value[0] &&
-          value[0].university &&
-          value[0].course &&
-          value[0].amount);
-
+        (Array.isArray(value) && value.length > 0 && 
+         value[0] && value[0].university && value[0].course && value[0].amount);
+      
       // Handle arrays of payment objects
       if (isExpectedPayments && Array.isArray(value)) {
-        return value
-          .map((item, index) => {
-            if (item && item.university && item.course && item.amount) {
-              // Format each payment item with a user-friendly number
-              return `${index + 1}. ${item.university} - ${item.course} (${formatCurrency(item.amount)})`;
-            } else {
-              // For other array items
-              return `${index + 1}. ${typeof item === "object" ? JSON.stringify(item) : String(item)}`;
-            }
-          })
-          .join("\n");
+        return value.map((item, index) => {
+          if (item && item.university && item.course && item.amount) {
+            // Format each payment item with a user-friendly number
+            return `${index + 1}. ${item.university} - ${item.course} (${formatCurrency(item.amount)})`;
+          } else {
+            // For other array items
+            return `${index + 1}. ${typeof item === 'object' ? JSON.stringify(item) : String(item)}`;
+          }
+        }).join('\n');
       }
       // Handle single scholarship/finance object
       else if (Array.isArray(value)) {
-        return value
-          .map((item, index) => {
-            if (typeof item === "object" && item !== null) {
-              return `${index + 1}. ${JSON.stringify(item)}`;
-            } else {
-              return `${index + 1}. ${String(item)}`;
-            }
-          })
-          .join("\n");
-      } else if (
-        value.date &&
-        value.amount &&
-        value.university &&
-        value.course
-      ) {
+        return value.map((item, index) => {
+          if (typeof item === 'object' && item !== null) {
+            return `${index + 1}. ${JSON.stringify(item)}`;
+          } else {
+            return `${index + 1}. ${String(item)}`;
+          }
+        }).join('\n');
+      }
+      else if (value.date && value.amount && value.university && value.course) {
         // Special case for scholarship/finance objects
         return `${value.university} - ${value.course} (${formatCurrency(value.amount)})`;
-      }
+      } 
       // Handle other objects
       else if (Object.keys(value).length > 0) {
         // For other objects, show a summary of key properties
         const keyValues = Object.entries(value)
-          .filter(([k, v]) => v !== null && v !== undefined && k !== "id")
-          .map(
-            ([k, v]) =>
-              `${formatFieldName(k)}: ${typeof v === "object" ? "[Object]" : v}`
-          )
-          .join(", ");
-        return keyValues || "[Empty Object]";
+          .filter(([k, v]) => v !== null && v !== undefined && k !== 'id')
+          .map(([k, v]) => `${formatFieldName(k)}: ${typeof v === 'object' ? '[Object]' : v}`)
+          .join(', ');
+        return keyValues || '[Empty Object]';
       }
       return JSON.stringify(value);
     } catch (error) {
       console.error("Error stringifying object:", error);
-      return "[Object]";
+      return '[Object]';
     }
   }
 
@@ -883,16 +847,20 @@ export function TimelineComponent({
                   {/* Keep the improved date/time display */}
                   <div className="flex flex-col gap-y-0.5 items-end text-xs text-gray-500 whitespace-nowrap">
                     <span className="font-medium">
-                      {new Date(item.date).toLocaleDateString()}
+                      {new Date(item.date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
                     </span>
                     <span>
-                      {new Date(item.date).toLocaleTimeString([], {
+                      {new Date(item.date).toLocaleTimeString("en-GB", {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
                     </span>
                     <span className="text-gray-400 text-[10px]">
-                      {getRelativeTimeString(new Date(item.date))}
+                      {formatTimeAgo(item.date)}
                     </span>
                   </div>
                 </TimelineContent>

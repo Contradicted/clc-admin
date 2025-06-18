@@ -193,7 +193,7 @@ export async function POST(req) {
     });
 
     // Log activity
-    await logActivity(user.id, applicationId, "SENT_LETTER", {
+    await logActivity(user.id, applicationId, "EMAIL_SENT", {
       field: "Letter",
       prevValue: null,
       newValue: {

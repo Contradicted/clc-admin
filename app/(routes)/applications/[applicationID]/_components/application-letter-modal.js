@@ -10,9 +10,8 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog.jsx";
-import { Button } from "@/components/ui/button.jsx";
-import { ScrollArea } from "@/components/ui/scroll-area.jsx";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
   FileIcon,
   FolderIcon,
@@ -26,7 +25,7 @@ import {
   Send,
   Loader2,
 } from "lucide-react";
-import { Tree, TreeItem, TreeItemLabel } from "@/components/tree.jsx";
+import { Tree, TreeItem, TreeItemLabel } from "@/components/tree";
 import {
   hotkeysCoreFeature,
   syncDataLoaderFeature,
@@ -240,11 +239,27 @@ const ApplicationLetterModal = ({ open, onOpenChange, application }) => {
       });
 
       if (!emailResponse.ok) {
-        const errorData = await emailResponse.json();
+        let errorData;
+        try {
+          errorData = await emailResponse.json();
+        } catch (parseError) {
+          // If response is not JSON (like HTML error page), create generic error
+          const responseText = await emailResponse.text();
+          console.error("Non-JSON error response:", responseText);
+          throw new Error(
+            `Server error (${emailResponse.status}): ${responseText.includes("<html>") ? "Server returned HTML error page" : responseText.substring(0, 100)}`
+          );
+        }
         throw new Error(errorData.error || "Failed to send email");
       }
 
-      const result = await emailResponse.json();
+      let result;
+      try {
+        result = await emailResponse.json();
+      } catch (parseError) {
+        console.error("Error parsing success response:", parseError);
+        throw new Error("Email sent but received invalid response from server");
+      }
 
       toast({
         title: `Letter sent successfully!`,
@@ -579,6 +594,7 @@ const ApplicationLetterModal = ({ open, onOpenChange, application }) => {
                           size="sm"
                           onClick={handleDownloadPDF}
                           className="h-8 w-8 p-0"
+                          title="Download PDF"
                         >
                           <Download className="h-4 w-4" />
                         </Button>
